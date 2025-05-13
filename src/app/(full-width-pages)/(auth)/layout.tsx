@@ -15,7 +15,6 @@ export default function AuthLayout({
     <div className="relative p-6 bg-white z-1 dark:bg-gray-900 sm:p-0">
       <ThemeProvider>
         <div className="relative flex lg:flex-row w-full h-screen justify-center flex-col  dark:bg-gray-900 sm:p-0">
-          {children}
           <div className="lg:w-1/2 w-full h-full bg-brand-950 dark:bg-white/5 lg:grid items-center hidden">
             <div className="relative items-center justify-center  flex z-1">
               {/* <!-- ===== Common Grid Shape Start ===== --> */}
@@ -35,8 +34,11 @@ export default function AuthLayout({
               </div>
             </div>
           </div>
-          <div className="fixed bottom-6 right-6 z-50 hidden sm:block">
-            <ThemeTogglerTwo />
+          <div className="w-full sm:basis-3/5 h-full bg-opacity-50 p-8 lg:px-[70px] flex flex-col justify-start overflow-auto relative " >
+            <div className="-top-4 left-0 absolute ">
+              <img src="images/login/app-logo.png" alt="App Logo " className="w-[30%]" />
+            </div>
+            {children}
           </div>
         </div>
       </ThemeProvider>
