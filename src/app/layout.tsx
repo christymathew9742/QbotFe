@@ -1,8 +1,9 @@
 import { Outfit } from 'next/font/google';
 import './globals.css';
-
 import { SidebarProvider } from '@/context/SidebarContext';
 import { ThemeProvider } from '@/context/ThemeContext';
+import { ToastContainer } from 'react-toastify';
+import AuthProvider from './AuthProvider';
 
 const outfit = Outfit({
   subsets: ["latin"],
@@ -15,26 +16,13 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      {/* <head>
-        <script
-          dangerouslySetInnerHTML={{
-            __html: `
-              (function() {
-                try {
-                  const theme = localStorage.getItem('theme');
-                  if (theme === 'dark') {
-                    document.documentElement.classList.add('dark');
-                  }
-                } catch (_) {}
-              })();
-            `,
-          }}
-        />
-      </head> */}
       <body className={`${outfit.className} dark:bg-gray-900`}>
-        <ThemeProvider>
-          <SidebarProvider>{children}</SidebarProvider>
-        </ThemeProvider>
+        <AuthProvider>
+          <ThemeProvider>
+            <ToastContainer/>
+            <SidebarProvider>{children}</SidebarProvider>
+          </ThemeProvider>
+        </AuthProvider> 
       </body>
     </html>
   );
