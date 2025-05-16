@@ -115,5 +115,6 @@ const FieldProp: React.FC<FieldPropComponentProps> = ({ Config }) => {
     );
 };
 
+FieldProp.displayName = 'FieldProp';
 export default FieldProp;
 
