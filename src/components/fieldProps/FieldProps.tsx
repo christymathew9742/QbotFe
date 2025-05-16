@@ -31,6 +31,7 @@ const gridItemProps = {
     sm: 6,
 };
 
+
 const FieldProp: React.FC<FieldPropComponentProps> = ({ Config }) => {
     const [showPassword, setShowPassword] = useState(false);
     const handleClickShowPassword = () => setShowPassword(prev => !prev);
@@ -114,5 +115,6 @@ const FieldProp: React.FC<FieldPropComponentProps> = ({ Config }) => {
     );
 };
 
+FieldProp.displayName = 'FieldProp';
 export default FieldProp;
 

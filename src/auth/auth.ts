@@ -27,7 +27,7 @@ interface LoginResponse {
 }
 
 interface RegisterResponse {
-  data: any;
+  data: unknown;
   message: string;
   [key: string]: unknown;
 }
