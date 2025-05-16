@@ -1,1 +1,1 @@
-export { default as FieldProps } from "./FieldProps";
+export { default as FieldProp } from "./FieldProp";

@@ -7,7 +7,7 @@ import Divider from '@mui/material/Divider';
 import { Formik, Form, FormikHelpers } from "formik";
 import * as Yup from "yup";
 import { signUpV2 } from "@/auth/auth";
-import { FieldProps } from "@/components/fieldProps";
+import { FieldProp } from "@/components/fieldProps";
 import { FieldConfig } from "@/components/fieldProps/fieldConfig";
 import { debounce } from "lodash";
 import { toast } from "react-toastify";
@@ -115,7 +115,7 @@ return (
                       Or
                     </Divider>
                     {Object.keys(initialValues).map((key) => (
-                        <FieldProps key={key} Config={FieldConfig[key as keyof SignUpValues]} />
+                        <FieldProp key={key} Config={FieldConfig[key as keyof SignUpValues]} />
                     ))}
                 </Grid>
                 <Grid container>

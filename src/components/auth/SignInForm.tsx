@@ -8,7 +8,7 @@ import { useRouter } from "next/navigation";
 import { Formik, Form, FormikHelpers } from "formik";
 import * as Yup from "yup";
 import { loginV2 } from "@/auth/auth";
-import { FieldProps } from "@/components/fieldProps";
+import { FieldProp } from "@/components/fieldProps";
 import { FieldConfig } from "@/components/fieldProps/fieldConfig";
 import Link from "next/link";
 
@@ -57,7 +57,7 @@ const SignIn: React.FC = () => {
                   Sign In
               </h1>
               {Object.keys(initialValues).map((key) => (
-                  <FieldProps key={key} Config={FieldConfig[key as keyof LoginValues]} />
+                  <FieldProp key={key} Config={FieldConfig[key as keyof LoginValues]} />
               ))}
           </Grid>
           <Grid container>
