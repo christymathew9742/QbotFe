@@ -1,8 +1,7 @@
 "use client";
 
-import React, { useCallback, useEffect, useMemo, useState } from "react";
+import React, { useCallback, useMemo } from "react";
 import { CircularProgress, Grid } from "@mui/material";
-import { styled } from '@mui/material/styles';
 import Divider from '@mui/material/Divider';
 
 import { Formik, Form, FormikHelpers } from "formik";
@@ -10,19 +9,9 @@ import * as Yup from "yup";
 import { signUpV2 } from "@/auth/auth";
 import { FieldProps } from "@/components/fieldProps";
 import { FieldConfig } from "@/components/fieldProps/fieldConfig";
-import { Google, LoginOutlined } from "@mui/icons-material";
 import { debounce } from "lodash";
 import { toast } from "react-toastify";
 import Link from "next/link";
-
-const Root = styled('div')(({ theme }) => ({
-  width: '100%',
-  ...theme.typography.body2,
-  color: (theme.vars || theme).palette.text.secondary,
-  '& > :not(style) ~ :not(style)': {
-    marginTop: theme.spacing(2),
-  },
-}));
 
 interface SignUpValues {
     username: string;
