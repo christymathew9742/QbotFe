@@ -12,8 +12,8 @@ export default function AuthProvider({ children }: AuthWrapperProps) {
   useEffect(() => {
     if (typeof window === "undefined") return;
 
-    configure("dl-aiapp-abc123xyz456", (token: any) => {
-      console.debug("Session initialized with token.");
+    configure("dl-aiapp-abc123xyz456", (token:string) => {
+      console.debug(`Session initialized with token: ${token}`);
     });
   }, []); 
 

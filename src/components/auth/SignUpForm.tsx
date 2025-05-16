@@ -51,13 +51,12 @@ const SignUp: React.FC = () => {
 const onSubmit = useCallback(
   debounce(async (values: SignUpValues, { resetForm }: FormikHelpers<SignUpValues>) => {
       try {
-          await signUpV2(values, (err: any, data: any) => {
+          await signUpV2(values, (err, data) => {
           if (err) {
-              console.warn("Registration error:", err);
-              toast.error(err.response.data.message);
+              toast.error(err || "Something went wrong");
           } else {
               resetForm();
-              toast.success(data.message);
+              toast.success(data?.message);
           }
           });
       } catch (error) {

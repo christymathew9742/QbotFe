@@ -5,12 +5,15 @@ import { TextField, InputAdornment, IconButton, Grid } from "@mui/material";
 import { Visibility, VisibilityOff } from '@mui/icons-material';
 import { Field } from "formik";
 
+import { SxProps } from '@mui/system';
+
+type FieldType = 'text' | 'email' | 'password' | 'number' | 'textarea';
 interface FieldPropsConfig {
     name: string;
     label: string;
-    type: 'text' | 'email' | 'number' | 'password' | 'textarea';
-    size?: any;
-    style?: object;
+    type: FieldType;
+    size?: number;
+    style?: SxProps | null;
 }
 
 interface FieldPropsComponent {

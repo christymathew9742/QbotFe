@@ -1,8 +1,8 @@
 "use client";
 
-import React, { useCallback, useMemo, useState } from "react";
+import React, { useCallback, useMemo } from "react";
 import { toast } from "react-toastify";
-import { Typography, Button, CircularProgress, Grid } from "@mui/material";
+import { CircularProgress, Grid } from "@mui/material";
 import { debounce } from "lodash";
 import { useRouter } from "next/navigation";
 import { Formik, Form, FormikHelpers } from "formik";
@@ -24,17 +24,18 @@ const validationSchema = Yup.object({
 
 const SignIn: React.FC = () => {
   const router = useRouter();
-  const initialValues = useMemo<LoginValues>(() => ({
-          email: "",
-          password: "",
-  }), []);
+  const initialValues = 
+    useMemo<LoginValues>(() => ({
+      email: "",
+      password: "",
+    }), []);
 
   const onSubmit = useCallback (
     debounce(async (values: LoginValues, { resetForm }: FormikHelpers<LoginValues>) => {
       try {
-        await loginV2(values, (data: any, err: any) => {
+        await loginV2(values, (err) => {
             if (err) {
-              toast.error(err?.response?.data?.message || "Something went wrong");
+              toast.error(err|| "Something went wrong");
             } else {
               router.push("/");
             }
