@@ -92,7 +92,6 @@ const SignIn: React.FC = () => {
         </Form>
       )}
     </Formik>
-  
   );};
 
 export default SignIn;
