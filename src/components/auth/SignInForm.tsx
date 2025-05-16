@@ -8,8 +8,8 @@ import { useRouter } from "next/navigation";
 import { Formik, Form, FormikHelpers } from "formik";
 import * as Yup from "yup";
 import { loginV2 } from "@/auth/auth";
-import { FieldProp } from "@/components/fieldProps";
-import { FieldConfig } from "@/components/fieldProps/fieldConfig";
+import { FieldProp } from "@/components/fieldProp";
+import { FieldConfig } from "@/components/fieldProp/fieldConfig";
 import Link from "next/link";
 
 interface LoginValues {
