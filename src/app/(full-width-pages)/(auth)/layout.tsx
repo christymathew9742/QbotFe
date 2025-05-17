@@ -18,7 +18,7 @@ export default function AuthLayout({
               </div>
             </div>
           </div>
-          <div className="w-full sm:basis-3/5 h-full bg-opacity-50 p-8 lg:px-[100px] flex flex-col justify-start overflow-auto relative " >
+          <div className="w-full sm:basis-3/5 bg-opacity-50 p-8 lg:px-[100px] flex flex-col justify-start overflow-auto relative " >
             <div className="-top-4 left-0 absolute ">
               <img src="images/login/app-logo.png" alt="App Logo " className="w-[30%]" />
             </div>
