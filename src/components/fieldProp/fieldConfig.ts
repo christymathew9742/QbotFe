@@ -8,11 +8,13 @@ interface FieldConfig {
     label: string;
     type: FieldType;
     size?: number;
+    className: string;
     style?: SxProps | null;
 }
 
-const defaultFieldConfig: Pick<FieldConfig, 'size' | 'style'> = {
+const defaultFieldConfig: Pick<FieldConfig, 'size' | 'style' | 'className'> = {
     size: 12,
+    className: 'dark:bg-white/[0.03]',
     style: customInputStyles,
 };
 

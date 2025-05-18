@@ -20,6 +20,7 @@ interface FieldPropsConfig {
     label: string;
     type: FieldType;
     size?: number;
+    className?: string;
     style?: SxProps<Theme>;
 }
 
@@ -36,7 +37,7 @@ const FormInputProps: React.FC<FieldPropComponentProps> = ({ Config }) => {
     const [showPassword, setShowPassword] = useState(false);
     const handleClickShowPassword = () => setShowPassword(prev => !prev);
 
-    const { name, label, type, size, style } = Config;
+    const { name, label, type, size, className, style } = Config;
 
     const renderField = useMemo(() => {
         return ({
@@ -51,6 +52,7 @@ const FormInputProps: React.FC<FieldPropComponentProps> = ({ Config }) => {
             const commonProps: TextFieldProps = {
                 ...field,
                 label,
+                className,
                 error,
                 helperText,
                 fullWidth: true,
@@ -62,7 +64,7 @@ const FormInputProps: React.FC<FieldPropComponentProps> = ({ Config }) => {
                 case 'text':
                 case 'email':
                 case 'number':
-                return <TextField {...commonProps} type={type} />;
+                return <TextField {...commonProps} type={type}/>;
                 case 'password':
                 return (
                     <TextField
