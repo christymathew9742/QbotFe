@@ -103,7 +103,7 @@ const IntegrationsItems: NavItem[] = [
     icon: <BoxCubeIcon />,
     name: "WebHooks",
     subItems: [
-      { name: "Create Token", path: "/ss", pro: false },
+      { name: "Create Token", path: "/bar-chart", pro: false },
     ],
   },
   // {
@@ -139,19 +139,27 @@ const IntegrationsItems: NavItem[] = [
 const AppSidebar: React.FC = () => {
   const { isExpanded, isMobileOpen, isHovered, setIsHovered } = useSidebar();
   const pathname = usePathname();
+  const [submenuMatche, setSubmenuMatched] = useState<{
+    type: string
+    index: number;
+  } | null>(null);
+
+  useEffect(() => {
+    setSubmenuMatched(null);
+  }, [pathname]);
 
   const renderMenuItems = (
     navItems: NavItem[],
     menuType: "menu" | "Integrations"
   ) => (
-    <ul className="flex flex-col gap-4 mx-auto w-full max-w-60 rounded-2xl bg-gray-50 px-4 py-5 text-center dark:bg-white/[0.03]">
+    <ul className={`flex flex-col gap-4 ${isExpanded && 'mx-auto w-full max-w-60 rounded-2xl bg-gray-50 px-4 py-5 text-center dark:bg-white/[0.03]'}`}>
       {navItems.map((nav, index) => (
         <li key={nav.name}>
           {nav.subItems ? (
             <button
               onClick={() => handleSubmenuToggle(index, menuType)}
-              className={`border-gray-50 border-[1px] dark:border-white/[0.03] menu-item group  ${
-                openSubmenu?.type === menuType && openSubmenu?.index === index
+              className={`border-gray-200 border-[1px] dark:border-white/[0.03] menu-item group  ${
+                submenuMatche?.type === menuType && submenuMatche?.index === index 
                   ? "menu-item-active"
                   : "menu-item-inactive"
               } cursor-pointer ${
@@ -187,7 +195,7 @@ const AppSidebar: React.FC = () => {
             nav.path && (
               <Link
                 href={nav.path}
-                className={`menu-item group ${
+                className={`border-gray-200 border-[1px] dark:border-white/[0.03] menu-item group ${
                   isActive(nav.path) ? "menu-item-active" : "menu-item-inactive"
                 }`}
               >
@@ -224,7 +232,7 @@ const AppSidebar: React.FC = () => {
                   <li key={subItem.name}>
                     <Link
                       href={subItem.path}
-                      className={`menu-dropdown-item ${
+                      className={`border-gray-200 border-[1px] dark:border-white/[0.03] menu-dropdown-item ${
                         isActive(subItem.path)
                           ? "menu-dropdown-item-active"
                           : "menu-dropdown-item-inactive"
@@ -270,6 +278,7 @@ const AppSidebar: React.FC = () => {
     type: "menu" | "Integrations";
     index: number;
   } | null>(null);
+
   const [subMenuHeight, setSubMenuHeight] = useState<Record<string, number>>(
     {}
   );
@@ -289,6 +298,10 @@ const AppSidebar: React.FC = () => {
             if (isActive(subItem.path)) {
               setOpenSubmenu({
                 type: menuType as "menu" | "Integrations",
+                index,
+              });
+              setSubmenuMatched({
+                type: menuType as "menu" | "integrations",
                 index,
               });
               submenuMatched = true;
