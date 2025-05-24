@@ -60,7 +60,7 @@ const SignUp: React.FC = () => {
         {({ isSubmitting }) => (
             <Form className="sm:mt-20">
                 <Grid container spacing={2} mb={2}  className="w-full">
-                    <h1 className="w-full text-center text-letter-theme-clr mb-4 text-[clamp(2.2rem,10vw,2.3rem)] font-semibold text-[#51A1FF]">
+                    <h1 className="w-full text-center mb-4 text-[clamp(2.2rem,10vw,2.3rem)] font-semibold text-[#51A1FF]">
                         Sign Up
                     </h1>
                     <div className="w-full">
@@ -114,15 +114,15 @@ const SignUp: React.FC = () => {
                     <Divider textAlign="center" sx={{ color: 'primary.main', width:'100%', fontSize:'12px'}}>
                       Or
                     </Divider>
-                    {Object.keys(initialValues).map((key) => (
-                        <FormInputProps key={key} Config={FieldConfig[key as keyof SignUpValues]} />
+                    {FieldConfig?.find(sec => sec.section === 'signup')?.fields.map((field) => (
+                      <FormInputProps key={field.name} Config={field} />
                     ))}
                 </Grid>
                 <Grid container>
                   <div className="mt-5 w-full">
                     <button 
                         type="submit" 
-                        className="flex items-center justify-center w-full  bg-[#51A1FF]  from-custom-blue-left to-custom-blue-right text-white py-2 px-6 rounded-md hover:opacity-90 transition-all bg-highlight-clr"
+                        className="flex items-center justify-center w-full  bg-[#51A1FF]  from-custom-blue-left to-custom-blue-right text-white py-2 px-6 rounded-md hover:opacity-90 transition-all"
                     >
                         {isSubmitting ? <>Sign Up...  <CircularProgress size={20} className="mr-2 text-white"/></> : <>Sign Up </>}
                     </button>

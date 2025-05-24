@@ -1,24 +1,24 @@
+"use client";
+
 import Link from "next/link";
 import React from "react";
+import { usePathname } from 'next/navigation';
 
 interface BreadcrumbProps {
-  pageTitle: string;
+  pagePath: string;
 }
 
-const PageBreadcrumb: React.FC<BreadcrumbProps> = ({ pageTitle }) => {
+const PageBreadcrumb: React.FC<BreadcrumbProps> = ({ pagePath="" }) => {
+  const pathname = usePathname(); // current URL path
+  const isActive = pathname === `/${pagePath}`;
+
   return (
     <div className="flex flex-wrap items-center justify-between gap-3 mb-6">
-      <h2
-        className="text-xl font-semibold text-gray-800 dark:text-white/90"
-        x-text="pageName"
-      >
-        {pageTitle}
-      </h2>
       <nav>
         <ol className="flex items-center gap-1.5">
           <li>
             <Link
-              className="inline-flex items-center gap-1.5 text-sm text-gray-500 dark:text-gray-400"
+              className={`inline-flex items-center gap-1.5 text-sm text-gray-500 dark:text-gray-400`}
               href="/"
             >
               Home
@@ -40,8 +40,13 @@ const PageBreadcrumb: React.FC<BreadcrumbProps> = ({ pageTitle }) => {
               </svg>
             </Link>
           </li>
-          <li className="text-sm text-gray-800 dark:text-white/90">
-            {pageTitle}
+          <li>
+            <Link
+              className={`${isActive && 'font-bold'} inline-flex items-center gap-1.5 text-sm text-gray-500 dark:text-gray-400`}
+              href="#"
+            >
+              {pagePath}
+            </Link>
           </li>
         </ol>
       </nav>

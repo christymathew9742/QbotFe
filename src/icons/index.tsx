@@ -51,6 +51,9 @@ import HorizontaLDots from "./horizontal-dots.svg";
 import ChatIcon from "./chat.svg";
 import MoreDotIcon from "./more-dot.svg";
 import BellIcon from "./bell.svg";
+import EditIcon from "./edit.svg";
+import DeleteIcon from "./delete.svg"
+import SearchIcon from "./search.svg";
 
 export {
   DownloadIcon,
@@ -106,4 +109,7 @@ export {
   HorizontaLDots,
   ChevronUpIcon,
   ChatIcon,
+  EditIcon,
+  DeleteIcon,
+  SearchIcon
 };

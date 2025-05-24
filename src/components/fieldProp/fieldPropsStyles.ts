@@ -1,6 +1,6 @@
 import { SxProps } from '@mui/system';
 
-export const customInputStyles:SxProps = {
+export const customInputStylesLoginBord:SxProps = {
     '& .MuiOutlinedInput-root': {
         '& fieldset': {
             borderColor: 'rgb(206 210 216)',
@@ -31,5 +31,61 @@ export const customInputStyles:SxProps = {
         fontSize:'12px',
     },
 };
+
+
+export const customInputStyles: SxProps = {
+    '& .MuiOutlinedInput-root': {
+        height: '2.75rem',
+        width: '100%',
+        borderRadius: '0.5rem',
+        backgroundColor: 'transparent',
+        paddingLeft: '1rem',
+        fontSize: '0.875rem',
+        color: '#9ca3af',
+        boxShadow: 'none',
+        '& fieldset': {
+            borderWidth: '1px !important',
+            borderColor: 'rgb(206 210 216)',
+        },
+        '&:hover fieldset': {
+            borderWidth: '1px !important',
+            borderColor: 'rgb(206 210 216)',
+        },
+        '&.Mui-focused fieldset': {
+            borderColor:'#4b1dd8!important',
+            borderWidth: '1px !important',
+            boxShadow: '0 0 0 3px rgba(59, 130, 246, 0.1)',
+            outline:'none!important',
+        },
+    },
+
+    '& .MuiOutlinedInput-input': {
+        color: '#9ca3af',
+        fontSize: '0.875rem',
+        padding: '0.625rem 0',
+        '::placeholder': {
+            color: '#9ca3af',
+        },
+    },
+
+    '& .MuiInputLabel-root': {
+        color: '#9ca3af',
+        fontSize: '0.875rem',
+    },
+
+    '& .MuiInputLabel-root.Mui-focused': {
+        color: '#9ca3af',
+        fontSize: '0.875rem',
+    },
+    '.dark & fieldset': {
+        borderColor:'#344054',
+    },
+    '.dark &:hover fieldset': {
+        borderColor:'#344054'
+    }
+};
+
+
+
 
 

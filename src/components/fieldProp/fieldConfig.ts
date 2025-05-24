@@ -1,7 +1,27 @@
 import { SxProps } from '@mui/system';
-import { customInputStyles } from './fieldPropsStyles';
+import { customInputStylesLoginBord, customInputStyles } from './fieldPropsStyles';
 
-type FieldType = 'text' | 'email' | 'password' | 'number' | 'textarea';
+export type FieldType =
+  | 'text'
+  | 'email'
+  | 'number'
+  | 'password'
+  | 'tel'
+  | 'url'
+  | 'search'
+  | 'date'
+  | 'datetime-local'
+  | 'month'
+  | 'time'
+  | 'week'
+  | 'checkbox'
+  | 'radio'
+  | 'file'
+  | 'range'
+  | 'color'
+  | 'hidden'
+  | 'textarea'
+  | 'select';
 
 interface FieldConfig {
     name: string;
@@ -12,37 +32,180 @@ interface FieldConfig {
     style?: SxProps | null;
 }
 
+export interface SectionConfig {
+    section: string;
+    fields: FieldConfig[];
+}
+
 const defaultFieldConfig: Pick<FieldConfig, 'size' | 'style' | 'className'> = {
     size: 12,
-    className: 'dark:bg-white/[0.03]',
-    style: customInputStyles,
+    className: 'dark:!bg-[#101828] dark:!border-[#4b1dd8]',
 };
 
-export const FieldConfig: Record<string, FieldConfig> = {
-    username: {
-        name: 'username',
-        label: 'User name',
-        type: 'text',
-        ...defaultFieldConfig,
+export const FieldConfig: SectionConfig[] = [
+    {
+        section: 'signin',
+        fields: [
+            {
+                name: 'email',
+                label: 'Email',
+                type: 'email',
+                style: customInputStylesLoginBord,
+                ...defaultFieldConfig,
+            },
+            {
+                name: 'password',
+                label: 'Password',
+                type: 'password',
+                style: customInputStylesLoginBord,
+                ...defaultFieldConfig,
+            },
+        ],
     },
-    email: {
-        name: 'email',  
-        label: 'Email',
-        type: 'email',
-        ...defaultFieldConfig,
+    {
+        section: 'signup',
+        fields: [
+            {
+                name: 'username',
+                label: 'User name',
+                type: 'text',
+                style: customInputStylesLoginBord,
+                ...defaultFieldConfig,
+            },
+            {
+                name: 'email',
+                label: 'Email',
+                type: 'email',
+                style: customInputStylesLoginBord,
+                ...defaultFieldConfig,
+            },
+            {
+                name: 'password',
+                label: 'Password',
+                type: 'password',
+                style: customInputStylesLoginBord,
+                ...defaultFieldConfig,
+            },
+            {
+                name: 'confirmPassword',
+                label: 'Confirm password',
+                type: 'password',
+                style: customInputStylesLoginBord,
+                ...defaultFieldConfig,
+            },
+        ],
     },
-    password: {
-        name: 'password',
-        label: 'Password',
-        type: 'password',
-        ...defaultFieldConfig,
+    {
+        section: "socialLinks",
+        fields: [
+            {
+                name: "facebook",
+                label: "Facebook",
+                type: "text",
+                style: customInputStyles,
+                ...defaultFieldConfig,
+            },
+            {
+                name: "twitter",
+                label: "X.com",
+                type: "text",
+                style: customInputStyles,
+                ...defaultFieldConfig,
+            },
+            {
+                name: "linkedin",
+                label: "LinkedIn",
+                type: "text",
+                style: customInputStyles,
+                ...defaultFieldConfig,
+            },
+            {
+                name: "instagram",
+                label: "Instagram",
+                type: "text",
+                style: customInputStyles,
+                ...defaultFieldConfig,
+            },
+        ],
     },
-    confirmPassword: {
-        name: 'confirmPassword',
-        label: 'Confirm password',
-        type: 'password',
-        ...defaultFieldConfig,
+    {
+      section: "personalInfo",
+        fields: [
+            {
+                name: "displayname",
+                label: "Display Name",
+                type: "text",
+                style: customInputStyles,
+                ...defaultFieldConfig,
+            },
+            {
+                name: "username",
+                label: "User Name",
+                type: "text",
+                style: customInputStyles,
+                ...defaultFieldConfig,
+            },
+            {
+                name: "email",
+                label: "Email Address",
+                type: "email",
+                style: customInputStyles,
+                ...defaultFieldConfig,
+            },
+            {
+                name: "phone",
+                label: "Phone",
+                type: "text",
+                style: customInputStyles,
+                ...defaultFieldConfig,
+            },
+            {
+                name: "bio",
+                label: "Bio",
+                type: "text",
+                style: customInputStyles,
+                ...defaultFieldConfig,
+            },
+        ],
     },
-};
+    {
+        section: "address",
+        fields: [
+            {
+                name: "country",
+                label: "Country",
+                type: "text",
+                style: customInputStyles,
+                ...defaultFieldConfig,
+            },
+            {
+                name: "state",
+                label: "City/State",
+                type: "text",
+                style: customInputStyles,
+                ...defaultFieldConfig,
+            },
+            {
+                name: "postalcode",
+                label: "Postal Code",
+                type: "text",
+                style: customInputStyles,
+                ...defaultFieldConfig,
+            },
+            {
+                name: "taxId",
+                label: "TAX ID",
+                type: "text",
+                style: customInputStyles,
+                ...defaultFieldConfig,
+            },
+        ],
+    },
+];
+  
+  
+  
+  
+  
 
 

@@ -13,7 +13,28 @@ import { Visibility, VisibilityOff } from '@mui/icons-material';
 import { Field, FieldProps } from 'formik';
 import { SxProps, Theme } from '@mui/system';
 
-type FieldType = 'text' | 'email' | 'password' | 'number' | 'textarea';
+export type FieldType =
+  | 'text'
+  | 'email'
+  | 'number'
+  | 'password'
+  | 'tel'
+  | 'url'
+  | 'search'
+  | 'date'
+  | 'datetime-local'
+  | 'month'
+  | 'time'
+  | 'week'
+  | 'checkbox'
+  | 'radio'
+  | 'file'
+  | 'range'
+  | 'color'
+  | 'hidden'
+  | 'textarea'
+  | 'select';
+
 
 interface FieldPropsConfig {
     name: string;
@@ -22,6 +43,9 @@ interface FieldPropsConfig {
     size?: number;
     className?: string;
     style?: SxProps<Theme>;
+    socialLinks?:any;
+    personalInfo?:any;
+    address?:any;
 }
 
 interface FieldPropComponentProps {
@@ -36,9 +60,7 @@ const gridItemProps = {
 const FormInputProps: React.FC<FieldPropComponentProps> = ({ Config }) => {
     const [showPassword, setShowPassword] = useState(false);
     const handleClickShowPassword = () => setShowPassword(prev => !prev);
-
     const { name, label, type, size, className, style } = Config;
-
     const renderField = useMemo(() => {
         return ({
             field,

@@ -1,0 +1,1 @@
+export { default as ChatBotDetailsPage } from "./ChatBotDetailsPage";

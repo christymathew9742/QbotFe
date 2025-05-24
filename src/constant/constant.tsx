@@ -1,7 +1,7 @@
 export const constantsText = {
     BOT: {
         BOT_TITLE:'ChatBot',
-        DEFAULT:'Start',
+        DEFAULT:'Drop here',
         STEP:'Group #',
         SAVE:'Save',
         CHAT_BOX:'Create New',

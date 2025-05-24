@@ -1,14 +1,22 @@
 "use client";
 import Image from "next/image";
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { Dropdown } from "../ui/dropdown/Dropdown";
 import { DropdownItem } from "../ui/dropdown/DropdownItem";
 import { signOut } from '@/auth/auth';
 import { useRouter } from "next/navigation";
+import { AppDispatch } from "@/redux/store";
+import { getUserSelector } from "@/redux/reducers/user/selectors";
+import { parseCookies } from "nookies";
+import { useDispatch, useSelector } from "react-redux";
+import { fetchUserRequest } from "@/redux/reducers/user/actions";
 
 export default function UserDropdown() {
   const [isOpen, setIsOpen] = useState(false);
   const router = useRouter();
+  const { accessToken } = parseCookies();
+  const dispatch = useDispatch<AppDispatch>();
+  const currentUser = useSelector(getUserSelector);
 
   function toggleDropdown(e: React.MouseEvent<HTMLButtonElement, MouseEvent>) {
     e.stopPropagation();
@@ -27,6 +35,10 @@ export default function UserDropdown() {
     }, 1000);
   }, []);
 
+  useEffect(() => {
+    if (accessToken) dispatch(fetchUserRequest());
+  },[dispatch, accessToken]);
+
   return (
     <div className="relative">
       <button
@@ -42,7 +54,7 @@ export default function UserDropdown() {
           />
         </span>
 
-        <span className="block mr-1 font-medium text-theme-sm">Musharof</span>
+        <span className="block mr-1 font-medium text-theme-sm">{currentUser?.user?.data?.username}</span>
 
         <svg
           className={`stroke-gray-500 dark:stroke-gray-400 transition-transform duration-200 ${
@@ -71,10 +83,10 @@ export default function UserDropdown() {
       >
         <div>
           <span className="block font-medium text-gray-700 text-theme-sm dark:text-gray-400">
-            Musharof Chowdhury
+          {currentUser?.user?.data?.username}
           </span>
           <span className="mt-0.5 block text-theme-xs text-gray-500 dark:text-gray-400">
-            randomuser@pimjo.com
+           {currentUser?.user?.data?.email}
           </span>
         </div>
 

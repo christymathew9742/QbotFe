@@ -36,8 +36,8 @@ const navItems: NavItem[] = [
     icon: <CalenderIcon />,
     name: "Chatbots",
     subItems: [
-      { name: "Add Bot", path: "/form-elements", pro: false },
-      { name: "Manage Bot", path: "/basic-tables", pro: false },
+      { name: "Add Bot", path: "/chatbot-details", pro: false },
+      { name: "Manage Bot", path: "/chatbot", pro: false },
     ],
   },
   {
@@ -284,7 +284,6 @@ const AppSidebar: React.FC = () => {
   );
   const subMenuRefs = useRef<Record<string, HTMLDivElement | null>>({});
 
-  // const isActive = (path: string) => path === pathname;
    const isActive = useCallback((path: string) => path === pathname, [pathname]);
 
   useEffect(() => {
@@ -399,7 +398,7 @@ const AppSidebar: React.FC = () => {
           <div className="flex flex-col gap-4">
             <div>
               <h2
-                className={`mb-4 text-xs uppercase flex leading-[20px] text-gray-400 ${
+                className={`mb-4 text-xxxs uppercase flex leading-[20px] text-gray-400 ${
                   !isExpanded && !isHovered
                     ? "lg:justify-center"
                     : "justify-start"
@@ -416,7 +415,7 @@ const AppSidebar: React.FC = () => {
 
             <div className="">
               <h2
-                className={`mb-4 text-xs uppercase flex leading-[20px] text-gray-400 ${
+                className={`mb-4 text-xxxs uppercase flex leading-[20px] text-gray-400 ${
                   !isExpanded && !isHovered
                     ? "lg:justify-center"
                     : "justify-start"

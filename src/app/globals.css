@@ -1,6 +1,10 @@
 @import 'tailwindcss';
 
 @custom-variant dark (&:is(.dark *));
+/* @custom-variant dark (&:is(.light *)); */
+
+@tailwind utilities;
+
 
 @theme {
   --font-*: initial;
@@ -165,6 +169,44 @@
   --z-index-9999: 9999;
   --z-index-99999: 99999;
   --z-index-999999: 999999;
+
+  /***** custom style *****/
+  /* colors */
+  --color-custom-blue-right: #6054FF;
+  --color-custom-blue-left: #459AFF;
+  --color-letter-theme-clr: #334155;
+  --color-text-theme: #53565a;
+  --color-node-active: #ffffff;
+  --color-drag-border: #d1d5db;
+  --color-drag-text: #6b7280;
+  --color-divider: #e5e7eb;
+  --color-msg-icons: rgb(15 171 73);
+  --color-highlight-clr: #FF1493;
+  --color-group-icon: #800080;
+  --color-delete-icon: #c51f1f;
+  --color-error: #ff065e;
+  --color-close-btn-h: #9c0909;
+  --color-op-handil: rgb(23 196 220);
+  --color-dark-border: oklch(0.54 0 0);
+  --color-dark-text: color-mix(in oklab, var(--color-white) 90%, transparent);
+  --color-dark-field:#20262a;
+  --color-disable-dark:#343b45;
+  --color-switch-dark:#808493;
+
+  /* Font Sizes */
+  --text-xxxs: 10px;
+  --text-xxs: 12px;
+  --text-xxm: 14px;
+  --text-xs: 16px;
+  --text-sm: 0.875rem;
+  --text-base: 1rem;
+  --text-lg: 1.125rem;
+  --text-xl: 1.25rem;
+  --text-2xl: 1.5rem;
+  --text-3xl: 1.875rem;
+  --text-4xl: 2.25rem;
+  --text-5xl: 3rem;
+  --text-6xl: 4rem;
 }
 
 /*
@@ -292,11 +334,199 @@
   }
 }
 
-
-
-
-
 /* third-party libraries CSS */
+
+/**react flow section**/
+.react-flow__panel a {
+  display: none !important;
+}
+.react-flow {
+  --xy-theme-selected: #f7faf5;
+  --xy-theme-hover: #C5C5C5;
+  --xy-theme-edge-hover: black;
+  --xy-theme-color-focus: #E8E8E8;
+  --xy-node-border-default: 1px solid #EDEDED;
+  --xy-node-boxshadow-default: 
+    0px 3.54px 4.55px 0px #00000005, 
+    0px 3.54px 4.55px 0px #0000000D, 
+    0px 0.51px 1.01px 0px #0000001A;
+  --xy-node-border-radius-default: 8px;
+  --xy-handle-background-color-default: #ffffff;
+  --xy-handle-border-color-default: #AAAAAA;
+  --xy-edge-label-color-default: #505050;
+}
+
+/* Customizing Default Theming */
+.react-flow__node {
+  box-shadow: var(--xy-node-boxshadow-default);
+  border-radius: var(--xy-node-border-radius-default);
+  background-color: #ffffff;
+  padding: 10px;
+  font-size: 12px;
+  border: var(--xy-node-border-default);
+  color: var(--xy-node-color, var(--xy-node-color-default));
+}
+.dark .react-flow__node {
+  background-color: #101828;
+  border: 1px solid oklch(0.54 0 0);
+  color:#ffffffE6; 
+}
+.react-flow__node.selectable:focus {
+  box-shadow: 0px 0px 0px 4px var(--xy-theme-color-focus);
+  border-color: #d9d9d9;
+}
+.react-flow__node.selectable:focus:active {
+  box-shadow: var(--xy-node-boxshadow-default);
+}
+.react-flow__node.selectable:hover, 
+.react-flow__node.draggable:hover {
+  border-color: var(--xy-theme-hover);
+}
+.react-flow__node.selectable.selected {
+  border-color: var(--xy-theme-selected);
+  box-shadow: var(--xy-node-boxshadow-default);
+}
+.react-flow__node-group {
+  background-color: rgba(207, 182, 255, 0.4);
+  border-color: #9E86ED;
+}
+.react-flow__edge.selectable:hover .react-flow__edge-path,
+.react-flow__edge.selectable.selected .react-flow__edge-path {
+  stroke: var(--xy-theme-edge-hover);
+}
+.react-flow__handle {
+  background-color: var(--xy-handle-background-color-default);
+}
+.react-flow__handle.connectionindicator:hover {
+  pointer-events: all;
+  border-color: var(--xy-theme-edge-hover);
+  background-color: white;
+}
+.react-flow__handle.connectionindicator:focus , 
+.react-flow__handle.connectingfrom,
+.react-flow__handle.connectingto {
+  border-color: var(--xy-theme-edge-hover);
+}
+
+/*message section*/
+.react-flow__node .border-messages-node  {
+  border: 1px solid rgb(15 171 73)
+}
+.react-flow__node .messages-node-normal {
+  background-color: rgb(221 255 234);
+}
+.dark .react-flow__node .messages-node-normal {
+  background-color: rgb(221 255 234 / 10%);
+}
+
+/*replay section*/
+.react-flow__node .border-replay-node  {
+  border: 1px solid #f069b1;
+}
+.react-flow__node .replay-node-normal {
+  background-color: #fff3f9;
+}
+.dark .react-flow__node .replay-node-normal {
+  background-color: #fff3f917;
+}
+
+/*preference*/
+.react-flow__node .border-preference-node  {
+  border: 1px solid rgb(23 196 220);
+}
+.react-flow__node .preference-node-normal {
+  background-color: rgb(220 251 255);
+}
+.dark .react-flow__node .preference-node-normal {
+  background-color: rgb(19 185 207 / 11%);
+}
+
+/**textEditor Tiptap section**/
+/* Set minimum height for the content area */
+.tiptap-editor-container .ProseMirror {
+  min-height: 50px;  
+  max-height: none;  
+  height: auto;  
+  overflow-y: auto;  
+  padding: 10px;
+  border: none;
+  transition: border 0.2s ease;
+}
+.tiptap-editor-container:hover,
+.tiptap-editor-container:focus-within,
+.tiptap-editor-container .ProseMirror:focus {
+  border:none;
+  outline: none;
+}
+.qbot-editor {
+  font-size: 12px;
+}
+.dark .active-editor-bi-messages svg{
+  color: rgb(15 171 73)!important;
+}
+.dark .active-editor-bi-replay svg{
+  color: #f069b1!important;
+}
+.dark .disable-editor-bi-messages svg,
+.dark .disable-editor-bi-replay svg {
+  color:#ffffffE6!important;
+}
+
+/*** error popup style****/
+.Toastify__toast-container {
+  z-index: 999999;
+}
+
+/** pagination **/
+.MuiTablePagination-root p, 
+.MuiTablePagination-select, 
+.MuiTablePagination-root svg {
+  @apply  dark:text-gray-400!;
+}
+.MuiTablePagination-root {
+  @apply -mt-4!;
+}
+.MuiTablePagination-actions button.Mui-disabled svg {
+  @apply dark:!text-disable-dark;
+}
+
+/* Global input styles for MUI TextFields */
+.custom-input .MuiOutlinedInput-root {
+  font-size: 12px;
+}
+
+.custom-input .MuiOutlinedInput-root fieldset {
+  border-color: rgb(206, 210, 216);
+  color: #77818f;
+  font-size: 12px;
+}
+
+.custom-input .MuiOutlinedInput-root:hover fieldset {
+  border-color: rgb(206, 210, 216);
+  box-shadow: 0 0 4px rgba(20, 161, 255, 0.8);
+}
+
+.custom-input .MuiOutlinedInput-root.Mui-focused fieldset {
+  border-color: rgb(206, 210, 216);
+  box-shadow: none;
+}
+
+.custom-input .MuiInputLabel-root {
+  color: #77818f;
+  font-size: 12px;
+}
+
+.custom-input .MuiInputLabel-root.Mui-focused {
+  color: #77818f;
+  font-size: 12px;
+}
+
+.custom-input .MuiOutlinedInput-input {
+  color: #77818f;
+  font-size: 12px;
+}
+
+/*------- app styles -------*/
 .apexcharts-legend-text {
   @apply text-gray-700! dark:text-gray-400!;
 }
