@@ -7,11 +7,11 @@ import Button from "../ui/button/Button";
 import { useDropzone } from 'react-dropzone';
 import imageCompression from 'browser-image-compression';
 import { AppDispatch } from "@/redux/store";
-import { getUserSelector, getUpdateUserPendingSelector, getFetchPendingSelector, getAllPending } from "@/redux/reducers/user/selectors";
+import { getUserSelector, getUpdateUserPendingSelector, getFetchPendingSelector } from "@/redux/reducers/user/selectors";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchUserRequest, updateUserRequest } from "@/redux/reducers/user/actions";
 import { FieldConfig } from "@/components/fieldProp/fieldConfig";
-import { Formik, Form, FormikHelpers } from "formik";
+import { Formik, Form } from "formik";
 import * as Yup from "yup";
 import FormInputProps from "@/components/fieldProp/FormInputProps";
 import { toast } from "react-toastify";
@@ -50,7 +50,6 @@ export default function UserMetaCard() {
   const userData = currentUser?.user?.data || {};
   const [isUpdate, setIsUpdate] = useState<boolean>(false);
   const { isOpen, openModal, closeModal } = useModal();
-  const [uploadProgress, setUploadProgress] = useState(0);
   const [isUploading, setIsUploading] = useState(false);
   const cancelTokenRef = useRef<ReturnType<typeof axios.CancelToken.source> | null>(null);
 
@@ -118,14 +117,13 @@ export default function UserMetaCard() {
       const formData = new FormData();
       formData.append('file', compressedFile, file.name);
 
-      const responce = await api.put('/auth/update', formData, {
-        headers: { 'Content-Type': 'multipart/form-data' },
-        onUploadProgress: (progressEvent) => {
-          const percent = Math.round((progressEvent.loaded * 100) / (progressEvent.total || 1));
-          setUploadProgress(percent);
-        },
-        cancelToken: cancelTokenRef?.current?.token
-      });
+      // const responce = await api.put('/auth/update', formData, {
+      //   headers: { 'Content-Type': 'multipart/form-data' },
+      //   onUploadProgress: (progressEvent) => {
+      //     const percent = Math.round((progressEvent.loaded * 100) / (progressEvent.total || 1));
+      //   },
+      //   cancelToken: cancelTokenRef?.current?.token
+      // });
 
     } catch (error) {
       console.error('Upload failed:', error);
@@ -321,7 +319,7 @@ export default function UserMetaCard() {
             </p>
           </div>
           <Formik initialValues={initialValues} validationSchema={validationSchema} onSubmit={onSubmit}>
-            {({ isSubmitting }) => (
+            {() => (
               <Form className="flex flex-col sm:mt-2" >
                 <div className="custom-scrollbar h-[260px] overflow-y-auto px-2 pb-3">
                   <div>

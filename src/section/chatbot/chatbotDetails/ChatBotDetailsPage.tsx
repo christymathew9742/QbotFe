@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useCallback, useEffect, useRef, useMemo } from "react";
+import React, { useState, useCallback, useEffect, useRef} from "react";
 import CustomNode from "./CustomNode";
 import ReactFlow, {
   addEdge,
@@ -16,7 +16,7 @@ import ReactFlow, {
   ReactFlowProvider,
   MarkerType,
 } from "reactflow";
-import { getBotSelector, getWebSocketStatusSelector } from "@/redux/reducers/chatBot/selectors";
+import { getBotSelector } from "@/redux/reducers/chatBot/selectors";
 import { useSearchParams,useRouter, usePathname } from 'next/navigation';
 import { AppDispatch } from "@/redux/store";
 import {
@@ -81,12 +81,12 @@ interface Viewport {
 }
 
 interface FlowData {
-  title:String;
+  title:string;
   nodes: Nod[];
   edges: Edge[];
   viewport: Viewport;
-  status: Boolean;
-  update: Boolean;
+  status: boolean;
+  update: boolean;
   data:any;
 }
 
@@ -133,9 +133,8 @@ const ChatBotDetails = () => {
   const [nodes, setNodes] = useState<Node<CustomNodeData>[]>([]);
   const [edges, setEdges] = useState<Edge[]>([]);
   const reactFlowInstance = useRef<ReactFlowInstance | null>(null);
-  const [socket, setSocket] = useState<WebSocket | null>(null);
   const [isTitleEmpt, setIsTitleEmpt] = useState(false);
-  const [title, setTitle] = useState<String | any>('');
+  const [title, setTitle] = useState<string | any>('');
   const titleRef = useRef<HTMLInputElement | null>(null);
   const dispatch = useDispatch<AppDispatch>();
   const searchParams = useSearchParams();
@@ -457,7 +456,7 @@ const ChatBotDetails = () => {
     handleSocketEvents();
 
     return () => socket.close();
-  }, [dispatch, chatbotId,socket]); 
+  }, [dispatch, chatbotId]); 
 
   useEffect(() => {
     if (botData) {

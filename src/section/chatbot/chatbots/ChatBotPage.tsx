@@ -14,10 +14,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch } from "@/redux/store";
 import { 
   getBotSelector, 
-  getAllPending,
-  getPostPendingSelector, 
-  getUpdatePendingSelector, 
-  getDeletePendingSelector  
+  getAllPending, 
 } from "@/redux/reducers/chatBot/selectors";
 import { 
   deleteBotRequest, 

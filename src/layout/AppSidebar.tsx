@@ -5,20 +5,11 @@ import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { useSidebar } from "../context/SidebarContext";
 import {
-  BoxCubeIcon,
-  CalenderIcon,
   ChatBot,
   ChevronDownIcon,
-  GridIcon,
   Home,
   HorizontaLDots,
-  ListIcon,
   Settings,
-  // PageIcon,
-  // PieChartIcon,
-  // PlugInIcon,
-  // TableIcon,
-  UserCircleIcon,
   WebHook,
   WhatsApp,
 

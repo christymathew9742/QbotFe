@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, useRef, useCallback, FC } from "react";
+import React, { useState, useEffect, useRef, useCallback } from "react";
 import {
   Handle,
   Position,
@@ -23,7 +23,6 @@ import Image from '@tiptap/extension-image';
 import Youtube from "@tiptap/extension-youtube";
 import { Plugin } from 'prosemirror-state';
 import { Mark } from '@tiptap/core';
-import { Node } from '@tiptap/core';
 import "reactflow/dist/style.css";
 import {constantsText} from "../../../constant/constant"
 import { IconButton } from "@mui/material";
@@ -138,7 +137,7 @@ const buttonConfigs = [
 const CustomNode: React.FC<NodeProps<CustomNodeData>> = ({ data, id }) => {
   const editorRefs = useRef<Map<string, Editor>>(new Map());
   const handilRef = useRef<number | null>(null);
-  const [highlightedEditors, setHighlightedEditors] = useState(new Set());
+  // const [highlightedEditors, setHighlightedEditors] = useState(new Set());
   const [isFocused, setIsFocused] = useState<string | null>(null);
   const { deleteElements, getEdges } = useReactFlow();
   const [loadEditor, setLoadEditor] = useState(false);
@@ -294,16 +293,16 @@ const CustomNode: React.FC<NodeProps<CustomNodeData>> = ({ data, id }) => {
           handleInputChange(input.id, updatedContent);
         }
 
-        if (!input.value) {
-          handleInputChange(input.id, updatedContent);
-          setHighlightedEditors((prev) => {
-            const updatedSet = new Set(prev);
-            updatedSet.delete(input.id);
-            return updatedSet;
-          });
-        } else {
-          setHighlightedEditors((prev) => new Set(prev).add(input.id));
-        }
+        // if (!input.value) {
+        //   handleInputChange(input.id, updatedContent);
+        //   setHighlightedEditors((prev) => {
+        //     const updatedSet = new Set(prev);
+        //     updatedSet.delete(input.id);
+        //     return updatedSet;
+        //   });
+        // } else {
+        //   setHighlightedEditors((prev) => new Set(prev).add(input.id));
+        // }
       });
     }
   });
