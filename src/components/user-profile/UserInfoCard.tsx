@@ -1,28 +1,14 @@
 "use client";
 import React, { useEffect } from "react";
-import { useModal } from "../../hooks/useModal";
-import { Modal } from "../ui/modal";
-import Button from "../ui/button/Button";
-import Input from "../form/input/InputField";
-import Label from "../form/Label";
 import { AppDispatch } from "@/redux/store";
-import { getFetchPendingSelector, getUpdatePendingSelector, getUserSelector } from "@/redux/reducers/user/selectors";
-import { parseCookies } from "nookies";
+import { getFetchPendingSelector, getUpdateUserPendingSelector, getUserSelector } from "@/redux/reducers/user/selectors";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchUserRequest } from "@/redux/reducers/user/actions";
-import { CircularProgress } from "@mui/material";
-
+import { Box, Skeleton } from "@mui/material";
 export default function UserInfoCard() {
-  const { isOpen, openModal, closeModal } = useModal();
-  const handleSave = () => {
-    // Handle save logic here
-    console.log("Saving changes...");
-    closeModal();
-  };
-  const { accessToken } = parseCookies();
   const dispatch = useDispatch<AppDispatch>();
   const currentUser = useSelector(getUserSelector);
-  const pendingUpdates = useSelector(getUpdatePendingSelector);
+  const pendingUpdates = useSelector(getUpdateUserPendingSelector);
   const userData = currentUser?.user?.data || {};
   const pendingFetch = useSelector(getFetchPendingSelector);
 
@@ -30,64 +16,46 @@ export default function UserInfoCard() {
     dispatch(fetchUserRequest());
   },[dispatch, pendingUpdates]);
 
+  const personalInfoFields = [
+    { label: 'User Name', value: userData?.username },
+    { label: 'Email address', value: userData?.email },
+    { label: 'Display Name', value: userData?.displayname },
+    { label: 'Phone', value: userData?.phone },
+    { label: 'Bio', value: userData?.bio },
+  ];
+
   return (
     <div className="p-5 border border-gray-200 rounded-2xl dark:border-gray-800 lg:p-6">
-      <div className="flex flex-col gap-6 lg:flex-row lg:items-start lg:justify-between">
-      {pendingFetch || Object.keys(userData).length <1  ? (
-        <div className="items-center text-center w-full gap-6 xl:flex-row ">
-          <CircularProgress className="!text-[10px]"/>
-        </div>
-      ):(
-        <div>
-          <h4 className="text-lg font-semibold text-gray-800 dark:text-white/90 lg:mb-6">
-            Personal Information
-          </h4>
-          <div className="grid grid-cols-1 gap-4 lg:grid-cols-2 lg:gap-7 2xl:gap-x-32">
-            <div>
-              <p className="mb-2 text-xs leading-normal text-gray-500 dark:text-gray-400">
-                User Name
-              </p>
-              <p className="text-sm font-medium text-gray-800 dark:text-white/90">
-                {userData?.username || '----'}
-              </p>
-            </div>
-            <div>
-              <p className="mb-2 text-xs leading-normal text-gray-500 dark:text-gray-400">
-                Email address
-              </p>
-              <p className="text-sm font-medium text-gray-800 dark:text-white/90">
-                {userData?.email || '-----'}
-              </p>
-            </div>
-            <div>
-              <p className="mb-2 text-xs leading-normal text-gray-500 dark:text-gray-400">
-                Display Name
-              </p>
-              <p className="text-sm font-medium text-gray-800 dark:text-white/90">
-                {userData?.displayname || '----'}
-              </p>
-            </div>
-
-            <div>
-              <p className="mb-2 text-xs leading-normal text-gray-500 dark:text-gray-400">
-                Phone
-              </p>
-              <p className="text-sm font-medium text-gray-800 dark:text-white/90">
-                {userData?.phone || '----'}
-              </p>
-            </div>
-
-            <div>
-              <p className="mb-2 text-xs leading-normal text-gray-500 dark:text-gray-400">
-                Bio
-              </p>
-              <p className="text-sm font-medium text-gray-800 dark:text-white/90">
-                {userData?.bio || '----'}
-              </p>
+      <div className="gap-6 lg:flex-row lg:items-start lg:justify-between">
+        {pendingFetch || Object.keys(userData).length <1  ? (
+          <Box sx={{ width: '100%' }}>
+            <Skeleton animation="wave" className="!mb-4 w-[25%] dark:!border-gray-700 dark:!bg-gray-800"/>
+            <Skeleton animation="wave" className="dark:!border-gray-700 dark:!bg-gray-800"/>
+            <Skeleton animation="wave" className="dark:!border-gray-700 dark:!bg-gray-800"/>
+            <Skeleton animation="wave" className="dark:!border-gray-700 dark:!bg-gray-800"/>
+            <Skeleton animation="wave" className="dark:!border-gray-700 dark:!bg-gray-800"/>
+            <Skeleton animation="wave" className="dark:!border-gray-700 dark:!bg-gray-800"/>
+            <Skeleton animation="wave" className="dark:!border-gray-700 dark:!bg-gray-800"/>
+          </Box>
+        ):(
+          <div className="flex-1 sm:w-[50%]">
+            <h4 className="text-lg font-semibold text-gray-800 dark:text-white/90 lg:mb-6">
+              Personal Information
+            </h4>
+            <div className="grid grid-cols-1 gap-4 lg:grid-cols-2 lg:gap-7 2xl:gap-x-32">
+              {personalInfoFields.map(({ label, value }) => (
+                <div key={label}>
+                  <p className="mb-2 text-xs leading-normal text-gray-500 dark:text-gray-400">
+                    {label}
+                  </p>
+                  <p className="text-sm font-medium text-gray-800 dark:text-white/90">
+                    {value || '----'}
+                  </p>
+                </div>
+              ))}
             </div>
           </div>
-        </div>
-      )}
+        )}
       </div>
     </div>
   );

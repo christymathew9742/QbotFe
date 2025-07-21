@@ -38,7 +38,17 @@ function createWebSocketChannel(socketUrl: string) {
         const socket = new WebSocket(socketUrl);
         socket.onopen = () => emit({ connected: true });
         socket.onmessage = (event) => emit({...event.data});
-        socket.onerror = (error) => emit({ error });
+        // socket.onerror = (error) => emit({ error });
+        socket.onerror = (event: Event) => {
+            const errorEvent = event as ErrorEvent;
+            emit({
+              error: {
+                message: errorEvent.message || 'WebSocket error',
+                type: errorEvent.type,
+                time: new Date().toISOString()
+              }
+            });
+        };
         socket.onclose = () => emit({ closed: true });
         return () => socket.close();
     });

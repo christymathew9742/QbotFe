@@ -163,7 +163,7 @@ const ChatBotDetails = () => {
           label:"x",
           markerEnd: {
             type: MarkerType.ArrowClosed,
-            color: '#f069b1'
+            color: '#b00707'
           },
           type: 'smoothstep',
         }));
@@ -208,7 +208,7 @@ const ChatBotDetails = () => {
           label: "x",
           markerEnd: {
             type: MarkerType.ArrowClosed,
-            color: "#f069b1",
+            color: "#b00707",
           },
           type: "smoothstep",
         };
@@ -326,7 +326,9 @@ const ChatBotDetails = () => {
         return;
       }
       const flowData: FlowData | any = reactFlowInstance.current.toObject();
+      console.log("Flow Data:", flowData);
       const sanitizedData = sanitizeFlowData(flowData);
+      console.log("Sanitized Data:", sanitizedData);
       const botData = { ...sanitizedData };
       const update = flowData.nodes.length > 0 
         && flowData.nodes.every((node:FlowData) => 
@@ -504,7 +506,6 @@ const ChatBotDetails = () => {
           gap={2} 
           size={1} 
           className="bg-cover bg-center bg-no-repeat object-cover dark:bg-black" 
-          // style={{ backgroundImage: "url('/images/Qbot/qbotbg.jpg')"}} bg-[url('/images/Qbot/whatsap-theme1.jpeg')] 
         />
       </ReactFlow>
       <div className="fixed top-2 bottom-2 right-2 overflow-auto w-full sm:w-48 bg-node-active p-3 rounded-lg shadow-lg overflow-y-auto z-50 dark:bg-black dark:border-[1px] dark:border-dark-border">
@@ -519,7 +520,7 @@ const ChatBotDetails = () => {
                 const inputData = { type, field: "messages" };
                 e.dataTransfer.setData("application/reactflow-input", JSON.stringify(inputData));
               }}
-              className="bg-node-active border-2 border-dotted border-drag-border p-[4px] rounded cursor-grab text-drag-text text-xxxs mb-1 dark:bg-dark-field dark:border-1 dark:border-dark-border dark:text-dark-text"
+              className="bg-node-active border-2 border-dotted border-drag-border p-[4px] rounded cursor-grab text-drag-text text-xxxs mb-1 dark:bg-black dark:border-1 dark:border-dark-border dark:text-dark-text"
             >
               {icon} {type}
             </div>
@@ -536,7 +537,7 @@ const ChatBotDetails = () => {
                 const inputData = { type, field: "replay" };
                 e.dataTransfer.setData("application/reactflow-input", JSON.stringify(inputData));
               }}
-              className="bg-node-active border-2 border-dotted border-drag-border p-[4px] rounded cursor-grab text-drag-text text-xxxs mb-1 dark:bg-dark-field dark:border-1 dark:border-dark-border dark:text-dark-text"
+              className="bg-node-active border-2 border-dotted border-drag-border p-[4px] rounded cursor-grab text-drag-text text-xxxs mb-1 dark:bg-black dark:border-1 dark:border-dark-border dark:text-dark-text"
             >
               {icon} {type}
             </div>
@@ -553,7 +554,7 @@ const ChatBotDetails = () => {
                 const inputData = { type, field: "preference" };
                 e.dataTransfer.setData("application/reactflow-input", JSON.stringify(inputData));
               }}
-              className="bg-node-active border-2 border-dotted border-drag-border p-[4px] rounded cursor-grab text-drag-text text-xxxs mb-1 dark:bg-dark-field dark:border-1 dark:border-dark-border dark:text-dark-text"
+              className="bg-node-active border-2 border-dotted border-drag-border p-[4px] rounded cursor-grab text-drag-text text-xxxs mb-1 dark:bg-black dark:border-1 dark:border-dark-border dark:text-dark-text"
             >
               {icon} {type}
             </div>
@@ -569,7 +570,7 @@ const ChatBotDetails = () => {
               onDragStart={(e) => {
                 e.dataTransfer.setData("application/reactflow-node", 'customNode');
               }}
-              className="bg-node-active border-2 border-dotted border-drag-border p-[4px] rounded cursor-grab text-drag-text text-xxxs mb-1 dark:border-1 dark:border-dark-border dark:text-dark-text dark:bg-dark-field"
+              className="bg-node-active border-2 border-dotted border-drag-border p-[4px] rounded cursor-grab text-drag-text text-xxxs mb-1 dark:border-1 dark:border-dark-border dark:text-dark-text dark:bg-black"
             >
               {icon} {type}
             </div>
@@ -582,10 +583,10 @@ const ChatBotDetails = () => {
           ref={titleRef}
           value={title || ""}
           onChange={handleInputTitleChange}
-          className={`text-xxs text-text-theme flex-1 h-4 p-[10px] rounded focus:outline-none hover:outline-none border-1 border-solid ${isTitleEmpt ? 'border-error' : 'border-drag-border dark:border-1 dark:border-dark-border dark:text-dark-text dark:bg-dark-field'}`}
+          className={`text-xxs text-text-theme flex-1 h-4 p-[10px] rounded focus:outline-none hover:outline-none border-1 border-solid ${isTitleEmpt ? 'border-error' : 'border-drag-border dark:border-1 dark:border-dark-border dark:text-dark-text dark:bg-black'}`}
         />
         <button
-          className="flex items-center -ml-1 justify-center h-4 p-[10px] bg-[rgb(240 241 246)] rounded shadow border-1 border-solid border-drag-border dark:border-1 dark:border-dark-border dark:text-dark-text dark:bg-dark-field"
+          className="flex items-center -ml-1 justify-center h-4 p-[10px] bg-[rgb(240 241 246)] rounded shadow border-1 border-solid border-drag-border dark:border-1 dark:border-dark-border dark:text-dark-text dark:bg-black"
           onClick={()=> router.push('/chatbot')}
         >
           <ArrowBackIcon  
@@ -595,7 +596,7 @@ const ChatBotDetails = () => {
           />
         </button>
         <button
-          className="flex text-xxs items-center -ml-1 justify-center h-4 p-[10px] bg-[rgb(240 241 246)] rounded shadow border-1 border-solid border-drag-border dark:border-1 dark:border-dark-border dark:text-dark-text dark:bg-dark-field"
+          className="flex text-xxs items-center -ml-1 justify-center h-4 p-[10px] bg-[rgb(240 241 246)] rounded shadow border-1 border-solid border-drag-border dark:border-1 dark:border-dark-border dark:text-dark-text dark:bg-black"
           onClick={saveData}
         >
           {SAVE}

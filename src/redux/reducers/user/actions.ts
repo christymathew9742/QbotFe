@@ -2,6 +2,9 @@ import {
     FETCH_USER_REQUEST,
     FETCH_USER_SUCCESS,
     FETCH_USER_FAILURE,
+    POST_USER_REQUEST,
+    POST_USER_SUCCESS,
+    POST_USER_FAILURE,
     UPDATE_USER_REQUEST,
     UPDATE_USER_SUCCESS,
     UPDATE_USER_FAILURE,
@@ -36,8 +39,26 @@ export const fetchUserFailure = (
   payload
 });
 
-// Update user
-export const updateUserRequest = (payload?: any): any => ({
+// Post ChatBot
+export const postUserRequest = (payload: any = ''): any => ({
+  type: POST_USER_REQUEST,
+  payload,
+});
+
+export const postUserSuccess = (payload: SuccessPayload): any => ({
+  type: POST_USER_SUCCESS,
+  payload,
+});
+
+export const postUserFailure = (payload: FailurePayload): any => ({
+  type: POST_USER_FAILURE,
+  payload,
+});
+
+// Update ChatBot
+export const updateUserRequest = (
+  payload?: any
+): any => ({
   type: UPDATE_USER_REQUEST,
   payload,
 });

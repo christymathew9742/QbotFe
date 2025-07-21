@@ -9,6 +9,9 @@ interface TextareaProps {
   disabled?: boolean; // Disabled state
   error?: boolean; // Error state
   hint?: string; // Hint text to display
+  id?: string; // Unique identifier for the textarea
+  label?: string; // Label for the textarea
+  ToolTip?: string; // Title for the info icon
 }
 
 const TextArea: React.FC<TextareaProps> = ({
@@ -20,6 +23,9 @@ const TextArea: React.FC<TextareaProps> = ({
   disabled = false, // Disabled state
   error = false, // Error state
   hint = "", // Default hint text
+  id ="",
+  label="",
+  ToolTip="",
 }) => {
   const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     if (onChange) {
@@ -39,6 +45,17 @@ const TextArea: React.FC<TextareaProps> = ({
 
   return (
     <div className="relative">
+      <label htmlFor={id} className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
+        {label}
+        {ToolTip  && (
+          <span
+            className="ml-2 inline-block bg-black text-white rounded-full w-3 h-3 text-xs text-center leading-3 cursor-pointer text-[10px] dark:border dark:border-gray-600"
+            title={` ${ToolTip} `}
+          >
+            i
+          </span>
+        )}
+      </label>
       <textarea
         placeholder={placeholder}
         rows={rows}

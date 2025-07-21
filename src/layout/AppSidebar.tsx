@@ -7,15 +7,20 @@ import { useSidebar } from "../context/SidebarContext";
 import {
   BoxCubeIcon,
   CalenderIcon,
+  ChatBot,
   ChevronDownIcon,
   GridIcon,
+  Home,
   HorizontaLDots,
   ListIcon,
+  Settings,
   // PageIcon,
   // PieChartIcon,
   // PlugInIcon,
   // TableIcon,
   UserCircleIcon,
+  WebHook,
+  WhatsApp,
 
 } from "../icons/index";
 
@@ -28,12 +33,12 @@ type NavItem = {
 
 const navItems: NavItem[] = [
   {
-    icon: <GridIcon />,   
+    icon: <Home />,   
     name: "Home",
     path: "/",
   },
   {
-    icon: <CalenderIcon />,
+    icon: <ChatBot />,
     name: "Chatbots",
     subItems: [
       { name: "Add Bot", path: "/chatbot-details", pro: false },
@@ -41,99 +46,32 @@ const navItems: NavItem[] = [
     ],
   },
   {
-    icon: <UserCircleIcon />,
+    icon: <WhatsApp />,
     name: "WhatsApp",
     subItems: [
-      { name: "Users", path: "/blank", pro: false },
-      { name: "Appoiments", path: "/calendar", pro: false },
+      { name: "Appoiments", path: "/appoinments", pro: false },
+      { name: "Users", path: "/users", pro: false },
     ],
   },
   {
-    icon: <ListIcon />,
+    icon: <Settings />,
     name: "Settings",
     subItems: [
       { name: "User Profile", path: "/profile", pro: false },
-      { name: "Configuration", path: "/ss", pro: false },
+      { name: "General", path: "/ss", pro: false },
     ],
   },
-
-
-  
-  // {
-  //   icon: <ListIcon />,
-  //   name: "Chatbots",
-  //   subItems: [
-  //     { name: "Manage All", path: "/", pro: false }
-  //   ],
-  // },
-
-  // {
-  //   icon: <CalenderIcon />,
-  //   name: "Calendar",
-  //   path: "/calendar",
-  // },
-  // {
-  //   icon: <UserCircleIcon />,
-  //   name: "User Profile",
-  //   path: "/profile",
-  // },
-
-  // {
-  //   name: "Forms",
-  //   icon: <ListIcon />,
-  //   subItems: [{ name: "Form Elements", path: "/form-elements", pro: false }],
-  // },
-  // {
-  //   name: "Tables",
-  //   icon: <TableIcon />,
-  //   subItems: [{ name: "Basic Tables", path: "/basic-tables", pro: false }],
-  // },
-  // {
-  //   name: "Pages",
-  //   icon: <PageIcon />,
-  //   subItems: [
-  //     { name: "Blank Page", path: "/blank", pro: false },
-  //     { name: "404 Error", path: "/error-404", pro: false },
-  //   ],
-  // },
 ];
 
 const IntegrationsItems: NavItem[] = [
   {
-    icon: <BoxCubeIcon />,
+    icon: <WebHook />,
     name: "WebHooks",
     subItems: [
-      { name: "Create Token", path: "/bar-chart", pro: false },
+      { name: "Configuration", path: "/api-config", pro: false },
+      { name: "API Setup", path: "/generate-token", pro: false },
     ],
   },
-  // {
-  //   icon: <PieChartIcon />,
-  //   name: "Charts",
-  //   subItems: [
-  //     { name: "Line Chart", path: "/line-chart", pro: false },
-  //     { name: "Bar Chart", path: "/bar-chart", pro: false },
-  //   ],
-  // },
-  // {
-  //   icon: <BoxCubeIcon />,
-  //   name: "UI Elements",
-  //   subItems: [
-  //     { name: "Alerts", path: "/alerts", pro: false },
-  //     { name: "Avatar", path: "/avatars", pro: false },
-  //     { name: "Badge", path: "/badge", pro: false },
-  //     { name: "Buttons", path: "/buttons", pro: false },
-  //     { name: "Images", path: "/images", pro: false },
-  //     { name: "Videos", path: "/videos", pro: false },
-  //   ],
-  // },
-  // {
-  //   icon: <PlugInIcon />,
-  //   name: "Authentication",
-  //   subItems: [
-  //     { name: "Sign In", path: "/signin", pro: false },
-  //     { name: "Sign Up", path: "/signup", pro: false },
-  //   ],
-  // },
 ];
 
 const AppSidebar: React.FC = () => {
@@ -158,21 +96,18 @@ const AppSidebar: React.FC = () => {
           {nav.subItems ? (
             <button
               onClick={() => handleSubmenuToggle(index, menuType)}
-              className={`border-gray-200 border-[1px] dark:border-white/[0.03] menu-item group  ${
+              className={`menu-item group transition-transform duration-200 ${
                 submenuMatche?.type === menuType && submenuMatche?.index === index 
+                || openSubmenu?.type === menuType && openSubmenu?.index === index
                   ? "menu-item-active"
                   : "menu-item-inactive"
-              } cursor-pointer ${
-                !isExpanded && !isHovered
-                  ? "lg:justify-center"
-                  : "lg:justify-start"
-              }`}
+              } cursor-pointer`}
             >
               <span
                 className={` ${
                   openSubmenu?.type === menuType && openSubmenu?.index === index
                     ? "menu-item-icon-active"
-                    : "menu-item-icon-inactive"
+                    : ""
                 }`}
               >
                 {nav.icon}
@@ -185,7 +120,7 @@ const AppSidebar: React.FC = () => {
                   className={`ml-auto w-5 h-5 transition-transform duration-200  ${
                     openSubmenu?.type === menuType &&
                     openSubmenu?.index === index
-                      ? "rotate-180 text-brand-500"
+                      ? "rotate-180 !text-brand-500"
                       : ""
                   }`}
                 />
@@ -195,7 +130,7 @@ const AppSidebar: React.FC = () => {
             nav.path && (
               <Link
                 href={nav.path}
-                className={`border-gray-200 border-[1px] dark:border-white/[0.03] menu-item group ${
+                className={`dark:border-white/[0.03] menu-item group ${
                   isActive(nav.path) ? "menu-item-active" : "menu-item-inactive"
                 }`}
               >
@@ -219,7 +154,7 @@ const AppSidebar: React.FC = () => {
               ref={(el) => {
                 subMenuRefs.current[`${menuType}-${index}`] = el;
               }}
-              className="overflow-hidden transition-all duration-300"
+              className="overflow-hidden transition-all duration-200"
               style={{
                 height:
                   openSubmenu?.type === menuType && openSubmenu?.index === index
@@ -232,7 +167,7 @@ const AppSidebar: React.FC = () => {
                   <li key={subItem.name}>
                     <Link
                       href={subItem.path}
-                      className={`border-gray-200 border-[1px] dark:border-white/[0.03] menu-dropdown-item ${
+                      className={`menu-dropdown-item ${
                         isActive(subItem.path)
                           ? "menu-dropdown-item-active"
                           : "menu-dropdown-item-inactive"

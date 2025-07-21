@@ -25,11 +25,15 @@ export type FieldType =
 
 interface FieldConfig {
     name: string;
-    label: string;
+    label?: string;
     type: FieldType;
     size?: number;
-    className: string;
+    className?: string;
+    rows?: number;
     style?: SxProps | null;
+    labelTop?: string;
+    toolTip?: string;
+    placeholder?: string;
 }
 
 export interface SectionConfig {
@@ -39,7 +43,7 @@ export interface SectionConfig {
 
 const defaultFieldConfig: Pick<FieldConfig, 'size' | 'style' | 'className'> = {
     size: 12,
-    className: 'dark:!bg-[#101828] dark:!border-[#4b1dd8]',
+    className: 'dark:!bg-[#101828] dark:!border-[#4b1dd8] !rounded-md',
 };
 
 export const FieldConfig: SectionConfig[] = [
@@ -196,6 +200,53 @@ export const FieldConfig: SectionConfig[] = [
                 name: "taxId",
                 label: "TAX ID",
                 type: "text",
+                style: customInputStyles,
+                ...defaultFieldConfig,
+            },
+        ],
+    },
+    {
+        section: "testMessage",
+        fields: [
+            {
+                name: "sendnumber",
+                type: "text",
+                labelTop: "To a Recipient:",
+                toolTip: "Enter your recipient number here.",
+                placeholder: "Enter your number",
+                style: customInputStyles,
+                ...defaultFieldConfig,
+            },
+            {
+                name: "sendmessage",
+                type: "textarea",
+                rows: 3,
+                labelTop: "Message:",
+                toolTip: "Enter your message here.",
+                placeholder: "Enter your message",
+                style: customInputStyles,
+                ...defaultFieldConfig,
+            },
+        ],
+    },
+    {
+        section: "apiconfig",
+        fields: [
+            {
+                name: "accesstoken",
+                type: "text",
+                labelTop: "Access Token:",
+                toolTip: "Copy and paste your Access Token from your WhatsApp Business account here.",
+                placeholder: "Enter your Access Token",
+                style: customInputStyles,
+                ...defaultFieldConfig,
+            },
+            {
+                name: "phonenumberid",
+                type: "text",
+                labelTop: "Phone number ID:",
+                toolTip: "Copy and paste your Phone Number ID from your WhatsApp Business account here.",
+                placeholder: "Enter your Phone number ID",
                 style: customInputStyles,
                 ...defaultFieldConfig,
             },

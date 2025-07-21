@@ -10,6 +10,8 @@ import { getUserSelector } from "@/redux/reducers/user/selectors";
 import { parseCookies } from "nookies";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchUserRequest } from "@/redux/reducers/user/actions";
+import { Skeleton } from "@mui/material";
+import { NoProfileIcon } from "@/icons";
 
 export default function UserDropdown() {
   const [isOpen, setIsOpen] = useState(false);
@@ -17,6 +19,9 @@ export default function UserDropdown() {
   const { accessToken } = parseCookies();
   const dispatch = useDispatch<AppDispatch>();
   const currentUser = useSelector(getUserSelector);
+  const userData = currentUser?.user?.data;
+  // const userName = userData?.username
+  const userProfileImage = userData?.profilepick?.fileUrl;
 
   function toggleDropdown(e: React.MouseEvent<HTMLButtonElement, MouseEvent>) {
     e.stopPropagation();
@@ -41,41 +46,29 @@ export default function UserDropdown() {
 
   return (
     <div className="relative">
-      <button
-        onClick={toggleDropdown} 
-        className="flex items-center text-gray-700 dark:text-gray-400 dropdown-toggle"
-      >
-        <span className="mr-3 overflow-hidden rounded-full h-11 w-11">
-          <Image
-            width={44}
-            height={44}
-            src="/images/user/owner.jpg"
-            alt="User"
-          />
-        </span>
-
-        <span className="block mr-1 font-medium text-theme-sm">{currentUser?.user?.data?.username}</span>
-
-        <svg
-          className={`stroke-gray-500 dark:stroke-gray-400 transition-transform duration-200 ${
-            isOpen ? "rotate-180" : ""
-          }`}
-          width="18"
-          height="20"
-          viewBox="0 0 18 20"
-          fill="none"
-          xmlns="http://www.w3.org/2000/svg"
+      {!userData ? 
+      (
+        <div className="flex items-start justify-between w-full">
+          <Skeleton animation="wave" variant="circular" width={45} height={45} className="dark:!border-gray-700 dark:!bg-gray-800" />
+        </div>
+      ):(
+        <button
+          onClick={toggleDropdown} 
+          className="flex relative group items-center text-gray-700 dark:text-gray-400 dropdown-toggle"
         >
-          <path
-            d="M4.3125 8.65625L9 13.3437L13.6875 8.65625"
-            stroke="currentColor"
-            strokeWidth="1.5"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          />
-        </svg>
-      </button>
-
+          { userProfileImage ? (
+            <Image
+              width={40}
+              height={40}
+              src={userProfileImage}
+              alt="UserProfilePick"
+              className="w-[44px] h-[44px] overflow-hidden rounded-full border border-gray-300"
+            />
+          ) : (
+            <NoProfileIcon width={44} height={44} />
+          )}
+        </button>
+      )}
       <Dropdown
         isOpen={isOpen}
         onClose={closeDropdown}
@@ -89,7 +82,6 @@ export default function UserDropdown() {
            {currentUser?.user?.data?.email}
           </span>
         </div>
-
         <ul className="flex flex-col gap-1 pt-4 pb-3 border-b border-gray-200 dark:border-gray-800">
           <li>
             <DropdownItem

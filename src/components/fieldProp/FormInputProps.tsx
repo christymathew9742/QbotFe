@@ -8,6 +8,7 @@ import {
     IconButton,
     Grid,
     TextFieldProps,
+    FormHelperText,
 } from '@mui/material';
 import { Visibility, VisibilityOff } from '@mui/icons-material';
 import { Field, FieldProps } from 'formik';
@@ -38,14 +39,19 @@ export type FieldType =
 
 interface FieldPropsConfig {
     name: string;
-    label: string;
+    label?: string;
     type: FieldType;
     size?: number;
     className?: string;
+    rows?: number;
     style?: SxProps<Theme>;
     socialLinks?:any;
     personalInfo?:any;
     address?:any;
+    labelTop?:string;
+    toolTip?: string;
+    placeholder?: string;
+    // onchainge?: (phone:number, value: string) => void;
 }
 
 interface FieldPropComponentProps {
@@ -60,7 +66,7 @@ const gridItemProps = {
 const FormInputProps: React.FC<FieldPropComponentProps> = ({ Config }) => {
     const [showPassword, setShowPassword] = useState(false);
     const handleClickShowPassword = () => setShowPassword(prev => !prev);
-    const { name, label, type, size, className, style } = Config;
+    const { name, label, type, size, className, rows=3, labelTop, toolTip, placeholder,  style } = Config;
     const renderField = useMemo(() => {
         return ({
             field,
@@ -76,7 +82,6 @@ const FormInputProps: React.FC<FieldPropComponentProps> = ({ Config }) => {
                 label,
                 className,
                 error,
-                helperText,
                 fullWidth: true,
                 variant: 'outlined',
                 sx: style,
@@ -86,38 +91,77 @@ const FormInputProps: React.FC<FieldPropComponentProps> = ({ Config }) => {
                 case 'text':
                 case 'email':
                 case 'number':
-                return <TextField {...commonProps} type={type}/>;
+                return (
+                    <div className="mb-4">
+                        {labelTop && (
+                        <label htmlFor={'id'} className="block mb-2 pt-0 text-sm font-medium text-gray-900 dark:text-white">
+                            {labelTop}
+                            {toolTip && (
+                            <span
+                                className="ml-2 inline-block bg-black text-white rounded-full w-3 h-3 text-xs text-center leading-3 cursor-pointer text-[10px] dark:border dark:border-gray-600"
+                                title={toolTip}
+                            >
+                                i
+                            </span>
+                            )}
+                        </label>
+                        )}
+                        <TextField {...commonProps} type={type} placeholder={placeholder}/>
+                        <FormHelperText error={true}>{helperText}</FormHelperText>
+                    </div>
+                );
                 case 'password':
                 return (
-                    <TextField
-                        {...commonProps}
-                        type={showPassword ? 'text' : 'password'}
-                        InputProps={{
-                            endAdornment: (
-                                <InputAdornment position="end">
-                                    <IconButton
-                                        aria-label="toggle password visibility"
-                                        onClick={handleClickShowPassword}
-                                        edge="end"
-                                        sx={{
-                                            background: '#fff',
-                                            padding: 0,
-                                            marginRight: '2px',
-                                            '&:hover': {
-                                            background: '#fff',
-                                            padding: 0,
-                                            },
-                                        }}
-                                        >
-                                        {showPassword ? <VisibilityOff /> : <Visibility />}
-                                    </IconButton>
-                                </InputAdornment>
-                            ),
-                        }}
-                    />
+                    <>
+                        <TextField
+                            {...commonProps}
+                            type={showPassword ? 'text' : 'password'}
+                            InputProps={{
+                                endAdornment: (
+                                    <InputAdornment position="end">
+                                        <IconButton
+                                            aria-label="toggle password visibility"
+                                            onClick={handleClickShowPassword}
+                                            edge="end"
+                                            sx={{
+                                                background: '#fff',
+                                                padding: 0,
+                                                marginRight: '2px',
+                                                '&:hover': {
+                                                background: '#fff',
+                                                padding: 0,
+                                                },
+                                            }}
+                                            >
+                                            {showPassword ? <VisibilityOff /> : <Visibility />}
+                                        </IconButton>
+                                    </InputAdornment>
+                                ),
+                            }}
+                        />
+                        <FormHelperText error={true}>{helperText}</FormHelperText>
+                    </>
                 );
                 case 'textarea':
-                return <TextField {...commonProps} multiline rows={4} />;
+                return (
+                    <div>
+                        {labelTop && (
+                        <label htmlFor={'id'} className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
+                            {labelTop}
+                            {toolTip && (
+                            <span
+                                className="ml-2 inline-block bg-black text-white rounded-full w-3 h-3 text-xs text-center leading-3 cursor-pointer text-[10px] dark:border dark:border-gray-600"
+                                title={toolTip}
+                            >
+                                i
+                            </span>
+                            )}
+                        </label>
+                        )}
+                        <TextField {...commonProps} multiline rows={rows} placeholder={placeholder}/>
+                        <FormHelperText error={true}>{helperText}</FormHelperText>
+                    </div>
+                );
                 default:
                 return null;
             }

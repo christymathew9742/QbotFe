@@ -133,6 +133,7 @@
   --color-warning-800: #93370d;
   --color-warning-900: #7a2e0e;
   --color-warning-950: #4e1d09;
+  --color-myfav: #363450d1;
 
   --color-theme-pink-500: #ee46bc;
 
@@ -172,7 +173,8 @@
 
   /***** custom style *****/
   /* colors */
-  --color-custom-blue-right: #6054FF;
+  /* --color-custom-blue-right: #6054FF; */
+  --color-custom-them-clr: #6054FF;
   --color-custom-blue-left: #459AFF;
   --color-letter-theme-clr: #334155;
   --color-text-theme: #53565a;
@@ -441,6 +443,11 @@
   background-color: rgb(19 185 207 / 11%);
 }
 
+/* edge section */
+.react-flow__edge.react-flow__edge-smoothstep {
+  pointer-events: none;
+}
+
 /**textEditor Tiptap section**/
 /* Set minimum height for the content area */
 .tiptap-editor-container .ProseMirror {
@@ -495,6 +502,28 @@
   font-size: 12px;
 }
 
+.dark .MuiDataGrid-columnHeader {
+  background-color: #182332!important;
+  @apply  text-gray-400!;
+  border-top: 1px solid #374151!important;
+  border-bottom: 1px solid #374151!important;
+}
+.dark .MuiDataGrid-iconButtonContainer svg {
+  @apply dark:!text-white/90;
+}
+.dark .MuiDataGrid-toolbar {
+  border-bottom: 1px solid #374151!important;
+}
+
+.dark .MuiDataGrid-row:hover {
+  background-color: #06060638 !important;
+}
+
+.dark .MuiDataGrid-cell,
+.dark .MuiDataGrid-footerContainer {
+  border-top: 1px solid #374151!important;
+}
+
 .custom-input .MuiOutlinedInput-root fieldset {
   border-color: rgb(206, 210, 216);
   color: #77818f;
@@ -526,6 +555,9 @@
   font-size: 12px;
 }
 
+.dark .MuiDataGrid-toolbar svg {
+  @apply dark:!text-white/90;
+}
 /*------- app styles -------*/
 .apexcharts-legend-text {
   @apply text-gray-700! dark:text-gray-400!;

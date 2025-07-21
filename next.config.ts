@@ -1,8 +1,13 @@
-/** @type {import('next').NextConfig} */
-const nextConfig = {
-  output: "standalone", // add this line
-  webpack(config:any) {
-    config.module.rules.push({
+import type { NextConfig } from 'next';
+import type { Configuration } from 'webpack';
+
+const nextConfig: NextConfig = {
+  output: "standalone",
+  images: {
+    domains: ['localhost', 'api.yourdomain.com'], // adjust your domains
+  },
+  webpack(config: Configuration): Configuration {
+    config.module?.rules?.push({
       test: /\.svg$/,
       use: ["@svgr/webpack"],
     });
@@ -10,5 +15,4 @@ const nextConfig = {
   },
 };
 
-module.exports = nextConfig;
-
+export default nextConfig;

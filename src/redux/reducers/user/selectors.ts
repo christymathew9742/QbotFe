@@ -15,7 +15,12 @@ export const getFetchPendingSelector = createSelector(
   (pending:any)  => pending?.fetch
 );
 
-export const getUpdatePendingSelector = createSelector(
+export const getUpdateUserPendingSelector = createSelector(
   getPending,
   (pending:any) => pending?.update
+);
+
+export const getUpdateUserPostSelector = createSelector(
+  getPending,
+  (pending:any) => pending?.post
 );

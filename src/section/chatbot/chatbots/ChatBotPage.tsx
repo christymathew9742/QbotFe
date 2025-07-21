@@ -242,6 +242,7 @@ const ChatBot = () => {
                           <TableCell colSpan={2} className="px-5 py-2 text-gray-500 text-start text-theme-sm dark:text-gray-400">
                           <Switch
                             label=""
+                            color="blue"
                             checked={activeBots[bot._id]}
                             onChange={(checked: boolean) => handleSwitchChange(bot, checked)}
                           />

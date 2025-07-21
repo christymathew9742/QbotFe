@@ -35,7 +35,7 @@ export const customInputStylesLoginBord:SxProps = {
 
 export const customInputStyles: SxProps = {
     '& .MuiOutlinedInput-root': {
-        height: '2.75rem',
+        minHeight: '2.75rem',
         width: '100%',
         borderRadius: '0.5rem',
         backgroundColor: 'transparent',
@@ -43,6 +43,9 @@ export const customInputStyles: SxProps = {
         fontSize: '0.875rem',
         color: '#9ca3af',
         boxShadow: 'none',
+        '& .MuiInputBase-input': {
+            paddingRight: '16px!important',
+        },
         '& fieldset': {
             borderWidth: '1px !important',
             borderColor: 'rgb(206 210 216)',
@@ -82,8 +85,9 @@ export const customInputStyles: SxProps = {
     },
     '.dark &:hover fieldset': {
         borderColor:'#344054'
-    }
+    },
 };
+
 
 
 
