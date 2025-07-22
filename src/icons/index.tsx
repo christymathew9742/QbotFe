@@ -60,6 +60,7 @@ import Home from "./home.svg";
 import WebHook from "./webhook.svg";
 import ChatBot from "./chatBot.svg";
 import NoProfileIcon from "./no-profile.svg";
+import Expried from "./expired.svg";
 
 export {
   DownloadIcon,
@@ -124,4 +125,5 @@ export {
   WebHook,
   ChatBot,
   NoProfileIcon,
+  Expried,
 };
