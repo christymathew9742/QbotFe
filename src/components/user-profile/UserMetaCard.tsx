@@ -117,13 +117,14 @@ export default function UserMetaCard() {
       const formData = new FormData();
       formData.append('file', compressedFile, file.name);
 
-      // const responce = await api.put('/auth/update', formData, {
-      //   headers: { 'Content-Type': 'multipart/form-data' },
-      //   onUploadProgress: (progressEvent) => {
-      //     const percent = Math.round((progressEvent.loaded * 100) / (progressEvent.total || 1));
-      //   },
-      //   cancelToken: cancelTokenRef?.current?.token
-      // });
+      await api.put('/auth/update', formData, {
+        headers: { 'Content-Type': 'multipart/form-data' },
+        onUploadProgress: (progressEvent) => {
+          const percent = Math.round((progressEvent.loaded * 100) / (progressEvent.total || 1));
+          console.log(`Upload progress: ${percent}%`);
+        },
+        cancelToken: cancelTokenRef?.current?.token
+      });
 
     } catch (error) {
       console.error('Upload failed:', error);
