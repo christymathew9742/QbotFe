@@ -52,13 +52,9 @@ export default function UserMetaCard() {
   const { isOpen, openModal, closeModal } = useModal();
   const [isUploading, setIsUploading] = useState(false);
   const cancelTokenRef = useRef<ReturnType<typeof axios.CancelToken.source> | null>(null);
-
-  // Initialize before making request
   cancelTokenRef.current = axios.CancelToken.source();
-
-  // Then use:
   cancelTokenRef.current.token
-  console.log(isUploading,'isUploadingisUploadingisUploading')
+
   const initialValues = useMemo<ProfileData>(() => ({
     displayname: userData.displayname || '',
     username: userData.username || '',
@@ -119,10 +115,6 @@ export default function UserMetaCard() {
 
       await api.put('/auth/update', formData, {
         headers: { 'Content-Type': 'multipart/form-data' },
-        onUploadProgress: (progressEvent) => {
-          const percent = Math.round((progressEvent.loaded * 100) / (progressEvent.total || 1));
-          console.log(`Upload progress: ${percent}%`);
-        },
         cancelToken: cancelTokenRef?.current?.token
       });
 
