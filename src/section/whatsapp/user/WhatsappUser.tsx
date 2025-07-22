@@ -254,7 +254,6 @@ const WhatsappUser = () => {
       default: return 'bg-success-50 text-success-600 dark:bg-success-500/15 dark:text-success-500';
     }
   };
-
   const InteractionType = (type: string) => {
     switch (type.toString()) {
       case 'true': return "bg-success-50 text-success-600 dark:bg-success-500/15 dark:text-success-500";
