@@ -244,7 +244,6 @@ const WhatsappUser = () => {
     "Last Visit",
     "Action",
   ];
-
   const userType = (type: string) => {
     switch (type) {
       case 'New': return "bg-brand-50 text-brand-500 dark:bg-brand-500/15 dark:text-brand-400";
