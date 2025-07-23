@@ -61,7 +61,7 @@ export default function UserDropdown() {
               alt="user"
               width={40}
               height={40}
-              className="w-[80px] h-[80px] overflow-hidden rounded-full border border-gray-300"
+              className="w-[40px] h-[40px] overflow-hidden rounded-full border border-gray-300"
             />
           ) : (
             <NoProfileIcon width={44} height={44} />
