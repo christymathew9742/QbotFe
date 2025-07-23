@@ -1,4 +1,5 @@
 "use client";
+
 import React, { useCallback, useEffect, useState } from "react";
 import { Dropdown } from "../ui/dropdown/Dropdown";
 import { DropdownItem } from "../ui/dropdown/DropdownItem";
@@ -58,8 +59,8 @@ export default function UserDropdown() {
             <img
               src={userProfileImage}
               alt="user"
-              width={80}
-              height={80}
+              width={40}
+              height={40}
               className="w-[80px] h-[80px] overflow-hidden rounded-full border border-gray-300"
             />
           ) : (
