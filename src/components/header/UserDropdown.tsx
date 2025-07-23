@@ -1,5 +1,5 @@
 "use client";
-import Image from "next/image";
+// import Image from "next/image";
 import React, { useCallback, useEffect, useState } from "react";
 import { Dropdown } from "../ui/dropdown/Dropdown";
 import { DropdownItem } from "../ui/dropdown/DropdownItem";
@@ -20,7 +20,6 @@ export default function UserDropdown() {
   const dispatch = useDispatch<AppDispatch>();
   const currentUser = useSelector(getUserSelector);
   const userData = currentUser?.user?.data;
-  // const userName = userData?.username
   const userProfileImage = userData?.profilepick?.fileUrl;
 
   function toggleDropdown(e: React.MouseEvent<HTMLButtonElement, MouseEvent>) {
@@ -57,12 +56,19 @@ export default function UserDropdown() {
           className="flex relative group items-center text-gray-700 dark:text-gray-400 dropdown-toggle"
         >
           { userProfileImage ? (
-            <Image
-              width={40}
-              height={40}
+            // <Image
+            //   width={40}
+            //   height={40}
+            //   src={userProfileImage}
+            //   alt="UserProfilePick"
+            //   className="w-[44px] h-[44px] overflow-hidden rounded-full border border-gray-300"
+            // />
+            <img
               src={userProfileImage}
-              alt="UserProfilePick"
-              className="w-[44px] h-[44px] overflow-hidden rounded-full border border-gray-300"
+              alt="user"
+              width={80}
+              height={80}
+              className="w-[80px] h-[80px] overflow-hidden rounded-full border border-gray-300"
             />
           ) : (
             <NoProfileIcon width={44} height={44} />
