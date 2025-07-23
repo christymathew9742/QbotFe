@@ -17,7 +17,6 @@ import FormInputProps from "@/components/fieldProp/FormInputProps";
 import { toast } from "react-toastify";
 import { CircularProgress, Skeleton } from "@mui/material";
 import { EditIcon, NoProfileIcon } from "@/icons";
-// import Image from "next/image";
 import api from "@/utils/axios";
 import axios from "axios";
 
@@ -173,13 +172,6 @@ export default function UserMetaCard() {
                 <input {...getInputProps()} />
                 { userData?.profilepick?.fileUrl ? (
                   <div className="w-20 h-20 overflow-hidden border border-gray-200 rounded-full dark:border-gray-800">
-                    {/* <Image
-                      width={80}
-                      height={80}
-                      src={userData?.profilepick?.fileUrl}
-                      alt="user"
-                      className="w-[80px] h-[80px] overflow-hidden rounded-full border border-gray-300"
-                    /> */}
                     <img
                       src={userData?.profilepick?.fileUrl}
                       alt="user"
