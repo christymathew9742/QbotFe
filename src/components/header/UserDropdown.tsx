@@ -56,13 +56,6 @@ export default function UserDropdown() {
           className="flex relative group items-center text-gray-700 dark:text-gray-400 dropdown-toggle"
         >
           { userProfileImage ? (
-            // <Image
-            //   width={40}
-            //   height={40}
-            //   src={userProfileImage}
-            //   alt="UserProfilePick"
-            //   className="w-[44px] h-[44px] overflow-hidden rounded-full border border-gray-300"
-            // />
             <img
               src={userProfileImage}
               alt="user"
