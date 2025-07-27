@@ -57,7 +57,7 @@ export default (state = initialState, action: userActions) => {
         return {
         ...state,
             pending: { ...state.pending, post: false },
-            userResponse: action.payload,
+            userResponse: action.payload.user,
             user: action.payload.user,
             error: null,
             log: null,

@@ -66,17 +66,14 @@ function* postUserSaga(data: any): any {
                 log: response.data?.log || null
             }));
         }
-
     } catch (e: any) {
         const backendError = e?.response?.data;
-
         yield put(postUserFailure({
             error: backendError?.error || 'Something went wrong',
             log: backendError?.log || null
         }));
     }
 }
-
 
 // Update User data
 function* updateUserSaga(data: any): any {

@@ -19,8 +19,7 @@ import { getUpdateUserPendingSelector, getUserSelector } from "@/redux/reducers/
 
 export const metadata: Metadata = {
   title: "List all Qbot",
-  description:
-    "This is the Qbot listing page",
+  description: "This is the Qbot listing page",
 };
 
 interface FormData {
@@ -35,8 +34,7 @@ const ApiConfig = () => {
     const currentUser = useSelector(getUserSelector);
     const userUpdatesStatus = useSelector(getUpdateUserPendingSelector);
     const userData = currentUser?.user?.data || {};
-    console.log(currentUser?.user?.data?.accesstoken,'currentUsercurrentUser')
-
+    const userUpdate = currentUser?.userResponse?.user || {};
     const initialValues = useMemo<FormData>(() => ({
         accesstoken: userData?.accesstoken || '',
         phonenumberid: userData?.phonenumberid || '',
@@ -50,25 +48,28 @@ const ApiConfig = () => {
     useEffect(() => {
         dispatch(fetchUserRequest());
     },[dispatch, userUpdatesStatus]);
-
-    // useEffect(() => {
-    //     dispatch(fetchUserRequest());
-    // },[]);
-
+    
+    useEffect(() => {
+        if (isUpdate) {
+            if (userUpdate?.success) {
+                toast.success(userUpdate?.message || 'Updated successfully');
+                setIsUpdate(false);
+            } else if (userUpdate?.success === false) {
+                toast.error(userUpdate?.message || 'Update failed');
+                setIsUpdate(false);
+            }
+        }
+    }, [userUpdate, isUpdate, dispatch]);
+    
     const handleSubmit = useCallback(
         (values: FormData) => {
-            try {
-                setIsUpdate(true);
-                setTimeout(async () => {
-                    await dispatch(updateUserRequest(values));
-                    toast.success('Updated');
-                    setIsUpdate(false)
-                }, 1500);
-            } catch (error) {
-                console.error('Update failed:', error);
-            } 
-        }, 
-    [dispatch]);
+            setIsUpdate(true);
+            setTimeout(() => {
+                dispatch(updateUserRequest(values));
+            }, 1000);
+        },
+        [dispatch]
+    );
     
     return (
         <div>
@@ -93,6 +94,7 @@ const ApiConfig = () => {
                                 <div className="w-full">
                                     <Formik
                                         initialValues={initialValues}
+                                        enableReinitialize
                                         validationSchema={validationSchema}
                                         onSubmit={handleSubmit}
                                     >

@@ -8,7 +8,7 @@ import { useSidebar } from "@/context/SidebarContext";
 import Image from "next/image";
 import Link from "next/link";
 import { AppDispatch } from "@/redux/store";
-import { getUserSelector } from "@/redux/reducers/user/selectors";
+import { getUpdateUserPendingSelector, getUserSelector } from "@/redux/reducers/user/selectors";
 import { parseCookies } from "nookies";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchUserRequest } from "@/redux/reducers/user/actions";
@@ -17,10 +17,12 @@ import { Expried } from "@/icons/index";
 const AppHeader: React.FC = () => {
   const [isApplicationMenuOpen, setApplicationMenuOpen] = useState(false);
   const { isMobileOpen, toggleSidebar, toggleMobileSidebar } = useSidebar();
+  const userUpdatesStatus = useSelector(getUpdateUserPendingSelector);
   const { accessToken } = parseCookies();
   const dispatch = useDispatch<AppDispatch>();
   const currentUser = useSelector(getUserSelector);
   const userData = currentUser?.user?.data;
+  const tockenDetails = userData?.tokenDetails || {};
   console.log(userData,'userDatauserData')
   
   const handleToggle = () => {
@@ -38,7 +40,7 @@ const AppHeader: React.FC = () => {
 
   useEffect(() => {
       if (accessToken) dispatch(fetchUserRequest());
-  },[dispatch, accessToken]);
+  },[dispatch, accessToken, userUpdatesStatus]);
 
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
@@ -112,13 +114,13 @@ const AppHeader: React.FC = () => {
               alt="Logo"
             />
           </Link>
-          {userData && (
+          {tockenDetails?.hastocken && (
             <div className="flex items-center gap-0 text-xxm py-1 px-2 rounded-[4px] font-extralight w-auto bg-error-50 text-error-600 dark:bg-error-500/15 dark:text-[#c96d66]">
               <Expried />
               <p>
-                Free trial {userData?.tokenDetails?.isExpired ? 'ended' : `ends in `}
-                {!userData?.tokenDetails?.isExpired && (
-                  <b>{userData?.tokenDetails?.remaining}</b>
+                Free trial {tockenDetails?.isExpired ? 'ended' : `ends in `}
+                {!tockenDetails?.isExpired && (
+                  <b>{tockenDetails?.remaining}</b>
                 )}
               </p>
             </div>
