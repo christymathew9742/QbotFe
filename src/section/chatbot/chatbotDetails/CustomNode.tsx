@@ -137,7 +137,6 @@ const buttonConfigs = [
 const CustomNode: React.FC<NodeProps<CustomNodeData>> = ({ data, id }) => {
   const editorRefs = useRef<Map<string, Editor>>(new Map());
   const handilRef = useRef<number | null>(null);
-  // const [highlightedEditors, setHighlightedEditors] = useState(new Set());
   const [isFocused, setIsFocused] = useState<string | null>(null);
   const { deleteElements, getEdges } = useReactFlow();
   const [loadEditor, setLoadEditor] = useState(false);
@@ -459,9 +458,16 @@ const CustomNode: React.FC<NodeProps<CustomNodeData>> = ({ data, id }) => {
             <div
               key={`${field}-editor-${id}`}
               className={`flex flex-col rounded-md p-${field === 'preference' ? '4' : '1'} ${
-                isFocused === id ? `border-${field}-node` : `${field}-node-normal`
+                isFocused === id ? `border-${field}-node` : `${field}-node-normal relative`
               }`}
-            >
+            > 
+              {field === 'preference' && (
+                <FontAwesomeIcon
+                  icon={faTrash}
+                  className="text-drag-text absolute right-[1px] -top-[1px] text-xxxs hover:scale-105 active:scale-95 transition-all duration-200 ease-in-out p-1 cursor-pointer"
+                  onClick={() => handleDeleteDynamicFields(id)}
+                />
+              )}
               {loadEditor && renderField(id, field, options, editor, index, isReplay)}
             </div>
           );
