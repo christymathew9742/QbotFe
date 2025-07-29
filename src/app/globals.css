@@ -194,6 +194,10 @@
   --color-dark-field:#20262a;
   --color-disable-dark:#343b45;
   --color-switch-dark:#808493;
+  --color-card-bg: #465fff70;
+  --color-status-bg-active:#0080006b;
+  --color-status-bg-cancel:#ff00006b;
+  --color-status-bg-reactive:#ffff0075;
 
   /* Font Sizes */
   --text-xxxs: 10px;
