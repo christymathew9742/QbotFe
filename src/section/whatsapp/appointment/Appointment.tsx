@@ -66,7 +66,6 @@ const Appoinment = () => {
           </div>
           <div className="p-4 border-t dark:border-gray-800 sm:p-6">
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-6">
-              {/* {appointmentData?.data?.map((card:any, index:number) => { */}
               {appointmentData?.data?.slice(0, visibleCards).map((card:any) => {
                 const month = new Date(card?.createdAt).toLocaleString('default', { month: 'long' });
                 const day = new Date(card?.createdAt).getDate();
