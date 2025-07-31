@@ -14,14 +14,6 @@ export const metadata: Metadata = {
   description: "This is the Qbot listing page",
 };
 
-const totalCards = Array.from({ length: 30 }, (_, i) => ({
-  id: i + 1,
-  name: "Christy",
-  number: `+123456789${i}`,
-  botTitle: `Qbot ${i + 1}`,
-  title: `Card ${i + 1}`,
-  description: `Description for card ${i + 1}`,
-}));
 
 const Appoinment = () => {
   const [visibleCards, setVisibleCards] = useState(12);
@@ -40,7 +32,7 @@ const Appoinment = () => {
       Math.ceil(window.innerHeight + window.scrollY) >=
       document.documentElement.scrollHeight;
 
-    if (bottom && visibleCards < totalCards.length && !isLoading) {
+    if (bottom && visibleCards < appointmentData.length && !isLoading) {
       setIsLoading(true);
       setTimeout(() => {
         setVisibleCards((prev) => prev + 4);
@@ -56,7 +48,7 @@ const Appoinment = () => {
 
   return (
     <div>
-      <PageBreadcrumb pagePath="Chatbot" />
+      <PageBreadcrumb pagePath="Appointments" />
       <div className="space-y-6">
         <div className="rounded-2xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-white/[0.03]">
           <div className="flex flex-col gap-2 p-4 sm:flex-row sm:items-center sm:justify-between">
@@ -72,20 +64,21 @@ const Appoinment = () => {
                 const time = new Date(card?.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
                 return (
                   <div
-                    key={card?.id}
+                    key={card?._id}
                     className="flex rounded-xl w-full h-auto bg-white dark:bg-[#1f1f1f] text-black dark:text-white shadow-md transition-all border border-card-bg dark:border-card-bg hover:shadow-lg hover:scale-[1.01] active:scale-[0.99] cursor-pointer"
                   >
-                    <div className="bg-card-bg text-center px-4 py-2 flex flex-col justify-between rounded-l-xl w-24">
-                      <div className="text-xl font-bold text-white/70">{month}</div>
+                    <div className="bg-card-bg text-center flex flex-col justify-between rounded-l-xl w-24">
+                      <div className="text-xl font-bold text-white/70 py-2 ">{month}</div>
                       <div className="text-lg font-medium text-white mb-4">{day}</div>
-                      <div className="text-xxm text-white/70">{time}</div>
+                      <div className="text-xxs text-white/70 pb-1">🕒 {time}</div>
                     </div>
                     <div className="flex-1 p-4 flex flex-col justify-between dark:bg-black rounded-tr-xl rounded-br-xl relative">
                       <div>
-                        <div className="text-lg font-semibold font-mono">{card?.profileName}</div>
+                        <div className="text-lg font-semibold font-mono">👤{card?.profileName}</div>
+                        <div className="text-xxs font-extralight font-mono mt-1">📞 {card?.whatsAppNumber}</div>
                         <div className={`absolute right-2 top-1.5 z-10 h-3 w-3 rounded-full ${card?.status == 'booked' ? 'bg-status-bg-active' : card?.status == 'cancelled' ?  'bg-status-bg-cancel': 'bg-status-bg-reactive'} flex`}></div>
-                        <p className="text-sm text-[#666] dark:text-gray-400 mt-1">
-                          {card?.flowTitle}
+                        <p className="text-sm text-[#666] dark:text-gray-400 mt-4">
+                        📅 {card?.flowTitle}
                         </p>
                       </div>
                     </div>
