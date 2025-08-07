@@ -200,6 +200,7 @@
   --color-status-bg-reactive:#ff8c00c4;
 
   /* Font Sizes */
+  --text-xxss: 8px;
   --text-xxxs: 10px;
   --text-xxs: 12px;
   --text-xxm: 14px;
@@ -341,7 +342,6 @@
 }
 
 /* third-party libraries CSS */
-
 /**react flow section**/
 .react-flow__panel a {
   display: none !important;

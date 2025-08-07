@@ -63,7 +63,7 @@ const ChatBot = () => {
     if(isFetching) {
       setIsFetching(pendingStatus.fetch);
     }
-  }, [pendingStatus]);
+  }, [pendingStatus.fetch, pendingStatus.delete, pendingStatus.update, pendingStatus.post]);
 
   useEffect(() => {
     fetchBots();
@@ -96,7 +96,7 @@ const ChatBot = () => {
         toast.error(`Error in deleting ${title}`);
       }
     },
-    [dispatch, fetchBots, pendingStatus?.update]
+    [dispatch, fetchBots, pendingStatus.fetch, pendingStatus.delete, pendingStatus.update, pendingStatus.post]
   );
 
   const handleChangePage = (
@@ -157,7 +157,7 @@ const ChatBot = () => {
         console.error("Update failed:", error);
       }
     },
-    [dispatch, fetchBots, status, pendingStatus]
+    [dispatch, fetchBots, status, pendingStatus.fetch, pendingStatus.delete, pendingStatus.update, pendingStatus.post]
   );
   
   const options = [
@@ -224,10 +224,10 @@ const ChatBot = () => {
                         </TableCell>
                       </TableRow>
                     ) : botData?.data?.length ? (
-                      botData.data.map((bot: Bot) => (
+                      botData?.data?.map((bot: Bot) => (
                         <TableRow key={bot._id}>
                           <TableCell colSpan={2} className="px-5 py-2 text-start font-light divide-gray-100 dark:text-white/90 text-theme-sm">
-                            {bot.title}
+                            {bot?.title}
                           </TableCell>
                           <TableCell colSpan={2} className="px-5 py-2 text-gray-500 text-start text-theme-sm">
                             {new Date(bot.updatedAt).toLocaleDateString("en-US", {

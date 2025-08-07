@@ -34,6 +34,32 @@ export const customInputStylesLoginBord:SxProps = {
 
 
 export const customInputStyles: SxProps = {
+    '& .MuiPickersInputBase-root' :{
+        borderRadius: '.5rem',
+        backgroundColor: 'transparent',
+        height: '45px',
+        '& .MuiPickersSectionList-root': {
+            backgroundColor: 'transparent',
+            color:'white',
+        },
+        '& .MuiIconButton-root' : {
+            color:'white',
+        },
+        '&:hover fieldset': {
+            borderWidth: '1px !important',
+            borderColor: 'rgb(206 210 216)',
+        },
+        '&.Mui-focused fieldset': {
+            borderColor:'#4b1dd8!important',
+            borderWidth: '1px !important',
+            boxShadow: '0 0 0 3px rgba(59, 130, 246, 0.1)',
+            outline:'none!important',
+        },
+    },
+    '& .MuiPickerPopper-paper' : {
+        backgroundColor:'black',
+        color:'white',
+    },
     '& .MuiOutlinedInput-root': {
         minHeight: '2.75rem',
         width: '100%',

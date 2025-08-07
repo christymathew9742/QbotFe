@@ -40,7 +40,7 @@ const navItems: NavItem[] = [
     icon: <WhatsApp />,
     name: "WhatsApp",
     subItems: [
-      { name: "Appoiments", path: "/appoinments", pro: false },
+      { name: "Appointments", path: "/appointments", pro: false },
       { name: "Users", path: "/users", pro: false },
     ],
   },

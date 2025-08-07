@@ -53,6 +53,7 @@ export default function UserMetaCard() {
   const cancelTokenRef = useRef<ReturnType<typeof axios.CancelToken.source> | null>(null);
   cancelTokenRef.current = axios.CancelToken.source();
   cancelTokenRef.current.token
+  const userProfileImage = userData?.profilepick?.fileUrl ? userData?.profilepick?.fileUrl :userData?.googleProfilePic;
 
   const initialValues = useMemo<ProfileData>(() => ({
     displayname: userData.displayname || '',
@@ -170,10 +171,10 @@ export default function UserMetaCard() {
             <div className="flex flex-col items-center w-full gap-6 sm:flex-row">
               <div className="relative group" {...getRootProps()}>
                 <input {...getInputProps()} />
-                { userData?.profilepick?.fileUrl ? (
+                { userProfileImage ? (
                   <div className="w-20 h-20 overflow-hidden border border-gray-200 rounded-full dark:border-gray-800">
                     <img
-                      src={userData?.profilepick?.fileUrl}
+                      src={userProfileImage}
                       alt="user"
                       width={80}
                       height={80}

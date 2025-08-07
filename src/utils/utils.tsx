@@ -94,6 +94,54 @@ export function isQueryParamString(str:any) {
   return /^(\w+=[^&]*&)*(\w+=[^&]*)$/.test(str);
 }
 
+export const formatTime = (iso:any) => {
+  const date = new Date(iso);
+  return date.toLocaleTimeString(undefined, {
+    hour: '2-digit',
+    minute: '2-digit',
+    hour12: true, // for AM/PM
+  });
+};
+
+export const formatStringDate = (iso: any) => {
+  const date = new Date(iso);
+  const now = new Date();
+
+  const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  const inputDate = new Date(date.getFullYear(), date.getMonth(), date.getDate());
+
+  const diffTime = today.getTime() - inputDate.getTime();
+  const oneDay = 24 * 60 * 60 * 1000;
+
+  const timeStr = date.toLocaleTimeString(undefined, {
+    hour: '2-digit',
+    minute: '2-digit',
+    hour12: true,
+  });
+
+  if (diffTime === 0) {
+    return `Today at ${timeStr}`;
+  } else if (diffTime === oneDay) {
+    return `Yesterday at ${timeStr}`;
+  } else {
+    const dateStr = date.toLocaleDateString(undefined, {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric',
+    });
+    return `${dateStr} at ${timeStr}`;
+  }
+};
+
+export const formatString = (string: any): string => {
+  if (typeof string === 'string' && string?.trim()) {
+    return string?.charAt(0)?.toUpperCase() + string?.slice(1);
+  }
+  return '';
+};
+
+
+
 
 
 

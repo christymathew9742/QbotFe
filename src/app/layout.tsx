@@ -6,6 +6,7 @@ import { ToastContainer } from 'react-toastify';
 import AuthProvider from './AuthProvider';
 import { headers } from "next/headers";
 import ReduxProvider from './ReduxProvider';
+import { GoogleProviders } from './googleProvider';
 
 const outfit = Outfit({
   subsets: ["latin"],
@@ -24,8 +25,12 @@ export default   async function RootLayout({
         <ReduxProvider>
           <AuthProvider>
             <ThemeProvider>
-              <ToastContainer/>
-              <SidebarProvider>{children}</SidebarProvider>
+              <ToastContainer theme="dark"/>
+                <SidebarProvider>
+                  <GoogleProviders>
+                    {children}
+                  </GoogleProviders>
+                </SidebarProvider>
             </ThemeProvider>
           </AuthProvider>
         </ReduxProvider>

@@ -23,11 +23,27 @@ import type { Configuration } from 'webpack';
 const nextConfig: NextConfig = {
   output: 'standalone',
   images: {
-    domains: ['localhost', 'https://qbotbackend.onrender.com/'], // adjust your domains
+    domains: ['localhost', 'qbotbackend.onrender.com'],
   },
-  // ✅ Skip ESLint during builds (optional; useful for Vercel or CI)
   eslint: {
     ignoreDuringBuilds: true,
+  },
+  async headers() {
+    return [
+      {
+        source: '/api/auth/google-login',
+        headers: [
+          {
+            key: 'Cross-Origin-Opener-Policy',
+            value: 'unsafe-none',
+          },
+          {
+            key: 'Cross-Origin-Embedder-Policy',
+            value: 'unsafe-none',
+          },
+        ],
+      },
+    ];
   },
   webpack(config: Configuration): Configuration {
     config.module?.rules?.push({
@@ -40,14 +56,4 @@ const nextConfig: NextConfig = {
 
 export default nextConfig;
 
-/**
- * 🔧 To disable "@typescript-eslint/no-explicit-any",
- * create/edit your `.eslintrc.js` file:
- *
- * module.exports = {
- *   rules: {
- *     '@typescript-eslint/no-explicit-any': 'off',
- *   },
- * };
- */
 

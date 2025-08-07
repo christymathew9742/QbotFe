@@ -43,13 +43,6 @@ export const metadata: Metadata = {
     "This is the Qbot listing page",
 };
 
-// interface Bot {
-//     _id: number;
-//     title:string;
-//     status: boolean;
-//     updatedAt: string;
-//     user:string;
-// }
 interface FormData {
     sendnumber: string;
     sendmessage: string;

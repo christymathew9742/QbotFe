@@ -20,7 +20,7 @@ export default function UserDropdown() {
   const dispatch = useDispatch<AppDispatch>();
   const currentUser = useSelector(getUserSelector);
   const userData = currentUser?.user?.data;
-  const userProfileImage = userData?.profilepick?.fileUrl;
+  const userProfileImage = userData?.profilepick?.fileUrl ? userData?.profilepick?.fileUrl :userData?.googleProfilePic;
 
   function toggleDropdown(e: React.MouseEvent<HTMLButtonElement, MouseEvent>) {
     e.stopPropagation();
