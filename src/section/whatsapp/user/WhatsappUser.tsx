@@ -14,9 +14,9 @@ import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch } from "@/redux/store";
 import { getAllPending, getAppointmentSelector } from "@/redux/reducers/appointment/selectors";
 import { fetchAppointmentRequest } from "@/redux/reducers/appointment/actions";
-import { deleteBotRequest } from "@/redux/reducers/chatBot/actions";
+// import { deleteBotRequest } from "@/redux/reducers/chatBot/actions";
 import Link from "next/link";
-import { toast } from "react-toastify";
+// import { toast } from "react-toastify";
 import PageBreadcrumb from "@/components/common/PageBreadCrumb";
 import { Metadata } from "next";
 import {
