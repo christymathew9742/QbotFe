@@ -27,6 +27,7 @@ const deleteAppointment = (id: any) => api.delete<any[]>(`/appointments/${id}`);
 function* fetchAppointmentSaga(data:any): any {
     const {payload} = data;
     const params = isQueryParamString(payload)?`?${payload}`:`/${payload}`;
+    console.log(data,'params')
     try {
         const response: any = yield call(fetchAppointment,params);
         yield put (fetchAppointmentSuccess({appointment: response.data }));

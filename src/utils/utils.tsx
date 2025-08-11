@@ -15,6 +15,14 @@ import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
 import AccessTimeFilledIcon from '@mui/icons-material/AccessTimeFilled';
 import AddBoxIcon from '@mui/icons-material/AddBox';
 import ViewListIcon from '@mui/icons-material/ViewList';
+import {
+  isToday,
+  isYesterday,
+  differenceInCalendarDays,
+  differenceInMonths,
+  differenceInYears,
+  format,
+} from 'date-fns';
 
 const {
   BOT:{
@@ -26,6 +34,12 @@ const {
     }
   }
 } = constantsText;
+
+type Status = {
+  booked?: number;
+  completed?: number;
+  rescheduled?: number;
+};
 
 export const messageIcons = [
   { type: 'Text', icon: <WysiwygIcon sx={{ fontSize: '14px', marginRight: '4px', color: MESSAGE }} /> },
@@ -139,6 +153,33 @@ export const formatString = (string: any): string => {
   }
   return '';
 };
+
+export const formatUpdatedDate = (iso: string) => {
+  const date = new Date(iso);
+  const now = new Date();
+
+  if (isToday(date)) {
+    return `Today, ${format(date, 'HH:mm')}`;
+  }
+
+  if (isYesterday(date)) {
+    return `Yest, ${format(date, 'HH:mm')}`;
+  }
+
+  const daysDiff = differenceInCalendarDays(now, date);
+  if (daysDiff <= 30) {
+    return `${daysDiff}d ago`;
+  }
+
+  const monthsDiff = differenceInMonths(now, date);
+  if (monthsDiff < 12) {
+    return `${monthsDiff}mo ago`;
+  }
+
+  const yearsDiff = differenceInYears(now, date);
+  return `${yearsDiff}y ago`;
+};
+
 
 
 

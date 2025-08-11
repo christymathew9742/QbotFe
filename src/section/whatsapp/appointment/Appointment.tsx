@@ -35,6 +35,7 @@ const Appoinment = () => {
 
   const appointmentData = useSelector(getAppointmentSelector);
   const pendingStatus = useSelector(getAllPending);
+  console.log(appointmentData,'appointmentData111')
 
   useEffect(() => {
     if(isFetching) {
@@ -94,6 +95,7 @@ const Appoinment = () => {
     { value: "cancelled", label: "Cancelled" },
     { value: "booked", label: "Booked" },
     { value: "rescheduled", label: "Rescheduled" },
+    { value: "completed", label: "Completed" },
   ];
 
   const darkTheme = createTheme({
@@ -173,7 +175,8 @@ const Appoinment = () => {
                               <div className={`absolute right-2 top-1.5 z-10 h-3 w-3 rounded-full ${
                                 card?.status === 'booked' ? 'bg-status-bg-active'
                                   : card?.status === 'cancelled' ? 'bg-status-bg-cancel'
-                                  : 'bg-status-bg-reactive'
+                                  : card?.status === 'rescheduled' ?'bg-status-bg-reactive'
+                                  : 'bg-status-bg-completed'
                               }`} />
                               <p className="text-sm text-[#666] dark:text-gray-400 mt-4">
                                 📅 {card?.flowTitle}
@@ -197,17 +200,18 @@ const Appoinment = () => {
           </div>
         </div>
       </div>
-
-      <TablePagination
-        component="div"
-        className="text-amber-50"
-        rowsPerPageOptions={[5, 10, 25]}
-        count={appointmentData?.total || 0}
-        page={page - 1}
-        onPageChange={handleChangePage}
-        rowsPerPage={rowsPerPage}
-        onRowsPerPageChange={handleChangeRowsPerPage}
-      />
+      {appointmentData?.data?.length > 5 && (
+        <TablePagination
+          component="div"
+          className="text-amber-50"
+          rowsPerPageOptions={[5, 10, 25]}
+          count={appointmentData?.total || 0}
+          page={page - 1}
+          onPageChange={handleChangePage}
+          rowsPerPage={rowsPerPage}
+          onRowsPerPageChange={handleChangeRowsPerPage}
+        />
+      )}
     </>
   );
 };
