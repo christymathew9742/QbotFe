@@ -46,7 +46,7 @@ const ChatBot = () => {
   const [status, setStatus] = useState<string | null>(null);
   const [activeBots, setActiveBots] = useState<Record<string, boolean>>({});
   const [isFetching, setIsFetching] = useState(true);
-  const toggleLock = useRef<Record<string, boolean>>({}); // prevent multiple toggles
+  const toggleLock = useRef<Record<string, boolean>>({});
 
   const fetchBots = useCallback(async () => {
     try {
