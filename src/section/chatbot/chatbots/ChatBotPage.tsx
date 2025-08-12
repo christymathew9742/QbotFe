@@ -115,7 +115,6 @@ const ChatBot = () => {
       setActiveBots((prev) => ({ ...prev, [bot._id]: checked }));
       try {
         await dispatch(updateBotRequest({ id: bot._id, payload: { ...bot, status: checked } }));
-        // fetchBots();
       } catch (error) {
         console.error("Update failed:", error);
       } finally {
