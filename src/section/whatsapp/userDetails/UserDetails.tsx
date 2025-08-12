@@ -51,7 +51,6 @@ const UserDetails = () => {
             <PageBreadcrumb pagePath="user-details" />
             <div className="space-y-6">
                 <div className="flex flex-col sm:flex-row gap-4">
-                    {/* User Details */}
                     <div className="rounded-2xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-white/[0.03] w-full sm:w-[40%]">
                         <div className="h-full rounded-xl p-1">
                             <div className="px-4 py-2 w-full">
@@ -81,7 +80,6 @@ const UserDetails = () => {
                             <div className="grid grid-cols-1 gap-2  px-4 py-2 border-t dark:border-gray-800 "></div>
                         </div>
                     </div>
-                    {/* Activities */}
                     <div className="rounded-2xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-white/[0.03] w-full sm:w-[60%]">
                         <div className="h-full rounded-xl p-1">
                             <div className="px-4 py-2">

@@ -286,7 +286,6 @@ const AppointmentDetails: React.FC = () => {
         <PageBreadcrumb pagePath="appointment-details" />
         <div className="space-y-6">
           <div className="flex flex-col sm:flex-row gap-4">
-            {/* Left Details Panel */}
             <div className="rounded-2xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-white/[0.03] w-full sm:w-[40%]">
               <div className="h-full rounded-xl p-1">
                 <div className="px-4 py-2 w-full">
@@ -350,8 +349,6 @@ const AppointmentDetails: React.FC = () => {
                 <div className="grid grid-cols-1 gap-2  px-4 py-2 border-t dark:border-gray-800 "></div>
               </div>
             </div>
-
-            {/* Right Chats Panel */}
             <div className="rounded-2xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-white/[0.03] w-full sm:w-[60%]">
               <div className="h-full rounded-xl p-1">
                 <div className="grid grid-cols-1 sm:grid-cols-4 gap-2 items-center px-4 py-2">
