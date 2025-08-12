@@ -49,7 +49,6 @@ const ChatBot = () => {
   const toggleLock = useRef<Record<string, boolean>>({}); // prevent multiple toggles
 
   const fetchBots = useCallback(async () => {
-    // setIsFetching(true);
     try {
       const queryObject = { search, status, page, limit: rowsPerPage };
       const queryString = new URLSearchParams(queryObject as any).toString();
