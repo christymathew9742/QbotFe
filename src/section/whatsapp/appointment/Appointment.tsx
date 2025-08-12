@@ -1,17 +1,17 @@
 "use client";
 
-import React, { useEffect, useState, useCallback } from "react";
+import React, { useEffect, useState, useCallback, useMemo } from "react";
 import {
   CircularProgress,
   createTheme,
   ThemeProvider,
 } from "@mui/material";
-import Link from 'next/link';
-import SearchIcon from '@mui/icons-material/Search';
-import { DatePicker } from '@mui/x-date-pickers/DatePicker';
-import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
-import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
-import TablePagination from '@mui/material/TablePagination';
+import Link from "next/link";
+import SearchIcon from "@mui/icons-material/Search";
+import { DatePicker } from "@mui/x-date-pickers/DatePicker";
+import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import TablePagination from "@mui/material/TablePagination";
 import { useDispatch, useSelector } from "react-redux";
 import dayjs, { Dayjs } from "dayjs";
 
@@ -19,7 +19,10 @@ import PageBreadcrumb from "@/components/common/PageBreadCrumb";
 import Input from "@/components/form/input/InputField";
 import Select from "@/components/form/Select";
 import { AppDispatch } from "@/redux/store";
-import { getAllPending, getAppointmentSelector } from "@/redux/reducers/appointment/selectors";
+import {
+  getAllPending,
+  getAppointmentSelector,
+} from "@/redux/reducers/appointment/selectors";
 import { fetchAppointmentRequest } from "@/redux/reducers/appointment/actions";
 import { customInputStyles } from "@/components/fieldProp/fieldPropsStyles";
 
@@ -31,22 +34,20 @@ const Appoinment = () => {
   const [selectedDate, setSelectedDate] = useState<Dayjs | null>(null);
   const [page, setPage] = useState(1);
   const [rowsPerPage, setRowsPerPage] = useState(6);
+
   const [isFetching, setIsFetching] = useState(true);
 
   const appointmentData = useSelector(getAppointmentSelector);
   const pendingStatus = useSelector(getAllPending);
-  console.log(appointmentData,'appointmentData111')
 
   useEffect(() => {
-    if(isFetching) {
-      setIsFetching(pendingStatus.fetch);
-    }
-  }, [pendingStatus]);
+    setIsFetching(pendingStatus.fetch);
+  }, [pendingStatus.fetch]);
 
   const fetchAppointments = useCallback(() => {
-    const query: any = {
+    const query: Record<string, string | number> = {
       search,
-      status,
+      status: status || "",
       page,
       limit: rowsPerPage,
     };
@@ -55,8 +56,7 @@ const Appoinment = () => {
       query.date = dayjs(selectedDate).format("YYYY-MM-DD");
     }
 
-    const queryString = new URLSearchParams(query).toString();
-    dispatch(fetchAppointmentRequest(queryString));
+    dispatch(fetchAppointmentRequest(new URLSearchParams(query as any).toString()));
   }, [dispatch, search, status, selectedDate, page, rowsPerPage]);
 
   useEffect(() => {
@@ -64,19 +64,16 @@ const Appoinment = () => {
   }, [fetchAppointments]);
 
   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setIsFetching(false);
     setSearch(e.target.value);
     setPage(1);
   };
 
   const handleStatusChange = (value: string) => {
-    setIsFetching(false);
     setStatus(value);
     setPage(1);
   };
 
   const handleDateChange = (newValue: Dayjs | null) => {
-    setIsFetching(false);
     setSelectedDate(newValue);
     setPage(1);
   };
@@ -90,17 +87,24 @@ const Appoinment = () => {
     setPage(1);
   };
 
-  const options = [
-    { value: "", label: "All" },
-    { value: "cancelled", label: "Cancelled" },
-    { value: "booked", label: "Booked" },
-    { value: "rescheduled", label: "Rescheduled" },
-    { value: "completed", label: "Completed" },
-  ];
+  const options = useMemo(
+    () => [
+      { value: "", label: "All" },
+      { value: "cancelled", label: "Cancelled" },
+      { value: "booked", label: "Booked" },
+      { value: "rescheduled", label: "Rescheduled" },
+      { value: "completed", label: "Completed" },
+    ],
+    []
+  );
 
-  const darkTheme = createTheme({
-    palette: { mode: 'dark' },
-  });
+  const darkTheme = useMemo(
+    () =>
+      createTheme({
+        palette: { mode: "dark" },
+      }),
+    []
+  );
 
   return (
     <>
@@ -108,11 +112,11 @@ const Appoinment = () => {
         <PageBreadcrumb pagePath="Appointments" />
         <div className="space-y-6 mb-4">
           <div className="rounded-2xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-white/[0.03]">
+            {/* Filters */}
             <div className="grid grid-cols-1 sm:grid-cols-4 gap-2 items-center px-6 py-5">
               <h3 className="text-lg font-semibold text-gray-800 dark:text-white">
                 All Appointments
               </h3>
-
               <div className="relative">
                 <span className="absolute -translate-y-1/2 left-4 top-1/2 pointer-events-none">
                   <SearchIcon className="!text-gray-500 dark:!text-amber-50" />
@@ -125,14 +129,12 @@ const Appoinment = () => {
                   className="py-2.5 pl-12 pr-14 text-sm dark:bg-dark-900 bg-transparent dark:bg-white/[0.02]"
                 />
               </div>
-
               <Select
                 options={options}
                 defaultValue={status || ""}
                 onChange={handleStatusChange}
                 className="dark:bg-white/[0.02] text-gray-800 dark:!text-gray-100"
               />
-
               <ThemeProvider theme={darkTheme}>
                 <LocalizationProvider dateAdapter={AdapterDayjs}>
                   <DatePicker
@@ -143,26 +145,26 @@ const Appoinment = () => {
                 </LocalizationProvider>
               </ThemeProvider>
             </div>
-
             <div className="p-4 border-t dark:border-gray-800 sm:p-6">
               <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-6">
                 {isFetching ? (
-                  <div className="w-full col-span-3 flex justify-center text-center">
-                    <span  className="text-center py-6">
-                      <CircularProgress/>
-                    </span>
+                  <div className="w-full col-span-3 flex justify-center py-6">
+                    <CircularProgress />
                   </div>
-                  ) : appointmentData?.data?.length ? (
-                  appointmentData?.data?.map((card: any) => {
+                ) : appointmentData?.data?.length ? (
+                  appointmentData.data.map((card: any) => {
                     const date = new Date(card?.createdAt);
-                    const month = date.toLocaleString('default', { month: 'long' });
+                    const month = date.toLocaleString("default", { month: "long" });
                     const day = date.getDate();
-                    const time = date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                    const time = date.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+
                     return (
-                      <Link href={`/appointment-details?appointmentId=${card?._id}`} passHref key={card?._id}>
-                        <div
-                          className="flex rounded-xl w-full h-auto bg-white dark:bg-[#1f1f1f] text-black dark:text-white shadow-md transition-all border border-card-bg dark:border-card-bg hover:shadow-lg hover:scale-[1.01] active:scale-[0.99] cursor-pointer"
-                        >
+                      <Link
+                        href={`/appointment-details?appointmentId=${card?._id}`}
+                        passHref
+                        key={card?._id}
+                      >
+                        <div className="flex rounded-xl w-full h-auto bg-white dark:bg-[#1f1f1f] text-black dark:text-white shadow-md transition-all border border-card-bg dark:border-card-bg hover:shadow-lg hover:scale-[1.01] active:scale-[0.99] cursor-pointer">
                           <div className="bg-card-bg text-center flex flex-col justify-between rounded-l-xl w-24">
                             <div className="text-xl font-bold text-white/70 py-2">{month}</div>
                             <div className="text-lg font-medium text-white mb-4">{day}</div>
@@ -172,12 +174,17 @@ const Appoinment = () => {
                             <div>
                               <div className="text-lg font-semibold font-mono">👤{card?.profileName}</div>
                               <div className="text-xxs font-extralight font-mono mt-1">📞 +{card?.whatsAppNumber}</div>
-                              <div className={`absolute right-2 top-1.5 z-10 h-3 w-3 rounded-full ${
-                                card?.status === 'booked' ? 'bg-status-bg-active'
-                                  : card?.status === 'cancelled' ? 'bg-status-bg-cancel'
-                                  : card?.status === 'rescheduled' ?'bg-status-bg-reactive'
-                                  : 'bg-status-bg-completed'
-                              }`} />
+                              <div
+                                className={`absolute right-2 top-1.5 z-10 h-3 w-3 rounded-full ${
+                                  card?.status === "booked"
+                                    ? "bg-status-bg-active"
+                                    : card?.status === "cancelled"
+                                    ? "bg-status-bg-cancel"
+                                    : card?.status === "rescheduled"
+                                    ? "bg-status-bg-reactive"
+                                    : "bg-status-bg-completed"
+                                }`}
+                              />
                               <p className="text-sm text-[#666] dark:text-gray-400 mt-4">
                                 📅 {card?.flowTitle}
                               </p>
@@ -186,7 +193,6 @@ const Appoinment = () => {
                         </div>
                       </Link>
                     );
-
                   })
                 ) : (
                   <div className="w-full text-center col-span-3 flex justify-center">
@@ -200,7 +206,7 @@ const Appoinment = () => {
           </div>
         </div>
       </div>
-      {appointmentData?.data?.length > 5 && (
+      {appointmentData?.total > 5 && (
         <TablePagination
           component="div"
           className="text-amber-50"

@@ -1,9 +1,10 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback, useMemo } from "react";
 import { CircularProgress } from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
 import { useSearchParams } from "next/navigation";
+import { useAlert } from "@/components/alert/alert";
 
 import PageBreadcrumb from "@/components/common/PageBreadCrumb";
 import { AppDispatch } from "@/redux/store";
@@ -12,39 +13,92 @@ import { fetchAppointmentRequest } from "@/redux/reducers/appointment/actions";
 import { formatString, formatUpdatedDate } from "@/utils/utils";
 import SentimentChartOne from "@/components/charts/sentimentScores/SentimentScores";
 
-const UserDetails = () => {
+const UserDetails: React.FC = () => {
     const dispatch = useDispatch<AppDispatch>();
-    const [isFetching, setIsFetching] = useState(true);
-
     const searchParams = useSearchParams();
-    const appointmentId = searchParams.get("userId");
+    const { renderAlert } = useAlert();
+
+    const userId = useMemo(() => searchParams.get("userId"), [searchParams]);
 
     const appointmentData = useSelector(getAppointmentSelector);
     const pendingStatus = useSelector(getAllPending);
 
-    useEffect(() => {
-        setIsFetching(pendingStatus.fetch);
-    }, [pendingStatus]);
+    const [isFetching, setIsFetching] = useState(true);
+    const [error, setError] = useState<string | null>(null);
+    const [userDetails, setUserDetails] = useState<any>(null);
 
-    useEffect(() => {
-        if (appointmentId) {
-            dispatch(fetchAppointmentRequest(appointmentId));
+    const fetchUserDetails = useCallback(() => {
+        if (!userId) {
+            setError("Invalid user ID.");
+            setIsFetching(false);
+            return;
         }
-    }, [dispatch, appointmentId]);
+            setIsFetching(true);
+            setError(null);
+            dispatch(fetchAppointmentRequest(userId));
+    }, [userId, dispatch]);
 
-    const infoItems = [
-        { label: "User Name :", value: appointmentData?.data?.appointment?.profileName },
-        { label: "Last appointment :", value: appointmentData?.data?.latestFlowTitle },
-        { label: "Sentiment Score :", value: `${appointmentData?.data?.averageSentimentScores?.sentimentScores?.sentimentScore}/10` },
-        { label: "Interaction Speed :", value: `${appointmentData?.data?.averageSentimentScores?.sentimentScores?.speedScore}/10` },
-        { label: "Total Appointment :", value: appointmentData?.data?.totalAppointments || 0 },
-        { label: "User Type :", value: appointmentData?.data?.userType },
-        { label: "Behaviour Score :", value: `${appointmentData?.data?.averageSentimentScores?.sentimentScores?.behaviourScore}/10` },
-        { label: "User Number :", value: appointmentData?.data?.appointment?.whatsAppNumber },
-        { label: "Last Appointment Status :", value: formatString(appointmentData?.data?.latestStatus) },
-        { label: "User Created :", value: formatUpdatedDate(appointmentData?.data?.appointment?.userCreated) },
-        { label: "Last Visited :", value: formatUpdatedDate(appointmentData?.data?.appointment?.lastActiveAt) },
-    ];
+    useEffect(() => {
+        fetchUserDetails();
+    }, [fetchUserDetails]);
+
+    useEffect(() => {
+        if (pendingStatus.fetch) {
+            setIsFetching(true);
+            setError(null)
+            return;
+        }
+        if (!pendingStatus.fetch && appointmentData?.data) {
+            setUserDetails(appointmentData.data);
+            setIsFetching(false);
+            setError(null);
+        } else if (!pendingStatus.fetch && !appointmentData?.data) {
+            setUserDetails(null);
+            setIsFetching(false);
+            setError("No user data found.");
+        }
+    }, [pendingStatus, appointmentData]);
+
+    const infoItems = useMemo(
+        () => [
+            { label: "User Name :", value: userDetails?.appointment?.profileName },
+            { label: "Last appointment :", value: userDetails?.latestFlowTitle },
+            { label: "Sentiment Score :", value: `${userDetails?.averageSentimentScores?.sentimentScores?.sentimentScore}/10` },
+            { label: "Interaction Speed :", value: `${userDetails?.averageSentimentScores?.sentimentScores?.speedScore}/10` },
+            { label: "Total Appointment :", value: userDetails?.totalAppointments || 0 },
+            { label: "User Type :", value: userDetails?.userType },
+            { label: "Behaviour Score :", value: `${userDetails?.averageSentimentScores?.sentimentScores?.behaviourScore}/10` },
+            { label: "User Number :", value: userDetails?.appointment?.whatsAppNumber },
+            { label: "Last Appointment Status :", value: formatString(userDetails?.latestStatus) },
+            { label: "User Created :", value: formatUpdatedDate(userDetails?.appointment?.userCreated) },
+            { label: "Last Visited :", value: formatUpdatedDate(userDetails?.appointment?.lastActiveAt) },
+        ],
+        [userDetails]
+    );
+
+    if (isFetching) {
+        return (
+        <div className="flex justify-center items-center h-64">
+            <CircularProgress />
+        </div>
+        );
+    }
+
+    if (error) {
+        return renderAlert({
+            type: "error",
+            title: "Error!",
+            message: error
+        });
+    }
+
+    if (!userDetails) {
+        return renderAlert({
+            type: "info",
+            title: "Info alert!",
+            message: "No user details available."
+        });
+    }
 
     return (
         <div className="h-auto">
@@ -56,14 +110,9 @@ const UserDetails = () => {
                             <div className="px-4 py-2 w-full">
                                 <h3 className="text-lg font-semibold text-gray-800 dark:text-white">Details</h3>
                             </div>
-                            {isFetching ? (
-                                <div className="w-full flex justify-center border-t dark:border-gray-800 py-6">
-                                    <CircularProgress />
-                                </div>
-                            ) : (
-                                <div className="p-4 border-t dark:border-gray-800 sm:p-6 overflow-y-auto custom-scrollbar max-h-[350px]">
-                                    <div className="border dark:border-gray-700 rounded-[4px]">
-                                        {infoItems.map(({ label, value }, idx) => (
+                            <div className="p-4 border-t dark:border-gray-800 sm:p-6 overflow-y-auto custom-scrollbar max-h-[350px]">
+                                <div className="border dark:border-gray-700 rounded-[4px]">
+                                    {infoItems.map(({ label, value }, idx) => (
                                         <div
                                             key={label}
                                             className={`p-2 ${idx !== 0 ? "border-t dark:border-gray-700" : ""}`}
@@ -73,10 +122,9 @@ const UserDetails = () => {
                                                 {value ?? "-"}
                                             </p>
                                         </div>
-                                        ))}
-                                    </div>
+                                    ))}
                                 </div>
-                            )}
+                            </div>
                             <div className="grid grid-cols-1 gap-2  px-4 py-2 border-t dark:border-gray-800 "></div>
                         </div>
                     </div>
@@ -85,15 +133,9 @@ const UserDetails = () => {
                             <div className="px-4 py-2">
                                 <h3 className="text-lg font-semibold text-gray-800 dark:text-white">Activities</h3>
                             </div>
-                            {isFetching ? (
-                                <div className="w-full flex justify-center border-t dark:border-gray-800 py-6">
-                                    <CircularProgress />
-                                </div>
-                            ) : (
-                                <div className="p-4 border-t dark:border-gray-800 sm:p-6 overflow-y-auto custom-scrollbar max-h-[350px] space-y-4">
-                                    <SentimentChartOne appointments={appointmentData?.data?.sentimentData} />
-                                </div>
-                            )}
+                            <div className="p-4 border-t dark:border-gray-800 sm:p-6 overflow-y-auto custom-scrollbar max-h-[350px] space-y-4">
+                                <SentimentChartOne appointments={userDetails?.sentimentData} />
+                            </div>
                             <div className="grid grid-cols-1 gap-2  px-4 py-2 border-t dark:border-gray-800 "></div>
                         </div>
                     </div>
