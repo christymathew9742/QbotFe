@@ -48,14 +48,32 @@ const ChatBot = () => {
   const [isFetching, setIsFetching] = useState(true);
   const toggleLock = useRef<Record<string, boolean>>({});
 
-  const fetchBots = useCallback(async () => {
-    try {
-      const queryObject = { search, status, page, limit: rowsPerPage };
-      const queryString = new URLSearchParams(queryObject as any).toString();
-      await dispatch(fetchBotRequest(queryString));
-    } finally {
-      setIsFetching(false);
-    }
+  useEffect(() => {
+    setIsFetching(pendingStatus.fetch);
+  }, [pendingStatus.fetch]);
+
+
+
+  // const fetchBots = useCallback(async () => {
+  //   try {
+  //     const queryObject = { search, status, page, limit: rowsPerPage };
+  //     const queryString = new URLSearchParams(queryObject as any).toString();
+  //     await dispatch(fetchBotRequest(queryString));
+  //   } finally {
+  //     setIsFetching(false);
+  //   }
+  // }, [dispatch, search, status, page, rowsPerPage]);
+
+  const fetchBots = useCallback(() => {
+      const query = {
+        search,
+        status: status || "",
+        page,
+        limit: rowsPerPage,
+      };
+  
+      const queryString = new URLSearchParams(query as any).toString();
+      dispatch(fetchBotRequest(queryString));
   }, [dispatch, search, status, page, rowsPerPage]);
 
   useEffect(() => {
@@ -75,16 +93,13 @@ const ChatBot = () => {
   const handleDelete = useCallback(
     async (id: any, title: string) => {
       try {
-        setIsFetching(true);
         await dispatch(deleteBotRequest(id));
         toast.success(`${title} deleted successfully`);
         fetchBots();
       } catch (error) {
         console.error("Error in deleting ChatBot:", error);
         toast.error(`Error in deleting ${title}`);
-      } finally {
-        setIsFetching(false);
-      }
+      } 
     },
     [dispatch, fetchBots, pendingStatus.fetch]
   );
