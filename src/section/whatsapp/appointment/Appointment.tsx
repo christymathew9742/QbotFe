@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState, useCallback, useMemo } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import {
   CircularProgress,
   createTheme,
@@ -34,7 +34,6 @@ const Appoinment = () => {
   const [selectedDate, setSelectedDate] = useState<Dayjs | null>(null);
   const [page, setPage] = useState(1);
   const [rowsPerPage, setRowsPerPage] = useState(6);
-
   const [isFetching, setIsFetching] = useState(true);
 
   const appointmentData = useSelector(getAppointmentSelector);
@@ -45,47 +44,48 @@ const Appoinment = () => {
   }, [pendingStatus.fetch]);
 
   const fetchAppointments = useCallback(() => {
-    const query: Record<string, string | number> = {
+    const query = {
       search,
       status: status || "",
       page,
       limit: rowsPerPage,
+      ...(selectedDate && { date: dayjs(selectedDate).format("YYYY-MM-DD") }),
     };
 
-    if (selectedDate) {
-      query.date = dayjs(selectedDate).format("YYYY-MM-DD");
-    }
-
-    dispatch(fetchAppointmentRequest(new URLSearchParams(query as any).toString()));
+    const queryString = new URLSearchParams(query as any).toString();
+    dispatch(fetchAppointmentRequest(queryString));
   }, [dispatch, search, status, selectedDate, page, rowsPerPage]);
 
   useEffect(() => {
     fetchAppointments();
   }, [fetchAppointments]);
 
-  const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleSearch = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    setIsFetching(false);
     setSearch(e.target.value);
     setPage(1);
-  };
+  }, []);
 
-  const handleStatusChange = (value: string) => {
+  const handleStatusChange = useCallback((value: string) => {
+    setIsFetching(false);
     setStatus(value);
     setPage(1);
-  };
+  }, []);
 
-  const handleDateChange = (newValue: Dayjs | null) => {
+  const handleDateChange = useCallback((newValue: Dayjs | null) => {
+    setIsFetching(false);
     setSelectedDate(newValue);
     setPage(1);
-  };
+  }, []);
 
-  const handleChangePage = (_: unknown, newPage: number) => {
+  const handleChangePage = useCallback((_: unknown, newPage: number) => {
     setPage(newPage + 1);
-  };
+  }, []);
 
-  const handleChangeRowsPerPage = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleChangeRowsPerPage = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
     setRowsPerPage(parseInt(event.target.value, 10));
     setPage(1);
-  };
+  }, []);
 
   const options = useMemo(
     () => [
@@ -222,3 +222,4 @@ const Appoinment = () => {
 };
 
 export default Appoinment;
+
