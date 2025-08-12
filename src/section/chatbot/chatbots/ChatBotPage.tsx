@@ -49,7 +49,7 @@ const ChatBot = () => {
   const toggleLock = useRef<Record<string, boolean>>({}); // prevent multiple toggles
 
   const fetchBots = useCallback(async () => {
-    setIsFetching(true);
+    // setIsFetching(true);
     try {
       const queryObject = { search, status, page, limit: rowsPerPage };
       const queryString = new URLSearchParams(queryObject as any).toString();
@@ -87,7 +87,7 @@ const ChatBot = () => {
         setIsFetching(false);
       }
     },
-    [dispatch, fetchBots]
+    [dispatch, fetchBots, pendingStatus.fetch]
   );
 
   const handleChangePage = (_: any, newPage: number) => setPage(newPage + 1);
@@ -115,14 +115,14 @@ const ChatBot = () => {
       setActiveBots((prev) => ({ ...prev, [bot._id]: checked }));
       try {
         await dispatch(updateBotRequest({ id: bot._id, payload: { ...bot, status: checked } }));
-        fetchBots();
+        // fetchBots();
       } catch (error) {
         console.error("Update failed:", error);
       } finally {
         toggleLock.current[bot._id] = false;
       }
     },
-    [dispatch, fetchBots, pendingStatus?.fetch, pendingStatus?.update]
+    [dispatch, fetchBots, pendingStatus.fetch, pendingStatus.update]
   );
 
   const options = [
