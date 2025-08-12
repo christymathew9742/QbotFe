@@ -77,7 +77,6 @@ const ChatBot = () => {
       setActiveBots(initialState);
     }
   }, [botData]);
-
   const handleDelete = useCallback(
     async (id: any, title: string) => {
       try {
