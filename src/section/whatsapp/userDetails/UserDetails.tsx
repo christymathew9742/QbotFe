@@ -21,7 +21,7 @@ const UserDetails = () => {
 
     const appointmentData = useSelector(getAppointmentSelector);
     const pendingStatus = useSelector(getAllPending);
-console.log(appointmentData,'llllllllll')
+
     useEffect(() => {
         setIsFetching(pendingStatus.fetch);
     }, [pendingStatus]);
