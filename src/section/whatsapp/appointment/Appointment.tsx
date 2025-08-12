@@ -112,7 +112,6 @@ const Appoinment = () => {
         <PageBreadcrumb pagePath="Appointments" />
         <div className="space-y-6 mb-4">
           <div className="rounded-2xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-white/[0.03]">
-            {/* Filters */}
             <div className="grid grid-cols-1 sm:grid-cols-4 gap-2 items-center px-6 py-5">
               <h3 className="text-lg font-semibold text-gray-800 dark:text-white">
                 All Appointments
