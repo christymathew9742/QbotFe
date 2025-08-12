@@ -59,7 +59,6 @@ const ChatBot = () => {
         page,
         limit: rowsPerPage,
       };
-  
       const queryString = new URLSearchParams(query as any).toString();
       dispatch(fetchBotRequest(queryString));
   }, [dispatch, search, status, page, rowsPerPage]);
@@ -178,7 +177,7 @@ const ChatBot = () => {
                         </TableCell>
                       </TableRow>
                     ) : botData?.data?.length ? (
-                      botData.data.map((bot: Bot) => (
+                      botData?.data?.map((bot: Bot) => (
                         <TableRow key={bot._id}>
                           <TableCell colSpan={2} className="px-5 py-2 text-start font-light divide-gray-100 dark:text-white/90 text-theme-sm">{bot.title}</TableCell>
                           <TableCell colSpan={2} className="px-5 py-2 text-start font-light divide-gray-100 dark:text-white/90 text-theme-sm">
