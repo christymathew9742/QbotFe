@@ -52,20 +52,6 @@ const ChatBot = () => {
     setIsFetching(pendingStatus.fetch);
   }, [pendingStatus.fetch]);
 
-
-
-  // const fetchBots = useCallback(async () => {
-  //   try {
-  //     const queryObject = { search, status, page, limit: rowsPerPage };
-  //     const queryString = new URLSearchParams(queryObject as any).toString();
-  //     await dispatch(fetchBotRequest(queryString));
-  //   } finally {
-  //     setIsFetching(false);
-  //   }
-  // }, [dispatch, search, status, page, rowsPerPage]);
-
-  
-
   const fetchBots = useCallback(() => {
       const query = {
         search,
@@ -103,7 +89,7 @@ const ChatBot = () => {
         toast.error(`Error in deleting ${title}`);
       } 
     },
-    [dispatch, fetchBots, pendingStatus.fetch]
+    [dispatch, fetchBots, isFetching]
   );
 
   const handleChangePage = (_: any, newPage: number) => setPage(newPage + 1);
