@@ -165,7 +165,6 @@ const ChatBot = () => {
     { value: "true", label: "Enabled" },
     { value: "false", label: "Disabled" },
   ];
-
   return (
     <div>
       <PageBreadcrumb pagePath="Chatbot"/>
