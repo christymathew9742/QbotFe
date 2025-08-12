@@ -156,7 +156,7 @@ const WhatsappUser = () => {
           </span>
         </TableCell>
         <TableCell colSpan={2} className="px-5 py-2 text-center text-gray-500 text-theme-sm dark:text-gray-400">
-          {formatUpdatedDate(user?.updatedAt) && formatUpdatedDate(user?.userCreated)}
+          {formatUpdatedDate(user?.userCreated)}
         </TableCell>
         <TableCell colSpan={2} className="px-3 py-2 text-gray-500 text-theme-sm dark:text-gray-400">
           <div className="flex justify-center items-center">
