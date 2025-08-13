@@ -76,15 +76,19 @@ const ChatBot = () => {
       setActiveBots(initialState);
     }
   }, [botData]);
+  
   const handleDelete = useCallback(
     async (id: any, title: string) => {
       try {
         await dispatch(deleteBotRequest(id));
         toast.success(`${title} deleted successfully`);
-        fetchBots();
       } catch (error) {
         console.error("Error in deleting ChatBot:", error);
         toast.error(`Error in deleting ${title}`);
+      } finally {
+        setTimeout(() => {
+          fetchBots();
+        }, 1000);
       } 
     },
     [dispatch, fetchBots, isFetching]
@@ -119,6 +123,9 @@ const ChatBot = () => {
         console.error("Update failed:", error);
       } finally {
         toggleLock.current[bot._id] = false;
+        setTimeout(() => {
+          fetchBots();
+        }, 1000);
       }
     },
     [dispatch, fetchBots, pendingStatus.fetch, pendingStatus.update]
