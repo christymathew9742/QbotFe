@@ -49,7 +49,7 @@ const navItems: NavItem[] = [
     name: "Settings",
     subItems: [
       { name: "User Profile", path: "/profile", pro: false },
-      { name: "General", path: "/ss", pro: false },
+      { name: "General", path: "/general-settings", pro: false },
     ],
   },
 ];
