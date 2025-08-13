@@ -291,17 +291,6 @@ const CustomNode: React.FC<NodeProps<CustomNodeData>> = ({ data, id }) => {
         if (updatedContent !== input.value) {
           handleInputChange(input.id, updatedContent);
         }
-
-        // if (!input.value) {
-        //   handleInputChange(input.id, updatedContent);
-        //   setHighlightedEditors((prev) => {
-        //     const updatedSet = new Set(prev);
-        //     updatedSet.delete(input.id);
-        //     return updatedSet;
-        //   });
-        // } else {
-        //   setHighlightedEditors((prev) => new Set(prev).add(input.id));
-        // }
       });
     }
   });
