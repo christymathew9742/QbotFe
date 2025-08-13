@@ -43,17 +43,16 @@ const WhatsappUser = () => {
   const [page, setPage] = useState(1);
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [isFetching, setIsFetching] = useState(true);
+  const [isload, setIsLoad] = useState(true)
   const [user, setUser] = useState(false);
 
   const appointmentData = useSelector(getAppointmentSelector);
   const pendingStatus = useSelector(getAllPending);
 
   useEffect(() => {
-    if (isFetching) {
       setIsFetching(pendingStatus.fetch);
       setUser(true);
-    }
-  }, [pendingStatus, isFetching]);
+  }, [pendingStatus?.fetch]);
 
   const fetchAppointments = useCallback(() => {
     const query = {
@@ -73,16 +72,18 @@ const WhatsappUser = () => {
   }, [fetchAppointments]);
 
   const handleSearch = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-    setIsFetching(false);
+    setIsLoad(false)
     setSearch(e.target.value);
     setPage(1);
   }, []);
 
   const handleChangePage = useCallback((_: unknown, newPage: number) => {
+    setIsLoad(false)
     setPage(newPage + 1);
   }, []);
 
   const handleChangeRowsPerPage = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
+    setIsLoad(false)
     setRowsPerPage(parseInt(event.target.value, 10));
     setPage(1);
   }, []);
@@ -115,7 +116,7 @@ const WhatsappUser = () => {
   }, []);
 
   const tableRows = useMemo(() => {
-    if (isFetching) {
+    if (isFetching && isload) {
       return (
         <TableRow className="w-full">
           <TableCell colSpan={12} className="text-center py-6">

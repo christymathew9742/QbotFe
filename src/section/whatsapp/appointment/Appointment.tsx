@@ -35,6 +35,7 @@ const Appoinment = () => {
   const [page, setPage] = useState(1);
   const [rowsPerPage, setRowsPerPage] = useState(6);
   const [isFetching, setIsFetching] = useState(true);
+  const [isload, setIsLoad] = useState(true)
 
   const appointmentData = useSelector(getAppointmentSelector);
   const pendingStatus = useSelector(getAllPending);
@@ -61,28 +62,32 @@ const Appoinment = () => {
   }, [fetchAppointments]);
 
   const handleSearch = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-    setIsFetching(false);
+    setIsLoad(false)
     setSearch(e.target.value);
     setPage(1);
   }, []);
 
   const handleStatusChange = useCallback((value: string) => {
+    setIsLoad(false)
     setIsFetching(false);
     setStatus(value);
     setPage(1);
   }, []);
 
   const handleDateChange = useCallback((newValue: Dayjs | null) => {
+    setIsLoad(false)
     setIsFetching(false);
     setSelectedDate(newValue);
     setPage(1);
   }, []);
 
   const handleChangePage = useCallback((_: unknown, newPage: number) => {
+    setIsLoad(false)
     setPage(newPage + 1);
   }, []);
 
   const handleChangeRowsPerPage = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
+    setIsLoad(false)
     setRowsPerPage(parseInt(event.target.value, 10));
     setPage(1);
   }, []);
@@ -146,7 +151,7 @@ const Appoinment = () => {
             </div>
             <div className="p-4 border-t dark:border-gray-800 sm:p-6">
               <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-6">
-                {isFetching ? (
+                {isFetching && isload ? (
                   <div className="w-full col-span-3 flex justify-center py-6">
                     <CircularProgress />
                   </div>
