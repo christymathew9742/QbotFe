@@ -14,17 +14,16 @@ const WebHooks = () => {
     const dispatch = useDispatch<AppDispatch>();
     const [isUpdate, setIsUpdate] = useState(false);
     const [isFetching, setIsFetching] = useState(true);
+    const [isload, setIsLoad] = useState(true)
 
     const currentUser = useSelector(getUserSelector);
     const pendingStatus = useSelector(getUpdateUserPendingSelector);
     const userData = currentUser?.user?.data || {};
 
     useEffect(() => {
-        if(isFetching) {
-            setIsFetching(pendingStatus);
-        }
-    }, [pendingStatus]);
-
+        setIsFetching(pendingStatus.fetch);
+    }, [pendingStatus.fetch]);
+    
     const generateToken = useCallback(() => {
         setIsFetching(false)
         setIsUpdate(true);

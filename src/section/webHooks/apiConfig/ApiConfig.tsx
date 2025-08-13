@@ -30,6 +30,7 @@ const ApiConfig = () => {
 
     const [isFetching, setIsFetching] = useState(true);
     const [isUpdate, setIsUpdate] = useState(false);
+    const [isload, setIsLoad] = useState(true)
 
     const fields = FieldConfig.find((sec) => sec.section === "apiconfig")?.fields || [];
     const currentUser = useSelector(getUserSelector);
@@ -52,10 +53,8 @@ const ApiConfig = () => {
     });
 
     useEffect(() => {
-        if(isFetching) {
-            setIsFetching(pendingStatus);
-        }
-    }, [pendingStatus]);
+        setIsFetching(pendingStatus.fetch);
+    }, [pendingStatus.fetch]);
 
     useEffect(() => {
         const loadData = async () => {
@@ -76,7 +75,7 @@ const ApiConfig = () => {
 
     const handleSubmit = useCallback (
         async (values?: FormData) => {
-            setIsFetching(false)
+            // setIsFetching(false)
             setIsUpdate(true);
             setTimeout(async () => {
                 await dispatch(updateUserRequest(values));

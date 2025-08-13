@@ -46,6 +46,7 @@ const ChatBot = () => {
   const [status, setStatus] = useState<string | null>(null);
   const [activeBots, setActiveBots] = useState<Record<string, boolean>>({});
   const [isFetching, setIsFetching] = useState(true);
+  const [isload, setIsLoad] = useState(true)
   const toggleLock = useRef<Record<string, boolean>>({});
 
   useEffect(() => {
@@ -87,6 +88,7 @@ const ChatBot = () => {
         toast.error(`Error in deleting ${title}`);
       } finally {
         setTimeout(() => {
+          setIsLoad(false);
           fetchBots();
         }, 1000);
       } 
@@ -97,16 +99,19 @@ const ChatBot = () => {
   const handleChangePage = (_: any, newPage: number) => setPage(newPage + 1);
 
   const handleChangeRowsPerPage = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setIsLoad(false);
     setRowsPerPage(parseInt(event.target.value, 10));
     setPage(1);
   };
 
   const handleSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setIsLoad(false);
     setSearch(event.target.value);
     setPage(1);
   };
 
   const handleStatusChange = (value: any) => {
+    setIsLoad(false);
     setStatus(value as string | null);
     setPage(1);
   };
@@ -124,6 +129,7 @@ const ChatBot = () => {
       } finally {
         toggleLock.current[bot._id] = false;
         setTimeout(() => {
+          setIsLoad(false);
           fetchBots();
         }, 1000);
       }
@@ -177,7 +183,7 @@ const ChatBot = () => {
                     </TableRow>
                   </TableHeader>
                   <TableBody className="divide-y divide-gray-100 dark:divide-white/[0.05] w-full">
-                    {isFetching ? (
+                    {isFetching && isload ? (
                       <TableRow className="w-full">
                         <TableCell colSpan={12} className="text-center py-6">
                           <CircularProgress />
