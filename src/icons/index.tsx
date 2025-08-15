@@ -62,6 +62,7 @@ import ChatBot from "./chatBot.svg";
 import NoProfileIcon from "./no-profile.svg";
 import Expried from "./expired.svg";
 import View from "./view.svg";
+import AppointmentIcon from "./appointmrnt.svg";
 
 export {
   DownloadIcon,
@@ -128,4 +129,5 @@ export {
   NoProfileIcon,
   Expried,
   View,
+  AppointmentIcon,
 };

@@ -87,8 +87,8 @@ const ChatBot = () => {
         console.error("Error in deleting ChatBot:", error);
         toast.error(`Error in deleting ${title}`);
       } finally {
+        setIsLoad(false);
         setTimeout(() => {
-          setIsLoad(false);
           fetchBots();
         }, 1000);
       } 
@@ -105,13 +105,11 @@ const ChatBot = () => {
   };
 
   const handleSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setIsLoad(false);
     setSearch(event.target.value);
     setPage(1);
   };
 
   const handleStatusChange = (value: any) => {
-    setIsLoad(false);
     setStatus(value as string | null);
     setPage(1);
   };
@@ -128,10 +126,10 @@ const ChatBot = () => {
         console.error("Update failed:", error);
       } finally {
         toggleLock.current[bot._id] = false;
+        setIsLoad(false);
         setTimeout(() => {
-          setIsLoad(false);
           fetchBots();
-        }, 1000);
+        }, 1500);
       }
     },
     [dispatch, fetchBots, pendingStatus.fetch, pendingStatus.update]

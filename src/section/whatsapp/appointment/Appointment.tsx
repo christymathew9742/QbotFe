@@ -39,7 +39,7 @@ const Appoinment = () => {
 
   const appointmentData = useSelector(getAppointmentSelector);
   const pendingStatus = useSelector(getAllPending);
-
+  console.log(appointmentData,'appo')
   useEffect(() => {
     setIsFetching(pendingStatus.fetch);
   }, [pendingStatus.fetch]);
@@ -52,7 +52,7 @@ const Appoinment = () => {
       limit: rowsPerPage,
       ...(selectedDate && { date: dayjs(selectedDate).format("YYYY-MM-DD") }),
     };
-
+console.log(query,'query')
     const queryString = new URLSearchParams(query as any).toString();
     dispatch(fetchAppointmentRequest(queryString));
   }, [dispatch, search, status, selectedDate, page, rowsPerPage]);
@@ -62,21 +62,16 @@ const Appoinment = () => {
   }, [fetchAppointments]);
 
   const handleSearch = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-    setIsLoad(false)
     setSearch(e.target.value);
     setPage(1);
   }, []);
 
   const handleStatusChange = useCallback((value: string) => {
-    setIsLoad(false)
-    setIsFetching(false);
     setStatus(value);
     setPage(1);
   }, []);
 
   const handleDateChange = useCallback((newValue: Dayjs | null) => {
-    setIsLoad(false)
-    setIsFetching(false);
     setSelectedDate(newValue);
     setPage(1);
   }, []);
@@ -178,17 +173,19 @@ const Appoinment = () => {
                             <div>
                               <div className="text-lg font-semibold font-mono">👤{card?.profileName}</div>
                               <div className="text-xxs font-extralight font-mono mt-1">📞 +{card?.whatsAppNumber}</div>
-                              <div
+                              <div 
                                 className={`absolute right-2 top-1.5 z-10 h-3 w-3 rounded-full ${
-                                  card?.status === "booked"
+                                  card?.status?.toLowerCase()?.trim() === "booked"
                                     ? "bg-status-bg-active"
-                                    : card?.status === "cancelled"
+                                    : card?.status?.toLowerCase()?.trim() === "cancelled"
                                     ? "bg-status-bg-cancel"
-                                    : card?.status === "rescheduled"
+                                    : card?.status?.toLowerCase()?.trim() === "rescheduled"
                                     ? "bg-status-bg-reactive"
-                                    : "bg-status-bg-completed"
-                                }`}
-                              />
+                                    : card?.status?.toLowerCase()?.trim() === "completed"
+                                    ? "bg-status-bg-completed"
+                                    : ""
+                                }`}                                
+                              /> {card?.status}
                               <p className="text-sm text-[#666] dark:text-gray-400 mt-4">
                                 📅 {card?.flowTitle}
                               </p>

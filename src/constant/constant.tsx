@@ -7,7 +7,7 @@ export const constantsText = {
         CHAT_BOX:'Create New',
         ICON_TITLE1:'Messages',
         ICON_TITLE2:'Replays',
-        ICON_TITLE3:'Preference',
+        ICON_TITLE3:'Choice',
         ICON_TITLE4:'Group',
         ICON:{
             MESSAGE:'rgb(15 171 73)',

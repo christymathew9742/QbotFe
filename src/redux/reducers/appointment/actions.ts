@@ -22,10 +22,10 @@ import {
 
 // Fetch Appointment
 export const fetchAppointmentRequest = (
-  payload: any
+  payload: any = ''
 ): any => ({
   type: FETCH_APPOINTMENT_REQUEST,
-  payload
+  payload,
 });
 
 export const fetchAppointmentSuccess = (payload: SuccessPayload): FetchAppointmentSuccess => ({
