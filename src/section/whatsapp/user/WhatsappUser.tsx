@@ -72,7 +72,6 @@ const WhatsappUser = () => {
   }, [fetchAppointments]);
 
   const handleSearch = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-    setIsLoad(false)
     setSearch(e.target.value);
     setPage(1);
   }, []);

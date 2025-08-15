@@ -2,7 +2,6 @@ import { useState } from 'react';
 import WysiwygIcon from '@mui/icons-material/Wysiwyg';
 import ImageIcon from '@mui/icons-material/Image';
 import VideoLibraryIcon from '@mui/icons-material/VideoLibrary';
-import YouTubeIcon from '@mui/icons-material/YouTube';
 import InsertDriveFileIcon from '@mui/icons-material/InsertDriveFile';
 import LocationOnIcon from '@mui/icons-material/LocationOn';
 import { constantsText } from '@/constant/constant';
@@ -15,6 +14,8 @@ import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
 import AccessTimeFilledIcon from '@mui/icons-material/AccessTimeFilled';
 import AddBoxIcon from '@mui/icons-material/AddBox';
 import ViewListIcon from '@mui/icons-material/ViewList';
+import AudioFileIcon from '@mui/icons-material/AudioFile';
+import SmartButtonIcon from '@mui/icons-material/SmartButton';
 import {
   isToday,
   isYesterday,
@@ -45,9 +46,9 @@ export const messageIcons = [
   { type: 'Text', icon: <WysiwygIcon sx={{ fontSize: '14px', marginRight: '4px', color: MESSAGE }} /> },
   { type: 'Image', icon: <ImageIcon sx={{ fontSize: '14px', marginRight: '4px', color: MESSAGE }} /> },
   { type: 'Video', icon: <VideoLibraryIcon sx={{ fontSize: '14px', marginRight: '4px', color: MESSAGE }} /> },
-  { type: 'YouTube', icon: <YouTubeIcon sx={{ fontSize: '14px', marginRight: '4px', color: MESSAGE }} /> },
+  { type: 'Audio', icon: <AudioFileIcon sx={{ fontSize: '14px', marginRight: '4px', color: MESSAGE }} /> },
   { type: 'Location', icon: <LocationOnIcon sx={{ fontSize: '14px', marginRight: '4px', color: MESSAGE }} /> },
-  { type: 'File', icon: <InsertDriveFileIcon sx={{ fontSize: '14px', marginRight: '4px', color: MESSAGE }} /> },
+  { type: 'Doc', icon: <InsertDriveFileIcon sx={{ fontSize: '14px', marginRight: '4px', color: MESSAGE }} /> },
 ];
 
 export const replayIcons = [
@@ -63,6 +64,7 @@ export const replayIcons = [
 
 export const Preference = [
   { type: 'List', icon: <ViewListIcon sx={{ fontSize: '14px', marginRight: '4px', color: PREFERENCE }} /> },
+  { type: 'Button', icon: <SmartButtonIcon sx={{ fontSize: '14px', marginRight: '4px', color: PREFERENCE }} /> },
 ];
 
 export const groupIcons = [
