@@ -19,12 +19,10 @@ interface MonthlyTargetProps {
   pendingStatus?: boolean;
 }
 
-export default function WhatsAppMonthlyTarget({
+export default function WhatsAppAvgSentiment ({
   globalAverageSentimentScores,
   pendingStatus,
 }: MonthlyTargetProps) {
-  const isLoading =
-    pendingStatus || !globalAverageSentimentScores || !globalAverageSentimentScores.length;
 
   const ArcSkeleton = () => (
     <svg width="260" height="180" viewBox="0 0 260 180">
@@ -58,7 +56,7 @@ export default function WhatsAppMonthlyTarget({
   );
     
 
-  if (isLoading) {
+  if (pendingStatus) {
     return (
       <div className="rounded-2xl border border-gray-200 bg-gray-100 dark:border-gray-800 dark:bg-white/[0.03]">
         <div className="px-5 pt-5 bg-white shadow-default rounded-2xl pb-11 dark:bg-gray-900 sm:px-6 sm:pt-6">
@@ -94,11 +92,10 @@ export default function WhatsAppMonthlyTarget({
     );
   }
 
-  const { sentimentScore, finalScore, speedScore, behaviourScore } =
-    globalAverageSentimentScores[0] || {};
-
-  const finalScorePercentage = parseFloat(((finalScore / 10) * 100).toFixed(1));
-  const series = [finalScorePercentage];
+  const { sentimentScore, speedScore, behaviourScore } = globalAverageSentimentScores[0] || {};
+  const avgFinalScore = (sentimentScore + speedScore + behaviourScore)/3 || 0.0;
+  const finalScorePercentage = parseFloat((( avgFinalScore / 10) * 100).toFixed(1));
+  const series = [finalScorePercentage || 0.0]; 
 
   const options: ApexOptions = {
     colors: ["#465FFF"],
@@ -150,7 +147,7 @@ export default function WhatsAppMonthlyTarget({
 
         <p className="mx-auto mt-10 w-full max-w-[380px] text-center text-sm text-gray-500 sm:text-base">
           Today's Engagement Overview score of your WhatsApp users is{" "}
-          <span className="text-white">{finalScore}</span>. Keep up the great
+          <span className="text-white">{avgFinalScore.toFixed(1) }</span>. Keep up the great
           engagement!
         </p>
       </div>
@@ -161,7 +158,7 @@ export default function WhatsAppMonthlyTarget({
             Behaviour
           </p>
           <p className="flex items-center justify-center gap-1 text-base font-semibold text-gray-800 dark:text-white/90 sm:text-lg">
-            {behaviourScore}+
+            {behaviourScore || 0.0}
           </p>
         </div>
 
@@ -172,7 +169,7 @@ export default function WhatsAppMonthlyTarget({
             Sentiment
           </p>
           <p className="flex items-center justify-center gap-1 text-base font-semibold text-gray-800 dark:text-white/90 sm:text-lg">
-            {sentimentScore}+
+            {sentimentScore || 0.0}
           </p>
         </div>
 
@@ -183,7 +180,7 @@ export default function WhatsAppMonthlyTarget({
             Interaction
           </p>
           <p className="flex items-center justify-center gap-1 text-base font-semibold text-gray-800 dark:text-white/90 sm:text-lg">
-            {speedScore}+
+            {speedScore || 0.0}
           </p>
         </div>
       </div>

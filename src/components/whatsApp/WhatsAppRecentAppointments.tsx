@@ -1,173 +1,115 @@
-import {
-    Table,
-    TableBody,
-    TableCell,
-    TableHeader,
-    TableRow,
-  } from "../ui/table";
-  import Badge from "../ui/badge/Badge";
-  import Image from "next/image";
-  
-  // Define the TypeScript interface for the table rows
-  interface Product {
-    id: number; // Unique identifier for each product
-    name: string; // Product name
-    variants: string; // Number of variants (e.g., "1 Variant", "2 Variants")
-    category: string; // Category of the product
-    price: string; // Price of the product (as a string with currency symbol)
-    // status: string; // Status of the product
-    image: string; // URL or path to the product image
-    status: "Delivered" | "Pending" | "Canceled"; // Status of the product
-  }
-  
-  // Define the table data using the interface
-  const tableData: Product[] = [
+"use client";
+import { AppointmentIcon } from "@/icons";
+import React from "react";
+import { Skeleton } from "@mui/material";
+
+interface StatCardProps {
+  appointmentStatus?: {
+    todaysAppointments?: number;
+    totalStatusCounts?: Record<string, number>;
+    totalBookings?: number;
+    todaysCancelledAppointments?: number;
+    todaysCompletedAppointments?: number;
+    totalAppointments?: number;
+  };
+  pendingStatus?: boolean;
+}
+
+interface StatCardItem {
+  title: string;
+  subtitle: string;
+  total: number;
+  today: number;
+  theme: string;
+}
+
+const WhatsAppStatCard: React.FC<StatCardProps> = ({
+  appointmentStatus,
+  pendingStatus = false,
+}) => {
+  const stats: StatCardItem[] = [
     {
-      id: 1,
-      name: "MacBook Pro 13”",
-      variants: "2 Variants",
-      category: "Laptop",
-      price: "$2399.00",
-      status: "Delivered",
-      image: "/images/product/product-01.jpg", // Replace with actual image URL
+      title: "Total Appointments",
+      subtitle: "Today's Bookings",
+      total: appointmentStatus?.totalAppointments ?? 0,
+      today: appointmentStatus?.todaysAppointments ?? 0,
+      theme: "bg-success-500/[0.08] text-success-500",
     },
     {
-      id: 2,
-      name: "Apple Watch Ultra",
-      variants: "1 Variant",
-      category: "Watch",
-      price: "$879.00",
-      status: "Pending",
-      image: "/images/product/product-02.jpg", // Replace with actual image URL
+      title: "Completed Appointments",
+      subtitle: "Today's Completed",
+      total: appointmentStatus?.totalStatusCounts?.completed ?? 0,
+      today: appointmentStatus?.todaysCompletedAppointments ?? 0,
+      theme: "bg-blue-500/[0.08] text-blue-light-500",
     },
     {
-      id: 3,
-      name: "iPhone 15 Pro Max",
-      variants: "2 Variants",
-      category: "SmartPhone",
-      price: "$1869.00",
-      status: "Delivered",
-      image: "/images/product/product-03.jpg", // Replace with actual image URL
-    },
-    {
-      id: 4,
-      name: "iPad Pro 3rd Gen",
-      variants: "2 Variants",
-      category: "Electronics",
-      price: "$1699.00",
-      status: "Canceled",
-      image: "/images/product/product-04.jpg", // Replace with actual image URL
-    },
-    {
-      id: 5,
-      name: "AirPods Pro 2nd Gen",
-      variants: "1 Variant",
-      category: "Accessories",
-      price: "$240.00",
-      status: "Delivered",
-      image: "/images/product/product-05.jpg", // Replace with actual image URL
+      title: "Cancelled Appointments",
+      subtitle: "Today's Cancelled",
+      total: appointmentStatus?.totalStatusCounts?.cancelled ?? 0,
+      today: appointmentStatus?.todaysCancelledAppointments ?? 0,
+      theme: "bg-red-500/[0.08] text-red-500",
     },
   ];
-  
-  export default function WhatsAppRecentAppointments(
-    {
-        todaysAppointments,
-        pendingStatus
-    }:any
-  ) {
-    return (
-      <div className="overflow-hidden rounded-2xl border border-gray-200 bg-white px-4 pb-3 pt-4 dark:border-gray-800 dark:bg-white/[0.03] sm:px-6">
-        <div className="flex flex-col gap-2 mb-4 sm:flex-row sm:items-center sm:justify-between">
-          <div>
-            <h3 className="text-lg font-semibold text-gray-800 dark:text-white/90">
-              Recent Appointments
-            </h3>
+
+  const renderOrSkeleton = (showSkeleton: boolean, className: string, content: React.ReactNode) =>
+    showSkeleton ? (
+      <Skeleton animation="wave" className={`${className} dark:!bg-gray-800`} />
+    ) : (
+      content
+    );
+
+  return (
+    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+      {stats.map((item, idx) => (
+        <div
+          key={idx}
+          className={`flex items-center justify-between rounded-2xl border border-gray-100 bg-white ${pendingStatus ? 'px-3' : 'p-4'} dark:border-gray-800 dark:bg-white/[0.03]`}
+        >
+          <div className="flex items-center gap-4">
+            {renderOrSkeleton(
+              pendingStatus,
+              "!rounded-2xl !w-12 !h-20",
+              <div className={`flex h-[52px] w-[52px] items-center justify-center rounded-xl ${item.theme}`}>
+                <AppointmentIcon />
+              </div>
+            )}
+            <div>
+              {renderOrSkeleton(
+                pendingStatus,
+                "!w-10 !h-4",
+                <h4 className="mb-1 text-sm font-medium text-gray-800 dark:text-white/90">
+                  {item.title}
+                </h4>
+              )}
+              {renderOrSkeleton(
+                pendingStatus,
+                "!w-10 !h-4",
+                <span className="block text-sm text-gray-500 dark:text-gray-400">
+                  {item.subtitle}
+                </span>
+              )}
+            </div>
+          </div>
+          <div className="text-right">
+            {renderOrSkeleton(
+              pendingStatus,
+              "!w-10 !h-4",
+              <span className="mb-1 block text-sm text-gray-500 dark:text-gray-400">
+                {item.total}
+              </span>
+            )}
+            {renderOrSkeleton(
+              pendingStatus,
+              "!w-10 !h-4",
+              <span className="block text-sm text-gray-500 dark:text-gray-400">
+                {item.today}
+              </span>
+            )}
           </div>
         </div>
-        <div className="max-w-full overflow-x-auto">
-          <Table>
-            {/* Table Header */}
-            <TableHeader className="border-gray-100 dark:border-gray-800 border-y">
-              <TableRow>
-                <TableCell
-                  isHeader
-                  className="py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400"
-                >
-                  Products
-                </TableCell>
-                <TableCell
-                  isHeader
-                  className="py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400"
-                >
-                  Category
-                </TableCell>
-                <TableCell
-                  isHeader
-                  className="py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400"
-                >
-                  Price
-                </TableCell>
-                <TableCell
-                  isHeader
-                  className="py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400"
-                >
-                  Status
-                </TableCell>
-              </TableRow>
-            </TableHeader>
-  
-            {/* Table Body */}
-  
-            <TableBody className="divide-y divide-gray-100 dark:divide-gray-800">
-              {tableData.map((product) => (
-                <TableRow key={product.id} className="">
-                  <TableCell className="py-3">
-                    <div className="flex items-center gap-3">
-                      <div className="h-[50px] w-[50px] overflow-hidden rounded-md">
-                        <Image
-                          width={50}
-                          height={50}
-                          src={product.image}
-                          className="h-[50px] w-[50px]"
-                          alt={product.name}
-                        />
-                      </div>
-                      <div>
-                        <p className="font-medium text-gray-800 text-theme-sm dark:text-white/90">
-                          {product.name}
-                        </p>
-                        <span className="text-gray-500 text-theme-xs dark:text-gray-400">
-                          {product.variants}
-                        </span>
-                      </div>
-                    </div>
-                  </TableCell>
-                  <TableCell className="py-3 text-gray-500 text-theme-sm dark:text-gray-400">
-                    {product.price}
-                  </TableCell>
-                  <TableCell className="py-3 text-gray-500 text-theme-sm dark:text-gray-400">
-                    {product.category}
-                  </TableCell>
-                  <TableCell className="py-3 text-gray-500 text-theme-sm dark:text-gray-400">
-                    <Badge
-                      size="sm"
-                      color={
-                        product.status === "Delivered"
-                          ? "success"
-                          : product.status === "Pending"
-                          ? "warning"
-                          : "error"
-                      }
-                    >
-                      {product.status}
-                    </Badge>
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </div>
-      </div>
-    );
-  }
-  
+      ))}
+    </div>
+  );
+};
+
+export default WhatsAppStatCard;

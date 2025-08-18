@@ -39,7 +39,7 @@ const Appoinment = () => {
 
   const appointmentData = useSelector(getAppointmentSelector);
   const pendingStatus = useSelector(getAllPending);
-  console.log(appointmentData,'appo')
+
   useEffect(() => {
     setIsFetching(pendingStatus.fetch);
   }, [pendingStatus.fetch]);
@@ -52,7 +52,7 @@ const Appoinment = () => {
       limit: rowsPerPage,
       ...(selectedDate && { date: dayjs(selectedDate).format("YYYY-MM-DD") }),
     };
-console.log(query,'query')
+
     const queryString = new URLSearchParams(query as any).toString();
     dispatch(fetchAppointmentRequest(queryString));
   }, [dispatch, search, status, selectedDate, page, rowsPerPage]);
@@ -185,7 +185,7 @@ console.log(query,'query')
                                     ? "bg-status-bg-completed"
                                     : ""
                                 }`}                                
-                              /> {card?.status}
+                              />
                               <p className="text-sm text-[#666] dark:text-gray-400 mt-4">
                                 📅 {card?.flowTitle}
                               </p>
