@@ -1,112 +1,5 @@
-// "use client";
-// import { ApexOptions } from "apexcharts";
-// import dynamic from "next/dynamic";
-// import { useState } from "react";
-
-// // Dynamically import the ReactApexChart component
-// const ReactApexChart = dynamic(() => import("react-apexcharts"), {
-//   ssr: false,
-// });
-
-// // Month names map
-// const monthNames = [
-//   "Jan","Feb","Mar","Apr","May","Jun",
-//   "Jul","Aug","Sep","Oct","Nov","Dec"
-// ];
-
-// interface MonthlyAppointment {
-//   month: number;
-//   count: number;
-// }
-
-// interface WhatsAppMonthlySalesChartProps {
-//   monthlyAppointments: MonthlyAppointment[];
-//   pendingStatus?: any;
-// }
-
-// export default function WhatsAppMonthlySalesChart({
-//   monthlyAppointments,
-//   pendingStatus = false,
-// }: WhatsAppMonthlySalesChartProps) {
-//   const seriesData = monthlyAppointments.map(item => item.count); 
-//   //const seriesData = [1,4,10,20,250,150,300,100,200,300,0,100,500];
-//   const categories = monthlyAppointments.map(item => monthNames[item.month - 1]);
-//   const maxValue = Math.max(...seriesData, 10);
-//   const seriesPercent = seriesData.map(val => (val / maxValue) * 100);
-
-//   const options: ApexOptions = {
-//     colors: ["#465fff"],
-//     chart: {
-//       fontFamily: "Outfit, sans-serif",
-//       type: "bar",
-//       height: 180,
-//       toolbar: { show: true },
-//     },
-//     plotOptions: {
-//       bar: {
-//         horizontal: false,
-//         columnWidth: "39%",
-//         borderRadius: 5,
-//         borderRadiusApplication: "end",
-//       },
-//     },
-//     dataLabels: { enabled: false },
-//     stroke: { show: true, width: 4, colors: ["transparent"] },
-//     xaxis: { 
-//       categories,
-//       axisBorder: { show: false },
-//       axisTicks: { show: false },
-//     },
-//     yaxis: {
-//       min: 0,
-//       max: 100, 
-//       tickAmount: 5,
-//       labels: { formatter: (val: number) => `${val}%` },
-//       title: { text: "" },
-//     },
-//     grid: { yaxis: { lines: { show: true } } },
-//     fill: { opacity: 1 },
-//     tooltip: {
-//       x: { show: false },
-//       y: { 
-//         formatter: (val: number, { dataPointIndex }) => `${seriesData[dataPointIndex]}` 
-//       },
-//     },
-//     legend: {
-//       show: true,
-//       position: "top",
-//       horizontalAlign: "left",
-//       fontFamily: "Outfit",
-//     },
-//   };
-  
-//   // Series using percentage-scaled data
-//   const series = [{ name: "Appointments", data: seriesPercent }];
-
-//   // const series = [{ name: "Sales", data: seriesData }];
-
-//   const [isOpen, setIsOpen] = useState(false);
-//   const toggleDropdown = () => setIsOpen(!isOpen);
-//   const closeDropdown = () => setIsOpen(false);
-
-//   return (
-//     <div className="overflow-hidden rounded-2xl border border-gray-200 bg-white px-5 pt-5 dark:border-gray-800 dark:bg-white/[0.03] sm:px-6 sm:pt-6">
-//       <div className="flex items-center justify-between">
-//         <h3 className="text-lg font-semibold text-gray-800 dark:text-white/90">
-//           Monthly Appointments
-//         </h3>
-//       </div>
-//       <div className="max-w-full overflow-x-auto custom-scrollbar">
-//         <div className="-ml-5 min-w-[650px] xl:min-w-full pl-2">
-//           <ReactApexChart options={options} series={series} type="bar" height={180} />
-//         </div>
-//       </div>
-//     </div>
-//   );
-// }
-
-
 "use client";
+
 import { ApexOptions } from "apexcharts";
 import dynamic from "next/dynamic";
 import { Skeleton, Box, Typography } from "@mui/material";
@@ -131,7 +24,7 @@ interface WhatsAppMonthlySalesChartProps {
   pendingStatus?: boolean;
 }
 
-export default function WhatsAppMonthlySalesChart({
+export default function WhatsAppMonthlyAppointmentChart({
   monthlyAppointments,
   pendingStatus = true,
 }: WhatsAppMonthlySalesChartProps) {

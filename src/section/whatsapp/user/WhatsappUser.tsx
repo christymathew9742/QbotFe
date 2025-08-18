@@ -33,6 +33,7 @@ interface User {
   statusCounts: number;
   userType: string;
   totalAppointments: string;
+  avgSentimentScores: any;
 }
 
 const WhatsappUser = () => {
@@ -141,13 +142,13 @@ const WhatsappUser = () => {
           {user?.profileName}
         </TableCell>
         <TableCell colSpan={2} className="px-5 py-2 font-light dark:text-white/90 text-theme-sm text-center">
-          <span className={`text-xxxs px-2 py-1 rounded-full font-medium text-center ${sentimentScoreClass(user?.sentimentScores?.speedScore)}`}>
-            {appointmentData?.averageSentimentScores?.sentimentScores?.speedScore}
+          <span className={`text-xxxs px-2 py-1 rounded-full font-medium text-center ${sentimentScoreClass(user?.avgSentimentScores?.speedScore)}`}>
+            {user?.avgSentimentScores?.speedScore}
           </span>
         </TableCell>
         <TableCell colSpan={2} className="px-5 py-2 text-center font-light dark:text-white/90 text-theme-sm">
-          <span className={`text-xxxs px-2 py-1 rounded-full font-medium text-center ${sentimentScoreClass(user?.sentimentScores?.sentimentScore)}`}>
-            {appointmentData?.averageSentimentScores?.sentimentScores?.sentimentScore}
+          <span className={`text-xxxs px-2 py-1 rounded-full font-medium text-center ${sentimentScoreClass(user?.avgSentimentScores?.sentimentScore)}`}>
+            {user?.avgSentimentScores?.sentimentScore}
           </span>
         </TableCell>
         <TableCell colSpan={2} className="px-5 py-2 text-center text-gray-500 text-theme-sm">

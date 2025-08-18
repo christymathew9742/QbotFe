@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useCallback, useEffect, useMemo, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { CircularProgress } from "@mui/material";
 import { Formik, Form } from "formik";
 import * as Yup from "yup";
@@ -25,12 +25,17 @@ interface FormData {
     phonenumberid: string;
 }
 
+interface UserUpdates {
+    sucess: boolean;
+    message: string;
+}
+
 const ApiConfig = () => {
     const dispatch = useDispatch<AppDispatch>();
 
     const [isFetching, setIsFetching] = useState(true);
     const [isUpdate, setIsUpdate] = useState(false);
-    const [isload, setIsLoad] = useState(true)
+    const [isload, setIsLoad] = useState(true);
 
     const fields = FieldConfig.find((sec) => sec.section === "apiconfig")?.fields || [];
     const currentUser = useSelector(getUserSelector);
@@ -66,25 +71,30 @@ const ApiConfig = () => {
     }, [dispatch]);
 
     useEffect(() => {
-        if (userUpdate?.success && !isUpdate) {
+        if(isload) return;
+
+        if (userUpdate?.success) {
             toast.success(userUpdate?.message || "Updated successfully");
         } else if (userUpdate?.success === false) {
             toast.error(userUpdate?.message || "Update failed");
         }
-    }, [userUpdate, pendingStatus, isUpdate]);
+    }, [userUpdate,isUpdate]);
 
     const handleSubmit = useCallback (
-        async (values?: FormData) => {
-            // setIsFetching(false)
+        
+        async (values?: FormData, userUpdate?: UserUpdates) => {
             setIsUpdate(true);
+            setIsLoad(false);
             setTimeout(async () => {
-                await dispatch(updateUserRequest(values));
+                await dispatch(updateUserRequest(values)); 
+                toast.info(userUpdate?.message);
                 setIsUpdate(false);
+                setIsLoad(true);
             }, 1500);
         },
         [dispatch]
     );
-  
+      
     if (isFetching) {
         return (
         <div className="flex justify-center items-center h-64">
@@ -124,7 +134,7 @@ const ApiConfig = () => {
                                 initialValues={initialValues}
                                 enableReinitialize
                                 validationSchema={validationSchema}
-                                onSubmit={handleSubmit}
+                                onSubmit={(values) => handleSubmit(values, userUpdate)}
                             >
                                 <Form>
                                     {fields.map((field) => (
