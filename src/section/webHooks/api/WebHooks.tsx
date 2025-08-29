@@ -17,8 +17,8 @@ const WebHooks = () => {
     const [isload, setIsLoad] = useState(true)
 
     const currentUser = useSelector(getUserSelector);
-    const pendingStatus = useSelector(getUpdateUserPendingSelector);
-    const userData = currentUser?.user?.data || {};
+    const pendingStatus:any = useSelector(getUpdateUserPendingSelector);
+    const userData = currentUser?.data || {};
 
     useEffect(() => {
         setIsFetching(pendingStatus.fetch);
@@ -75,6 +75,7 @@ const WebHooks = () => {
                             value={`${baseURL}/whatsapp/webhook`}
                             title="This is the URL Meta will send you events."
                             disabled
+                            type="password"
                         />
 
                         <CopyField
@@ -85,6 +86,7 @@ const WebHooks = () => {
                             onClick={generateToken}
                             disabled
                             update={isUpdate}
+                            type="password"
                         />
                         </div>
                     </div>

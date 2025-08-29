@@ -9,7 +9,7 @@ export default function UserInfoCard() {
   const dispatch = useDispatch<AppDispatch>();
   const currentUser = useSelector(getUserSelector);
   const pendingUpdates = useSelector(getUpdateUserPendingSelector);
-  const userData = currentUser?.user?.data || {};
+  const userData = currentUser?.data || {};
   const pendingFetch = useSelector(getFetchPendingSelector);
 
   useEffect(() => {

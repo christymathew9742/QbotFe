@@ -8,12 +8,12 @@ export default function AuthLayout({
   children: React.ReactNode;
 }) {
   return (
-    <div className="relative p-6 bg-white z-1 dark:bg-gray-900 sm:p-0">
+    <div className="relative p-6 z-1 sm:p-0 dark:bg-gray-900">
       <ThemeProvider>
         <div className="relative flex lg:flex-row w-full h-screen justify-center flex-col  dark:bg-gray-900 sm:p-0">
           <div className="lg:w-1/2 w-full h-full  dark:bg-white/5 lg:grid items-center hidden">
             <div className="relative items-center justify-center  flex z-1">
-              <GridShape />
+              {/* <GridShape /> */}
               <div className="flex flex-col items-center max-w-xs">
               </div>
             </div>

@@ -39,9 +39,9 @@ const ApiConfig = () => {
 
     const fields = FieldConfig.find((sec) => sec.section === "apiconfig")?.fields || [];
     const currentUser = useSelector(getUserSelector);
-    const pendingStatus = useSelector(getUpdateUserPendingSelector);
+    const pendingStatus:any = useSelector(getUpdateUserPendingSelector);
 
-    const userData = currentUser?.user?.data || {};
+    const userData = currentUser?.data || {};
     const userUpdate = currentUser?.userResponse?.user || {};
 
     const initialValues = useMemo<FormData>(
@@ -64,7 +64,7 @@ const ApiConfig = () => {
     useEffect(() => {
         const loadData = async () => {
             setIsFetching(true);
-            await dispatch(fetchUserRequest());
+            dispatch(fetchUserRequest());
             setIsFetching(false);
         };
         loadData();
@@ -87,7 +87,7 @@ const ApiConfig = () => {
             setIsLoad(false);
             setTimeout(async () => {
                 await dispatch(updateUserRequest(values)); 
-                toast.info(userUpdate?.message);
+                // toast.info(userUpdate?.message);
                 setIsUpdate(false);
                 setIsLoad(true);
             }, 1500);
@@ -113,7 +113,6 @@ const ApiConfig = () => {
                             API Configuration
                         </h3>
                     </div>
-
                     <div className="p-4 border-t border-gray-100 dark:border-gray-800 sm:p-6">
                         <div className="p-4 mx-auto overflow-hidden rounded-xl border border-gray-200 bg-white dark:border-white/[0.05] dark:bg-white/[0.03] sm:p-6">
                             <h3 className="mb-2 text-base font-medium text-gray-800 dark:text-white/90">Integrations</h3>
@@ -129,7 +128,6 @@ const ApiConfig = () => {
                                     Learn more
                                 </a>
                             </p>
-
                             <Formik
                                 initialValues={initialValues}
                                 enableReinitialize
@@ -156,7 +154,6 @@ const ApiConfig = () => {
                                             "Update"
                                         )}
                                     </Button>
-
                                 </Form>
                             </Formik>
                         </div>
@@ -168,7 +165,6 @@ const ApiConfig = () => {
 };
 
 export default ApiConfig;
-
 
 
 

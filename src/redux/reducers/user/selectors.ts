@@ -2,25 +2,39 @@ import { createSelector } from 'reselect';
 import { RootState } from '@/redux/store';
 
 const getPending = (state: RootState) => state?.userReducer?.pending;
-const getUser = (state: RootState) => state?.userReducer;
+const getUsers = (state: RootState) => state.userReducer?.user;
+const getWhatsAppUsers = (state: RootState) => state.userReducer?.whatsAppUsers;
+const getGlobalData = (state: RootState) => state.userReducer?.globalData
 const getError = (state: RootState) => state?.userReducer;
 
-export const getUserSelector = createSelector(getUser, (user:any) => user)
+export const getUserSelector = createSelector(getUsers, (userState:any) => userState)
+export const getWhatsAppUserSelector = createSelector(getWhatsAppUsers,(whatsAppUsers:any) => whatsAppUsers);
+export const getWhatsAppGlobaleSelector = createSelector(getGlobalData,(globalData:any) => globalData);
 export const getAllPending = createSelector(getPending,(pending:any) => pending);
 export const getErrorSelector = createSelector(getError, (error:any) => error);
 
-// New selectors for each pending flag
+// Pending selectors
 export const getFetchPendingSelector = createSelector(
   getPending,
-  (pending:any)  => pending?.fetch
+  (pending) => pending?.fetch
+);
+
+export const getFetchWhatsAppUserPendingSelector = createSelector(
+  getPending,
+  (pending) => pending?.whatsAppUser
+);
+
+export const getFetchWhatsAppPendingSelector = createSelector(
+  getPending,
+  (pending) => pending?.globalData
 );
 
 export const getUpdateUserPendingSelector = createSelector(
   getPending,
-  (pending:any) => pending?.update
+  (pending) => pending?.update
 );
 
 export const getUpdateUserPostSelector = createSelector(
   getPending,
-  (pending:any) => pending?.post
+  (pending) => pending?.post
 );

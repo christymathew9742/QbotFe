@@ -320,14 +320,12 @@ const ChatBotDetails = () => {
 
   const saveData = useCallback(
     async () => {
-      if (!reactFlowInstance.current) {
+      if (!reactFlowInstance?.current) {
         console.error("React Flow instance is not available");
         return;
       }
-      const flowData: FlowData | any = reactFlowInstance.current.toObject();
-      console.log("Flow Data:", flowData);
+      const flowData: FlowData | any = reactFlowInstance?.current.toObject();
       const sanitizedData = sanitizeFlowData(flowData);
-      console.log("Sanitized Data:", sanitizedData);
       const botData = { ...sanitizedData };
       const update = flowData.nodes.length > 0 
         && flowData.nodes.every((node:FlowData) => 

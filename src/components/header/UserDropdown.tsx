@@ -19,7 +19,7 @@ export default function UserDropdown() {
   const { accessToken } = parseCookies();
   const dispatch = useDispatch<AppDispatch>();
   const currentUser = useSelector(getUserSelector);
-  const userData = currentUser?.user?.data;
+  const userData = currentUser?.data;
   const userProfileImage = userData?.profilepick?.fileUrl ? userData?.profilepick?.fileUrl :userData?.googleProfilePic;
 
   function toggleDropdown(e: React.MouseEvent<HTMLButtonElement, MouseEvent>) {
@@ -75,10 +75,10 @@ export default function UserDropdown() {
       >
         <div>
           <span className="block font-medium text-gray-700 text-theme-sm dark:text-gray-400">
-          {currentUser?.user?.data?.username}
+            {userData?.username}
           </span>
           <span className="mt-0.5 block text-theme-xs text-gray-500 dark:text-gray-400">
-           {currentUser?.user?.data?.email}
+            {userData?.email}
           </span>
         </div>
         <ul className="flex flex-col gap-1 pt-4 pb-3 border-b border-gray-200 dark:border-gray-800">

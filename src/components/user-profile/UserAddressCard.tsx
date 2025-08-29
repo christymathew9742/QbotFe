@@ -12,7 +12,7 @@ export default function UserAddressCard() {
   const currentUser = useSelector(getUserSelector);
   const pendingUpdates = useSelector(getUpdateUserPendingSelector);
   const pendingFetch = useSelector(getFetchPendingSelector);
-  const userData = currentUser?.user?.data || {};
+  const userData = currentUser?.data || {};
 
   useEffect(() => {
       dispatch(fetchUserRequest());

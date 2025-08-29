@@ -44,8 +44,6 @@ const ResetPassword = () => {
         if (error || !result?.success) {
           return toast.error(error || 'Invalid OTP');
         }
-
-        // Preventing manual access to password reset without valid verification
         setUserId(result?.userId);
         setVerified(true);
         setStep('password');

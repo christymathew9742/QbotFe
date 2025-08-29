@@ -43,7 +43,7 @@ const ChatBot = () => {
   const [page, setPage] = useState(1);
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [search, setSearch] = useState("");
-  const [status, setStatus] = useState<string | null>(null);
+  const [status, setStatus] = useState<string | null>("");
   const [activeBots, setActiveBots] = useState<Record<string, boolean>>({});
   const [isFetching, setIsFetching] = useState(true);
   const [isload, setIsLoad] = useState(true)
@@ -90,7 +90,7 @@ const ChatBot = () => {
         setIsLoad(false);
         setTimeout(() => {
           fetchBots();
-        }, 1000);
+        }, 500);
       } 
     },
     [dispatch, fetchBots, isFetching]
@@ -127,9 +127,11 @@ const ChatBot = () => {
       } finally {
         toggleLock.current[bot._id] = false;
         setIsLoad(false);
-        setTimeout(() => {
-          fetchBots();
-        }, 1500);
+        if(status !== "") {
+          setTimeout(() => {
+            fetchBots();
+          }, 500);
+        }
       }
     },
     [dispatch, fetchBots, pendingStatus.fetch, pendingStatus.update]
@@ -137,8 +139,8 @@ const ChatBot = () => {
 
   const options = [
     { value: "", label: "All" },
-    { value: "true", label: "Enabled" },
-    { value: "false", label: "Disabled" },
+    { value: "enabled", label: "Enabled" },
+    { value: "disabled", label: "Disabled" },
   ];
 
   return (

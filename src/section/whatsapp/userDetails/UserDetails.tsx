@@ -8,10 +8,10 @@ import { useAlert } from "@/components/alert/alert";
 
 import PageBreadcrumb from "@/components/common/PageBreadCrumb";
 import { AppDispatch } from "@/redux/store";
-import { getAllPending, getAppointmentSelector } from "@/redux/reducers/appointment/selectors";
-import { fetchAppointmentRequest } from "@/redux/reducers/appointment/actions";
 import { formatString, formatUpdatedDate } from "@/utils/utils";
 import SentimentChartOne from "@/components/charts/sentimentScores/SentimentScores";
+import { fetchWhatsAppUserRequest } from "@/redux/reducers/user/actions";
+import { getWhatsAppUserSelector, getAllPending } from "@/redux/reducers/user/selectors";
 
 const UserDetails: React.FC = () => {
     const dispatch = useDispatch<AppDispatch>();
@@ -19,9 +19,8 @@ const UserDetails: React.FC = () => {
     const { renderAlert } = useAlert();
 
     const userId = useMemo(() => searchParams.get("userId"), [searchParams]);
-
-    const appointmentData = useSelector(getAppointmentSelector);
     const pendingStatus = useSelector(getAllPending);
+    const userData = useSelector(getWhatsAppUserSelector);
 
     const [isFetching, setIsFetching] = useState(true);
     const [error, setError] = useState<string | null>(null);
@@ -35,7 +34,7 @@ const UserDetails: React.FC = () => {
         }
             setIsFetching(true);
             setError(null);
-            dispatch(fetchAppointmentRequest(userId));
+            dispatch(fetchWhatsAppUserRequest(userId));
     }, [userId, dispatch]);
 
     useEffect(() => {
@@ -48,30 +47,30 @@ const UserDetails: React.FC = () => {
             setError(null)
             return;
         }
-        if (!pendingStatus.fetch && appointmentData?.data) {
-            setUserDetails(appointmentData.data);
+        if (!pendingStatus.fetch && userData?.data) {
+            setUserDetails(userData.data);
             setIsFetching(false);
             setError(null);
-        } else if (!pendingStatus.fetch && !appointmentData?.data) {
+        } else if (!pendingStatus.fetch && !userData?.data) {
             setUserDetails(null);
             setIsFetching(false);
             setError("No user data found.");
         }
-    }, [pendingStatus, appointmentData]);
+    }, [pendingStatus, userData]);
 
     const infoItems = useMemo(
         () => [
-            { label: "User Name :", value: userDetails?.appointment?.profileName },
-            { label: "Last appointment :", value: userDetails?.latestFlowTitle },
-            { label: "Sentiment Score :", value: `${userDetails?.averageSentimentScores?.sentimentScores?.sentimentScore}/10` },
-            { label: "Interaction Speed :", value: `${userDetails?.averageSentimentScores?.sentimentScores?.speedScore}/10` },
+            { label: "User Name :", value: userDetails?.profileName },
+            { label: "Last appointment :", value: userDetails?.flowTitle },
+            { label: "Sentiment Score :", value: `${userDetails?.avgSentimentScores?.sentimentScore}/10` },
+            { label: "Interaction Speed :", value: `${userDetails?.avgSentimentScores?.speedScore}/10` },
             { label: "Total Appointment :", value: userDetails?.totalAppointments || 0 },
             { label: "User Type :", value: userDetails?.userType },
-            { label: "Behaviour Score :", value: `${userDetails?.averageSentimentScores?.sentimentScores?.behaviourScore}/10` },
-            { label: "User Number :", value: userDetails?.appointment?.whatsAppNumber },
-            { label: "Last Appointment Status :", value: formatString(userDetails?.latestStatus) },
-            { label: "User Created :", value: formatUpdatedDate(userDetails?.appointment?.userCreated) },
-            { label: "Last Visited :", value: formatUpdatedDate(userDetails?.appointment?.lastActiveAt) },
+            { label: "Behaviour Score :", value: `${userDetails?.avgSentimentScores?.behaviourScore}/10` },
+            { label: "User Number :", value: userDetails?.whatsAppNumber },
+            { label: "Last Appointment Status :", value: formatString(userDetails?.status) },
+            { label: "User Created :", value: formatUpdatedDate(userDetails?.createdAt) },
+            { label: "Last Visited :", value: formatUpdatedDate(userDetails?.lastActiveAt) },
         ],
         [userDetails]
     );
@@ -110,7 +109,7 @@ const UserDetails: React.FC = () => {
                             <div className="px-4 py-2 w-full">
                                 <h3 className="text-lg font-semibold text-gray-800 dark:text-white">Details</h3>
                             </div>
-                            <div className="p-4 border-t dark:border-gray-800 sm:p-6 overflow-y-auto custom-scrollbar max-h-[350px]">
+                            <div className="p-4 border-t dark:border-gray-800 sm:p-6 overflow-y-auto custom-scrollbar h-[350px]">
                                 <div className="border dark:border-gray-700 rounded-[4px]">
                                     {infoItems.map(({ label, value }, idx) => (
                                         <div
@@ -133,7 +132,7 @@ const UserDetails: React.FC = () => {
                             <div className="px-4 py-2">
                                 <h3 className="text-lg font-semibold text-gray-800 dark:text-white">Activities</h3>
                             </div>
-                            <div className="p-4 border-t dark:border-gray-800 sm:p-6 overflow-y-auto custom-scrollbar max-h-[350px] space-y-4">
+                            <div className="p-4 border-t dark:border-gray-800 sm:p-6 overflow-y-auto custom-scrollbar h-[350px] space-y-4">
                                 <SentimentChartOne appointments={userDetails?.sentimentData} />
                             </div>
                             <div className="grid grid-cols-1 gap-2  px-4 py-2 border-t dark:border-gray-800 "></div>
