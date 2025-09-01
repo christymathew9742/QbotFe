@@ -207,12 +207,12 @@ const Appoinment = () => {
           </div>
         </div>
       </div>
-      {appointmentData?.total > 5 && (
+      {appointmentData?.totalBookings > 6 && (
         <TablePagination
           component="div"
           className="text-amber-50"
           rowsPerPageOptions={[5, 10, 25]}
-          count={appointmentData?.total || 0}
+          count={appointmentData?.totalBookings || 0}
           page={page - 1}
           onPageChange={handleChangePage}
           rowsPerPage={rowsPerPage}

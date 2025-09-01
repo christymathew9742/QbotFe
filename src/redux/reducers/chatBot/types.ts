@@ -11,7 +11,7 @@ import {
     DELETE_BOT_REQUEST,
     DELETE_BOT_SUCCESS,
     DELETE_BOT_FAILURE,
-    FETCH_REYAL_TIME_BOT,
+    FETCH_REAL_TIME_BOT,
     WEBSOCKET_CONNECTED,
     WEBSOCKET_DISCONNECTED,
     WEBSOCKET_ERROR,
@@ -71,7 +71,7 @@ export type PostBotRequest = {
 };
   
 export type PostFetchBotRequest = {
-    type: typeof FETCH_REYAL_TIME_BOT;
+    type: typeof FETCH_REAL_TIME_BOT;
 };
   
 export type PostBotSuccess = {

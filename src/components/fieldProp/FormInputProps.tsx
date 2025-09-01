@@ -112,7 +112,20 @@ const FormInputProps: React.FC<FieldPropComponentProps> = ({ Config }) => {
                 );
                 case 'password':
                 return (
-                    <>
+                    <div className="mb-4">
+                        {labelTop && (
+                        <label htmlFor={'id'} className="block mb-2 pt-0 text-sm font-medium text-gray-900 dark:text-white">
+                            {labelTop}
+                            {toolTip && (
+                            <span
+                                className="ml-2 inline-block bg-black text-white rounded-full w-3 h-3 text-xs text-center leading-3 cursor-pointer text-[10px] dark:border dark:border-gray-600"
+                                title={toolTip}
+                            >
+                                i
+                            </span>
+                            )}
+                        </label>
+                        )}
                         <TextField
                             {...commonProps}
                             type={showPassword ? 'text' : 'password'}
@@ -133,14 +146,14 @@ const FormInputProps: React.FC<FieldPropComponentProps> = ({ Config }) => {
                                                 },
                                             }}
                                             >
-                                            {showPassword ? <VisibilityOff /> : <Visibility />}
+                                            {showPassword ? <VisibilityOff className='!text-sm'/> : <Visibility className='!text-sm' />}
                                         </IconButton>
                                     </InputAdornment>
                                 ),
                             }}
                         />
                         <FormHelperText error={true}>{helperText}</FormHelperText>
-                    </>
+                    </div>
                 );
                 case 'textarea':
                 return (

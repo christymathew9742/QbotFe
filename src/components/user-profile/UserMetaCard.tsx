@@ -46,7 +46,7 @@ export default function UserMetaCard() {
   const currentUser = useSelector(getUserSelector);
   const pendingUpdates = useSelector(getUpdateUserPendingSelector);
   const pendingFetch = useSelector(getFetchPendingSelector);
-  const userData = currentUser?.user?.data || {};
+  const userData = currentUser?.data || {};
   const [isUpdate, setIsUpdate] = useState<boolean>(false);
   const { isOpen, openModal, closeModal } = useModal();
   const [isUploading, setIsUploading] = useState(false);

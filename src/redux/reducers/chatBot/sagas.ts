@@ -11,7 +11,7 @@ import {
     POST_BOT_REQUEST,
     UPDATE_BOT_REQUEST,
     DELETE_BOT_REQUEST,
-    FETCH_REYAL_TIME_BOT,
+    FETCH_REAL_TIME_BOT,
 } from './actionTypes';
 
 import {
@@ -55,7 +55,8 @@ function createWebSocketChannel(socketUrl: string) {
 }
 
 function* watchWebSocket() {
-    const socketUrl: string = `${baseURL}`;
+    //const socketUrl: string = `${baseURL}`;
+    const socketUrl: string = baseURL.replace(/^http/, "ws");
     const channel:EventChannel<any>  = yield call(createWebSocketChannel, socketUrl);
     while (true) {
         const message:WebSocketMessage   = yield take(channel);
@@ -135,7 +136,7 @@ function* BotSaga() {
         takeLatest(POST_BOT_REQUEST, postBotSaga),
         takeLatest(UPDATE_BOT_REQUEST, updateChatBotSaga),
         takeLatest(DELETE_BOT_REQUEST, deleteChatBot),
-        takeLatest(FETCH_REYAL_TIME_BOT, fetchReyalTimedataSaga),
+        takeLatest(FETCH_REAL_TIME_BOT, fetchReyalTimedataSaga),
     ]);
 }
 

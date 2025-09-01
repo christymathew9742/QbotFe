@@ -11,7 +11,7 @@
 //     DELETE_BOT_REQUEST,
 //     DELETE_BOT_SUCCESS,
 //     DELETE_BOT_FAILURE,
-//     FETCH_REYAL_TIME_BOT,
+//     FETCH_REAL_TIME_BOT,
 //     WEBSOCKET_CONNECTED,
 //     WEBSOCKET_DISCONNECTED,
 //     WEBSOCKET_ERROR,
@@ -73,7 +73,7 @@
 //         };
   
 //     // Post fetch ChatBot
-//     case FETCH_REYAL_TIME_BOT:
+//     case FETCH_REAL_TIME_BOT:
 //         return {
 //             ...state,
 //             pending: true,
@@ -168,7 +168,7 @@ import {
     DELETE_BOT_REQUEST,
     DELETE_BOT_SUCCESS,
     DELETE_BOT_FAILURE,
-    FETCH_REYAL_TIME_BOT,
+    FETCH_REAL_TIME_BOT,
     WEBSOCKET_CONNECTED,
     WEBSOCKET_DISCONNECTED,
     WEBSOCKET_ERROR,
@@ -234,8 +234,8 @@ export default (state = initialState, action: botActions) => {
                 error: action.payload.error,
             };
     
-        // Post fetch ChatBot (not sure what this does, keeping as is)
-        case FETCH_REYAL_TIME_BOT:
+        // Post fetch ChatBot 
+        case FETCH_REAL_TIME_BOT:
             return {
                 ...state,
                 pending: { ...state.pending, fetch: true },  // Assuming fetch here

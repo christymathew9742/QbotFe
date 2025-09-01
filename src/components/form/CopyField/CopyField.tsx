@@ -12,10 +12,11 @@ interface FieldProps {
   disabled?: boolean;
   onClick?: () => void;
   update?: boolean;
+  type?: string;
 
 }
 
-const CopyField = ({ id, label, value, title, disabled=false, onClick, update }: FieldProps) => {
+const CopyField = ({ id, label, value, title, disabled=false, onClick, update, type="text" }: FieldProps) => {
   const inputRef = useRef<HTMLInputElement>(null);
   const [copied, setCopied] = useState(false);
 
@@ -45,6 +46,7 @@ const CopyField = ({ id, label, value, title, disabled=false, onClick, update }:
               ref={inputRef}
               value={value}
               readOnly
+              type={type}
               disabled={disabled}
               className="w-full p-2.5 pr-10 text-sm text-gray-500 bg-gray-50 border border-gray-300 rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-gray-400 cursor-text"
             />

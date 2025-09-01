@@ -1,63 +1,71 @@
 import api from '../../../utils/axios'
-import { all, call, put, takeLatest, select } from 'redux-saga/effects';
-
+import { all, call, put, takeLatest } from 'redux-saga/effects';
 import {
     FETCH_USER_REQUEST,
     POST_USER_REQUEST,
     UPDATE_USER_REQUEST,
-
+    FETCH_WHATSAPP_USER_REQUEST,
+    FETCH_WHATSAPP_REQUEST
 } from './actionTypes';
 
-import { 
+import {
     fetchUserSuccess,
-    fetchUserFailure, 
+    fetchUserFailure,
     postUserSuccess,
     postUserFailure,
     updateUserSuccess,
     updateUserFailure,
+    fetchWhatsAppUserSuccess,
+    fetchWhatsAppUserFailure,
+    fetchWhatsAppSuccess,
+    fetchWhatsAppFailure,
 } from './actions';
+import { isQueryParamString } from '@/utils/utils';
 
 //operations
-const updateUserData = (body: any,) => api.put<any[]>(`/auth/update`, body);
-const sendmessage = (body: any) => api.post<any[]>(`/auth/sendmessage/`, body);
+const updateUserData = (body: any) => api.put(`/auth/update`, body);
+const sendMessage = (body: any) => api.post(`/auth/sendmessage/`, body);
 
 //fetch user
-function* fetchUserSaga(payload:any): any {
+function* fetchUserSaga(): any {
     try {
         const response: any = yield call(api.get, `/auth/user/`);
-        yield put (
-            fetchUserSuccess({
-                user: response.data  
-            })   
-        );
+        yield put(fetchUserSuccess({ user: response?.data }));
     } catch (e: any) {
-        yield put(
-            fetchUserFailure({
-                error: e.message
-            })
-        );
-        console.error(e)
+        yield put(fetchUserFailure({ error: e.message }));
     }
 }
 
-// Post user message
-// function* postUserSaga(data: any): any {
-//     const { payload } = data;
-//     console.log(data,'datadatadatadatadatadata')
-//     try {
-//         const response: any = yield call(sendmessage, payload);
-//         yield put(postUserSuccess({ user: response.data }));
-//     } catch (e: any) {
-//         yield put(postUserFailure({ error: e.message }));
-//     }
-// }
-
-function* postUserSaga(data: any): any {
-    const { payload } = data;
+//fetch whatsapp user
+function* fetchWhatsAppUserSaga(action: any): any {
+    const { data } = action
+    const params = isQueryParamString(data) ? `?${data}` : `/${data}`;
     try {
-        const response: any = yield call(sendmessage, payload);
+        const response: any = yield call(api.get, `/auth/whatsapp${params}`);
+        yield put(fetchWhatsAppUserSuccess({ whatsAppUsers: response.data }));
+    } catch (e: any) {
+        yield put(fetchWhatsAppUserFailure({ error: e.message }));
+    }
+}
 
-        // check for API-level error
+//fetch global data 
+function* fetchWhatsAppGlobalSaga(action: any): any {
+    const { data } = action
+    const params = isQueryParamString(data) ? `?${data}` : `/${data}`;
+    try {
+        const response: any = yield call(api.get, `/auth/globaldata${params}`);
+        yield put(fetchWhatsAppSuccess({ globalData: response.data }));
+    } catch (e: any) {
+        yield put(fetchWhatsAppFailure({ error: e.message }));
+    }
+}
+
+// Post user
+function* postUserSaga(action: any): any {
+    const { payload } = action;
+    try {
+        const response: any = yield call(sendMessage, payload);
+
         if (response.data?.success) {
             yield put(postUserSuccess({ user: response.data }));
         } else {
@@ -76,8 +84,8 @@ function* postUserSaga(data: any): any {
 }
 
 // Update User data
-function* updateUserSaga(data: any): any {
-    const {payload } = data;
+function* updateUserSaga(action: any): any {
+    const { payload } = action;
     try {
         const response: any = yield call(updateUserData, payload);
         yield put(updateUserSuccess({ user: response.data }));
@@ -89,12 +97,15 @@ function* updateUserSaga(data: any): any {
 function* UserSaga() {
     yield all([
         takeLatest(FETCH_USER_REQUEST, fetchUserSaga),
+        takeLatest(FETCH_WHATSAPP_USER_REQUEST, fetchWhatsAppUserSaga),
+        takeLatest(FETCH_WHATSAPP_REQUEST, fetchWhatsAppGlobalSaga),
         takeLatest(POST_USER_REQUEST, postUserSaga),
         takeLatest(UPDATE_USER_REQUEST, updateUserSaga),
     ]);
 }
 
 export default UserSaga;
+
 
 
 

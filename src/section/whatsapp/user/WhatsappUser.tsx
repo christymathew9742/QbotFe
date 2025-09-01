@@ -8,13 +8,13 @@ import Input from "@/components/form/input/InputField";
 import TablePagination from "@mui/material/TablePagination";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch } from "@/redux/store";
-import { getAllPending, getAppointmentSelector } from "@/redux/reducers/appointment/selectors";
-import { fetchAppointmentRequest } from "@/redux/reducers/appointment/actions";
 import Link from "next/link";
 import PageBreadcrumb from "@/components/common/PageBreadCrumb";
 import { Metadata } from "next";
 import { Table, TableBody, TableCell, TableHeader, TableRow } from "@/components/ui/table";
 import { View } from "@/icons";
+import { getAllPending, getWhatsAppUserSelector } from "@/redux/reducers/user/selectors";
+import { fetchWhatsAppUserRequest } from "@/redux/reducers/user/actions";
 
 export const metadata: Metadata = {
   title: "List all Qbot",
@@ -29,7 +29,7 @@ interface User {
   user: string;
   statusHistory: any;
   sentimentScores: any;
-  userCreated: any;
+  createdAt: any;
   statusCounts: number;
   userType: string;
   totalAppointments: string;
@@ -40,33 +40,28 @@ const WhatsappUser = () => {
   const dispatch = useDispatch<AppDispatch>();
 
   const [search, setSearch] = useState("");
-  const [status, setStatus] = useState<string | null>(null);
   const [page, setPage] = useState(1);
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [isFetching, setIsFetching] = useState(true);
   const [isload, setIsLoad] = useState(true)
-  const [user, setUser] = useState(false);
 
-  const appointmentData = useSelector(getAppointmentSelector);
+  const whatsAppUser = useSelector(getWhatsAppUserSelector);
   const pendingStatus = useSelector(getAllPending);
 
   useEffect(() => {
-      setIsFetching(pendingStatus.fetch);
-      setUser(true);
+    setIsFetching(pendingStatus.fetch);
   }, [pendingStatus?.fetch]);
 
   const fetchAppointments = useCallback(() => {
     const query = {
       search,
-      status,
-      user,
       page,
       limit: rowsPerPage,
     };
 
     const queryString = new URLSearchParams(query as any).toString();
-    dispatch(fetchAppointmentRequest(queryString));
-  }, [dispatch, search, status, page, rowsPerPage, user]);
+    dispatch((fetchWhatsAppUserRequest(queryString)));
+  }, [dispatch, search, page, rowsPerPage, isFetching]);
 
   useEffect(() => {
     fetchAppointments();
@@ -126,7 +121,7 @@ const WhatsappUser = () => {
       );
     }
 
-    if (!appointmentData?.data?.length) {
+    if (!whatsAppUser?.data?.length) {
       return (
         <TableRow className="w-full">
           <TableCell colSpan={12} className="text-center py-10 text-gray-500">
@@ -136,7 +131,7 @@ const WhatsappUser = () => {
       );
     }
 
-    return appointmentData.data.map((user: User) => (
+    return whatsAppUser.data.map((user: User) => (
       <TableRow key={user._id}>
         <TableCell colSpan={2} className="px-5 py-2 font-light dark:text-white/90 text-theme-sm text-center">
           {user?.profileName}
@@ -157,7 +152,7 @@ const WhatsappUser = () => {
           </span>
         </TableCell>
         <TableCell colSpan={2} className="px-5 py-2 text-center text-gray-500 text-theme-sm dark:text-gray-400">
-          {formatUpdatedDate(user?.userCreated)}
+          {formatUpdatedDate(user?.createdAt)}
         </TableCell>
         <TableCell colSpan={2} className="px-3 py-2 text-gray-500 text-theme-sm dark:text-gray-400">
           <div className="flex justify-center items-center">
@@ -177,7 +172,7 @@ const WhatsappUser = () => {
         </TableCell>
       </TableRow>
     ));
-  }, [isFetching, appointmentData, sentimentScoreClass, userTypeClass]);
+  }, [isFetching, whatsAppUser, sentimentScoreClass, userTypeClass]);
 
   return (
     <div>
@@ -225,12 +220,12 @@ const WhatsappUser = () => {
             </div>
           </div>
         </div>
-        {appointmentData?.total > 5 && (
+        {whatsAppUser?.total > 5 && (
           <TablePagination
             component="div"
             className="text-amber-50"
             rowsPerPageOptions={[5, 10, 25]}
-            count={appointmentData?.total || 0}
+            count={whatsAppUser?.total || 0}
             page={page - 1}
             onPageChange={handleChangePage}
             rowsPerPage={rowsPerPage}

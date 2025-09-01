@@ -10,24 +10,26 @@ export const getErrorSelector = createSelector(getError, (error:any) => error);
 export const getAllPending = createSelector(getPending, (pending) => pending);
 
 // New selectors for each pending flag
-export const getFetchPendingSelector = createSelector(
+export const getFetchPendingSelector = createSelector (
   getPending,
   (pending) => pending.fetch
 );
-export const getPostPendingSelector = createSelector(
+export const getPostPendingSelector = createSelector (
   getPending,
   (pending) => pending.post
 );
 
-export const getUpdatePendingSelector = createSelector(
+export const getUpdatePendingSelector = createSelector (
   getPending,
   (pending) => pending.update
 );
 
-export const getDeletePendingSelector = createSelector(
+export const getDeletePendingSelector = createSelector (
   getPending,
   (pending) => pending.delete
 );
+
+
 
 
 

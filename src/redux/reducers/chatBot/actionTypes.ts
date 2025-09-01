@@ -19,7 +19,7 @@ export const DELETE_BOT_SUCCESS = 'DELETE_BOT_SUCCESS';
 export const DELETE_BOT_FAILURE = 'DELETE_BOT_FAILURE';
 
 //fetch reyal time data
-export const FETCH_REYAL_TIME_BOT = 'FETCH_REYAL_TIME_BOT';
+export const FETCH_REAL_TIME_BOT = 'FETCH_REAL_TIME_BOT';
 
 //check websoket
 export const WEBSOCKET_CONNECTED = 'WEBSOCKET_CONNECTED';

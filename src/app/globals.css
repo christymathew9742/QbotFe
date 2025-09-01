@@ -199,6 +199,7 @@
   --color-status-bg-cancel:#ff00006b;
   --color-status-bg-reactive:#ff8c00c4;
   --color-status-bg-completed:#ffffffa8;
+  --color-notify: #14acff17;
 
   /* Font Sizes */
   --text-xxss: 8px;

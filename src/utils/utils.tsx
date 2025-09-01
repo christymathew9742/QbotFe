@@ -119,35 +119,42 @@ export const formatTime = (iso:any) => {
   });
 };
 
-export const formatStringDate = (iso: any) => {
+export const formatStringDate = (iso: string) => {
   const date = new Date(iso);
   const now = new Date();
 
-  const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-  const inputDate = new Date(date.getFullYear(), date.getMonth(), date.getDate());
-
-  const diffTime = today.getTime() - inputDate.getTime();
+  const diffMs = now.getTime() - date.getTime();
+  const diffMins = Math.floor(diffMs / (1000 * 60));
+  const diffHours = Math.floor(diffMs / (1000 * 60 * 60));
   const oneDay = 24 * 60 * 60 * 1000;
 
+  if (diffMins < 1) return "Just now";
+  if (diffMins < 60) return `${diffMins}m ago`;
+
+  const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  const inputDate = new Date(date.getFullYear(), date.getMonth(), date.getDate());
+  const diffDays = Math.floor((today.getTime() - inputDate.getTime()) / oneDay);
+
   const timeStr = date.toLocaleTimeString(undefined, {
-    hour: '2-digit',
-    minute: '2-digit',
+    hour: "2-digit",
+    minute: "2-digit",
     hour12: true,
   });
 
-  if (diffTime === 0) {
+  if (diffDays === 0) {
     return `Today at ${timeStr}`;
-  } else if (diffTime === oneDay) {
-    return `Yesterday at ${timeStr}`;
+  } else if (diffDays === 1) {
+    return `Yest at ${timeStr}`;
   } else {
     const dateStr = date.toLocaleDateString(undefined, {
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric',
+      year: "numeric",
+      month: "short",
+      day: "numeric",
     });
     return `${dateStr} at ${timeStr}`;
   }
 };
+
 
 export const formatString = (string: any): string => {
   if (typeof string === 'string' && string?.trim()) {
