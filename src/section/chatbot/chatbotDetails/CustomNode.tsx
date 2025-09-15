@@ -10,12 +10,8 @@ import {
 
 import { Editor, EditorContent } from '@tiptap/react';
 import { Extension } from '@tiptap/core';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import AddBoxIcon from '@mui/icons-material/AddBox';
 import DeleteIcon from '@mui/icons-material/Delete';
-import { 
-  faTrash, 
-} from '@fortawesome/free-solid-svg-icons';
 import StarterKit from '@tiptap/starter-kit';
 import Highlight from '@tiptap/extension-highlight';
 import Typography from '@tiptap/extension-typography';
@@ -25,16 +21,42 @@ import { Plugin } from 'prosemirror-state';
 import { Mark } from '@tiptap/core';
 import "reactflow/dist/style.css";
 import {constantsText} from "../../../constant/constant"
-import { IconButton } from "@mui/material";
+import { Button, IconButton } from "@mui/material";
 import FormatBoldIcon from '@mui/icons-material/FormatBold';
 import FormatItalicIcon from '@mui/icons-material/FormatItalic';
 import { toast } from "react-toastify";
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
+import "react-datepicker/dist/react-datepicker.css";
+import Dialog from '@mui/material/Dialog';
+import { messageIcons, replayIcons, Preference } from "@/utils/utils";
+import BookIcon from '@mui/icons-material/Book';
 
 const {
   BOT:{
     DEFAULT,
   },
 } = constantsText;
+
+interface TimeSlot {
+  start: Date;
+  end: Date;
+  interval: String;
+  date?: String
+  buffer: String;
+  slots?: any;
+}
+
+interface DateSlot {
+  date: string;
+  slots: TimeSlot[];
+}
+
+export interface SimpleDialogProps {
+  open: boolean;
+  selectedValue: string;
+  onClose: (value: string) => void;
+}
 
 type Input = {
   id: string | any;
@@ -43,6 +65,7 @@ type Input = {
   value: string | undefined; 
   editor?: any;
   options?: any;
+  slots?: any;
 }
 
 type CustomNodeData = {
@@ -111,7 +134,7 @@ const HighlightMarker = Extension.create({
                 const start = match.index + 1;
                 const end = start + match[0].length;
                 const backgroundColorMark = view.state.schema.marks.backgroundColor.create({
-                  class: 'bg-highlight-clr p-0.1 text-node-active w-max rounded',
+                  class: 'bg-highlight-clr py-0.2 px-1 text-node-active w-max rounded',
                 });
 
                 transaction.addMark(start, end - 1, backgroundColorMark);
@@ -142,20 +165,162 @@ const CustomNode: React.FC<NodeProps<CustomNodeData>> = ({ data, id }) => {
   const [loadEditor, setLoadEditor] = useState(false);
   const createNewId = Date.now();
 
-  const handleInputChange = useCallback(
+  const [open, setOpen] = useState(false);
+  const [selectedDate, setSelectedDate] = useState<Date | null>(null);
+  const [startTime, setStartTime] = useState<Date | null>(null);
+  const [endTime, setEndTime] = useState<Date | null>(null);
+  const [selectedValue, setSelectedValue] = useState('');
+  const [selectedBuffer, setSelectedBuffer] = useState('');
+
+  const handleIntervalChange = (event:any) => {
+    setSelectedValue(event.target.value);
+  };
+
+  const handleBufferChange = (event:any) => {
+    setSelectedBuffer(event.target.value);
+  };
+
+  const [userTimeZone] = useState<string>(() => 
+    Intl.DateTimeFormat().resolvedOptions().timeZone
+  );
+
+  const handleOpen = () => setOpen(true);
+  const handleClose = () => {
+    setSelectedDate(null);
+    setStartTime(null);
+    setEndTime(null);
+    setOpen(false);
+  };
+  
+  const addTimeSlot = () => {
+    if (!selectedDate || !startTime || !endTime || !selectedValue) return;
+  
+    const now = new Date();
+
+    const startDateTime = new Date(
+      selectedDate.getFullYear(),
+      selectedDate.getMonth(),
+      selectedDate.getDate(),
+      startTime.getHours(),
+      startTime.getMinutes(),
+      0,
+      0
+    );
+  
+    const endDateTime = new Date(
+      selectedDate.getFullYear(),
+      selectedDate.getMonth(),
+      selectedDate.getDate(),
+      endTime.getHours(),
+      endTime.getMinutes(),
+      0,
+      0
+    );
+  
+    const formatDate = (date: Date) => {
+      const year = date.getFullYear();
+      const month = (date.getMonth() + 1).toString().padStart(2, '0');
+      const day = date.getDate().toString().padStart(2, '0');
+      return `${year}-${month}-${day}`;
+    };
+
+    if (startDateTime <= now || endDateTime <= now || endDateTime <= startDateTime) return;
+  
+    const dateStr = formatDate(selectedDate);
+  
+    const newSlot: TimeSlot = { start: startDateTime, end: endDateTime, interval: selectedValue, buffer: selectedBuffer };
+
+    const existingInputs = data.inputs || [];
+    const existingSlots = existingInputs[0]?.slots || [];
+  
+    const dateEntry = existingSlots.find((d: TimeSlot) => d.date === dateStr);
+  
+    let updatedSlots;
+    if (dateEntry) {
+      updatedSlots = existingSlots.map((d: TimeSlot) =>
+        d.date === dateStr
+          ? { ...d, slots: [...d.slots, newSlot] }
+          : d
+      );
+    } else {
+      updatedSlots = [...existingSlots, { date: dateStr, slots: [newSlot] }];
+    }
+  
+    const serializedDateSlots = updatedSlots.map((ds: TimeSlot) => ({
+      date: ds.date,
+      slots: ds.slots.map((slot: TimeSlot) => ({
+        start: slot.start instanceof Date ? slot.start.toISOString() : slot.start,
+        end: slot.end instanceof Date ? slot.end.toISOString() : slot.end,
+        interval: slot?.interval || 0,
+        buffer: slot?.buffer || 0,
+      }))
+      .sort((a:any, b:any) => new Date(a.start).getTime() - new Date(b.start).getTime()),
+    }));
+
+    serializedDateSlots.sort((a:any, b:any) => new Date(a.date).getTime() - new Date(b.date).getTime());
+  
+    data.setInputs((prevInputs) =>
+      prevInputs.map((input: any) => {
+        return { ...input, slots: serializedDateSlots };
+      })
+    );
+  
+    setStartTime(null);
+    setEndTime(null);
+    setSelectedValue('');
+    setSelectedBuffer('');
+  };
+  
+  const handleRemoveSlot = (date: string, start: unknown, end: unknown) => {
+    data.setInputs((prev) =>
+      prev.map((input) => ({
+        ...input,
+        slots: input.slots
+          .map((dateSlot:DateSlot) =>
+            dateSlot.date === date
+              ? {
+                  ...dateSlot,
+                  slots: dateSlot.slots.filter(
+                    (slot:any) => slot.start !== start || slot.end !== end
+                  ),
+                }
+              : dateSlot
+          )
+          .filter((dateSlot:DateSlot) => dateSlot.slots.length > 0),
+      }))
+    );
+  };
+
+  const getMinStartTime = () => {
+    const now = new Date();
+    if (selectedDate && selectedDate.toDateString() === now.toDateString()) {
+      return now;
+    }
+    return new Date(0, 0, 0, 0, 0);
+  };
+
+  const getMinEndTime = () => {
+    return startTime
+      ? new Date(startTime.getTime() + 15 * 60 * 1000)
+      : new Date(0, 0, 0, 0, 15);
+  };
+  
+  const handleInputChange = useCallback (
     (inputId: string, value: string, opId: string | null = null) => {
       data.setInputs((prevInputs) =>
         prevInputs.map((input: any) => {
           if (input.id === inputId) {
-            if (input.field === 'preference' && Array.isArray(input.options)) {
-              const updatedOptions = input.options.map((option: any) => {
-                if (option.id === opId) {
-                  return { ...option, value };
+            if (input.field === 'preference' && 
+              Array.isArray(input.options) && 
+                (input.type === 'List' || input.type === 'Button')) {
+                  const updatedOptions = input.options.map((option: any) => {
+                    if (option.id === opId) {
+                      return { ...option, value };
+                    }
+                    return { ...option };
+                  });
+                  return { ...input, options: updatedOptions };
                 }
-                return { ...option };
-              });
-              return { ...input, options: updatedOptions };
-            }
             return { ...input, value };
           }
           return { ...input };
@@ -164,7 +329,7 @@ const CustomNode: React.FC<NodeProps<CustomNodeData>> = ({ data, id }) => {
     },
     [data]
   );
-  
+
   const handleDeleteNode = () => {
     const edgesToRemove = getEdges().filter(
       (edge) => edge.source === id || edge.target === id
@@ -212,11 +377,25 @@ const CustomNode: React.FC<NodeProps<CustomNodeData>> = ({ data, id }) => {
 
   const onDropInput = (event: React.DragEvent) => {
     event.preventDefault();
-    const inputDataStr = event.dataTransfer.getData("application/reactflow-input");
+    event.stopPropagation();
+  
+    const inputDataStr = event.dataTransfer.getData("application/reactflow-node");
+
     if (!inputDataStr) return;
+  
     try {
+  
       const { type, field } = JSON.parse(inputDataStr);
       const newNodeId = `${id}-input-${createNewId}`;
+  
+      const hasPreferenceAlready = data.inputs.some(
+        (input) => input.field === "preference"
+      );
+  
+      if (hasPreferenceAlready) return;
+
+      if (field === "preference" && data.inputs.length > 0) return;
+  
       let options: Input | undefined;
       if (field === "preference") {
         options = {
@@ -226,6 +405,7 @@ const CustomNode: React.FC<NodeProps<CustomNodeData>> = ({ data, id }) => {
           value: "",
         };
       }
+  
       const newInput: Input = {
         id: newNodeId,
         type,
@@ -233,7 +413,7 @@ const CustomNode: React.FC<NodeProps<CustomNodeData>> = ({ data, id }) => {
         options: options ? [options] : [],
         value: field !== "preference" ? "" : undefined,
       };
-
+  
       createEditor(newInput.id);
       data.setInputs((prevInputs) => [...prevInputs, newInput]);
     } catch (error) {
@@ -241,8 +421,8 @@ const CustomNode: React.FC<NodeProps<CustomNodeData>> = ({ data, id }) => {
       toast.error("Failed to drop input, please try again!");
     }
   };
-
-  const handleAddEditor = (index: number, id: string) => {
+  
+  const handleAddOptions = (index: number, id: string) => {
     const preference: any = {
       id: createNewId,
       field: "preference",
@@ -250,17 +430,25 @@ const CustomNode: React.FC<NodeProps<CustomNodeData>> = ({ data, id }) => {
     };
   
     data.setInputs((prevEditors) => {
-      const updatedEditors = [...prevEditors];
-      if (prevEditors[index]?.field === "preference" && prevEditors[index]?.id === id) {
-        const existingOptions = updatedEditors[index].options || [];
-        const optionsMap = new Map(existingOptions.map((opt: any) => [opt.id, opt]));
-        optionsMap.set(preference.id, preference);
-        updatedEditors[index].options = Array.from(optionsMap.values());
-      }
-      return updatedEditors;
+      return prevEditors.map((editor, i) => {
+        if (
+          i === index &&
+          editor.field === "preference" &&
+          (editor.type === "List" || editor.type === "Button") &&
+          editor.id === id
+        ) {
+          const existingOptions = editor.options || [];
+          const newOptions = [...existingOptions, preference]; 
+          return {
+            ...editor,
+            options: newOptions,
+          };
+        }
+        return editor;
+      });
     });
   };
-
+  
   const handleDeleteOptions = (
     ids: string = "",
     index: number,
@@ -312,58 +500,270 @@ const CustomNode: React.FC<NodeProps<CustomNodeData>> = ({ data, id }) => {
     return lastIndex;
   }, -1);
 
-  const RenderDynamicField = () => {
-    const renderFieldPreference  = (
-      id:string, 
-      options:any, 
-      index:number
-    ) => {
-      return options.map((option:any, opIndex:number) => (
+  const renderPreferenceOptions = useCallback(
+    (options: any[], id: string, type: string, index: number) => {
+      const maxOptions = type === "List" ? 10 : type === "Button" ? 3 : Infinity;
+      const optionsCount = options.length - 1; 
+  
+      return options.map((option: any, opIndex: number) => (
         <div key={`option-${id}-${option.id}`} className="relative flex mb-2">
           {opIndex > 0 && (
             <Handle
               type="source"
               id={`option-${option.id}-${id}`}
               position={Position.Right}
-              className="absolute !right-[-12px] top-1/2 text-[10px] !w-[8px] !h-[8px] !bg-node-active !border-2 !border-solid !border-op-handil"
+              className="absolute !right-[-25px] top-1/2 text-[10px] !w-[8px] !h-[8px] !bg-node-active !border-2 !border-solid !border-op-handil"
             />
           )}
           <input
             type="text"
-            className={`px-2 py-[2px] bg-white rounded-l-md w-full text-xxxs focus:outline-none hover:outline-none border border-solid ${opIndex > 0 ? "dark:border-red-500" : "dark:border-blue-500"} dark:text-dark-text dark:bg-black dark:borde-[1px]`}
-            placeholder={`${opIndex > 0 ? `option-${opIndex}` : "Title"}`}
+            className={`px-2 py-[2px] bg-white rounded-l-md w-full text-xxxs focus:outline-none hover:outline-none border border-solid ${
+              opIndex > 0 ? " border-red-200 dark:border-[#fb2c3657]" : "border-blue-200 dark:border-blue-500"
+            } dark:text-dark-text dark:bg-black dark:borde-[1px]`}
+            placeholder={
+              opIndex > 0
+                ? `${type.toLowerCase()} option-${opIndex}`
+                : "Title"
+            }
             value={option?.value}
             onChange={(e) => handleInputChange(id, e.target.value, option?.id)}
           />
           {opIndex < 1 ? (
             <button
-              className="bg-blue-500 text-white px-2 py-[1px] rounded-r-md"
-              onClick={() => handleAddEditor(index, id)}
+              className={`px-2 py-[1px] rounded-r-md bg-blue-500 text-white ${optionsCount >= maxOptions && "!bg-blue-300"}`}
+              onClick={() => handleAddOptions(index, id)}
+              disabled={optionsCount >= maxOptions}
             >
-              <AddBoxIcon className="!text-xxxs dark:text-dark-text" />
+              <AddBoxIcon className="!text-xxxs dark:text-dark-text mb-1" />
             </button>
           ) : (
             <button
-              className="bg-red-500 text-white px-2 py-[1px] rounded-r-md"
+              className="bg-red-500 dark:bg-[#fb2c3657] text-white px-2 py-[1px] rounded-r-md"
               onClick={() => handleDeleteOptions(option?.id, index, id)}
             >
-              <DeleteIcon className="!text-xxxs dark:text-dark-text" />
+              <DeleteIcon className="!text-xxxs dark:text-dark-text mb-1" />
             </button>
           )}
         </div>
       ));
+    },
+    [handleInputChange, handleAddOptions, handleDeleteOptions]
+  );
+  
+  const renderSlotOptions = useCallback(
+    (id: string, index: number, savedSlots:any) => {
+      return (
+        <div>
+          <Handle
+            type="source"
+            id={`option-slot-${id}`}
+            position={Position.Right}
+            className="absolute !right-[-10px] top-1/2 text-[10px] !w-[8px] !h-[8px] !bg-node-active !border-2 !border-solid !border-op-handil"
+          />
+          <span
+            className="flex items-center justify-center p-2"
+          >
+            <BookIcon  onClick={handleOpen} className="!text-[40px] cursor-pointer !transition-transform !duration-200 !ease-in-out hover:scale-110 hover:text-[#8adfea] text-[rgb(134,219,231)]" />
+          </span>
+          <Dialog
+            open={open}
+            onClose={handleClose}
+            fullWidth
+            sx={{ '& .MuiDialog-paper': {  width:'100%', height:'1000px', borderRadius:'10px'} }}
+          >
+            <div className="flex py-1 px-4 items-center justify-between w-full">
+              <div className="text-lg font-medium text-gray-800 dark:text-dark-text dark:font-normal">Add new slots</div>
+              <div className="cursor-pointer text-2xl text-gray-800 dark:text-dark-text !transition-transform !duration-200 !ease-in-out hover:scale-110 font-light" onClick={handleClose}>
+                X
+              </div>
+            </div>
+            <hr className="mb-3 mt-2 border-0.5 border-divider dark:border-custom-border" />
+            <div className="flex items-center gap-2  p-4">
+              <div className='text-xs font-medium text-gray-800 dark:text-dark-text dark:font-normal'>
+                <DatePicker
+                  selected={selectedDate}
+                  onChange={(date) => setSelectedDate(date)}
+                  dateFormat="yyyy-MM-dd"
+                  placeholderText="Pick a Date"
+                  minDate={new Date()}
+                  className='w-[100%] focus:outline-none focus:border-none focus:shadow-none'
+                  popperPlacement="bottom-end"
+                />
+              </div>
+              <div className='text-xs font-medium text-gray-800 dark:text-dark-text dark:font-normal'>
+                <DatePicker
+                  selected={startTime}
+                  onChange={(date) => setStartTime(date)}
+                  showTimeSelect
+                  showTimeSelectOnly
+                  timeIntervals={60}
+                  dateFormat="h:mm aa"
+                  placeholderText="Start Time"
+                  minTime={getMinStartTime()}
+                  maxTime={new Date(0, 0, 0, 23, 59)}
+                  className='w-[100%] focus:outline-none focus:border-none focus:shadow-none'
+                />
+              </div>
+              <div className='text-xs font-medium text-gray-800 dark:text-dark-text dark:font-normal'>
+                <DatePicker
+                  selected={endTime}
+                  onChange={(date) => setEndTime(date)}
+                  showTimeSelect
+                  showTimeSelectOnly
+                  timeIntervals={60}
+                  dateFormat="h:mm aa"
+                  placeholderText="End Time"
+                  minTime={getMinEndTime()}
+                  maxTime={new Date(0, 0, 0, 23, 59)}
+                  className='w-[100%] focus:outline-none focus:border-none focus:shadow-none'
+                />
+              </div>
+              <div>
+                <input 
+                  value={selectedValue}
+                  placeholder="Interval"
+                  onChange={(e) => {
+                    const value = e.target.value;
+                    if (/^\d*$/.test(value)) {
+                      handleIntervalChange(e);
+                    }
+                  }}
+                  className="w-[100%] focus:outline-none focus:border-none focus:shadow-none border-none text-xs font-medium text-gray-800 dark:text-dark-text dark:font-normal"
+                />
+              </div>
+              <div>
+                <input 
+                  value={selectedBuffer}
+                  placeholder="Buffer"
+                  onChange={(e) => {
+                    const value = e.target.value;
+                    if (/^\d*$/.test(value)) {
+                      handleBufferChange(e);
+                    }
+                  }}
+                  className="w-[100%] focus:outline-none focus:border-none focus:shadow-none border-none text-xs font-medium text-gray-800 dark:text-dark-text dark:font-normal"
+                />
+              </div>
+              <div className="dark:border-1 dark:border-custom-border rounded-[4px]">
+                <Button
+                  variant="contained"
+                  color="secondary"
+                  onClick={addTimeSlot}
+                  disabled={!selectedDate || !startTime || !endTime || !selectedValue}
+                  className='w-[100%] !p-0 !font-normal !text-lg dark:!text-node-pop'
+                >
+                  +
+                </Button>
+              </div>
+            </div>
+            <hr className="mb-3 mt-2 border-0.5 dark:border-custom-border border-divider justify-center m-auto w-[95%]" />
+            <div className="overflow-y-auto custom-scrollbar h-[350px]" >
+              {savedSlots.length > 0 ? (
+                <div className="space-y-2 mt-0 px-10">
+                  <p className="text-lg font-medium text-center text-gray-800 dark:text-dark-text dark:font-normal">Common availability</p>
+                  {savedSlots.map((ds:DateSlot, dateIdx:number) => (
+                    <div key={dateIdx} className="p-2 rounded">
+                      <h3 className="font-bold text-base mb-4  text-gray-500 dark:text-dark-text dark:font-normal">{ds.date}</h3>
+                      <ul className="space-y-2">
+                        {ds.slots.map((slot, slotIdx) => (
+                          <li
+                            key={slotIdx}
+                            className="flex justify-between items-center gap-1 w-full"
+                          >
+                            <span className="flex justify-between items-center w-[80%] px-18 py-[1px] rounded-[4px] bg-gray-50 border border-gray-300 dark:border-white/[0.05] dark:bg-white/[0.03] dark:text-node-pop">
+                              <span className="font-medium text-gray-500 dark:text-dark-text text-sm dark:font-normal">
+                                {new Date(slot.start).toLocaleTimeString([], {
+                                  hour: '2-digit',
+                                  minute: '2-digit',
+                                  hour12: true,
+                                  timeZone: userTimeZone,
+                                })}
+                              </span> - 
+                              <span className="font-medium text-gray-500 dark:text-dark-text text-sm dark:font-normal">
+                                {new Date(slot.end).toLocaleTimeString([], {
+                                  hour: '2-digit',
+                                  minute: '2-digit',
+                                  hour12: true,
+                                  timeZone: userTimeZone,
+                                })}
+                              </span>
+                            </span>
+                            <span className="flex justify-center text-sm text-gray-500 items-center w-[10%] px-8 py-[3px] rounded-[4px] dark:text-dark-text bg-gray-50 border border-gray-300 dark:border-white/[0.05] dark:bg-white/[0.03] dark:font-normal">
+                              {slot?.interval}
+                            </span>
+                            <span className="flex justify-center text-sm text-gray-500 items-center w-[10%] px-8 py-[3px] rounded-[4px] dark:text-dark-text bg-gray-50 border border-gray-300 dark:border-white/[0.05] dark:bg-white/[0.03] dark:font-normal">
+                              {slot?.buffer}
+                            </span>
+                            <button
+                              className="text-white font-medium text-base rounded-[4px] bg-red-500 border border-red-500 shadow-sm p-[1px] w-[10%] dark:border-red-900 dark:bg-red-900 dark:font-normal"
+                              onClick={() => handleRemoveSlot(ds.date, slot.start, slot.end)}
+                            >
+                              <span className="inline-block transition-transform duration-200 ease-in-out hover:scale-110">X</span>
+                            </button>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  ))}
+                </div>
+              ) :(
+                <div className="flex items-center justify-center h-full">
+                  <p className="text-2xl font-extralight text-center text-gray-500 dark:text-dark-text">
+                    Slot not found!
+                  </p>
+               </div>
+              )}
+            </div>
+            <hr className="mb-3 mt-2 border-0.5 dark:border-custom-border border-divider" />
+          </Dialog>
+        </div>
+      );
+    },
+    [
+      open,
+      selectedDate,
+      handleOpen,
+      handleRemoveSlot,
+      userTimeZone,
+    ]
+  );
+  
+  const RenderDynamicField = () => {
+    const renderFieldPreference  = (
+      id:string, 
+      options:any, 
+      index:number,
+      type:any,
+      slots: any,
+    ) => {
+      switch (type) {
+        case 'List':
+          return renderPreferenceOptions(options, id, type, index)
+        case 'Slot':
+          return renderSlotOptions(id, index, slots)
+        case 'Button':
+          return  renderPreferenceOptions(options, id, type, index)
+        default:
+          return <div>Unsupported field type!</div>;
+      }
     };
   
-    const renderFieldMessages = (
+    const renderFieldInputs = (
       id:string, 
       editor:any, 
       field:string, 
+      type: string,
       isReplay:boolean = false,
     ) => {
+      const allIcons = [...messageIcons, ...replayIcons];
+      const getIconByType = () => {
+        const found = allIcons.find((item) => item.type === type && item.field === field);
+        return found ? found.icon : null;
+      };
       return (
         <div
           id={`editor-${id}`}
-          className="relative tiptap-editor-container nodrag cursor-text text-left dark:text-dark-text"
+          className="relative inputs tiptap-editor-container nodrag cursor-text text-left dark:text-dark-text"
         >
           {isReplay && (
             <Handle
@@ -373,8 +773,8 @@ const CustomNode: React.FC<NodeProps<CustomNodeData>> = ({ data, id }) => {
               className="absolute !right-[-13px] top-1/2 text-[10px] !w-[8px] !h-[8px] !bg-node-active !border-2 !border-solid !border-[#f069b1]"
             />
           )}
-          {isFocused === id && (
-            <div className="grid grid-cols-8 gap-x-1">
+          {isFocused === id ? (
+            <div className="grid grid-cols-8 gap-x-1 border-b border-divider dark:border-dark-border pb-0">
               {buttonConfigs.map(({ icon, action, isActive }, tbIndex) => (
                 <div
                   key={`messages-toolbar-${id}-${tbIndex}`}
@@ -396,16 +796,25 @@ const CustomNode: React.FC<NodeProps<CustomNodeData>> = ({ data, id }) => {
                       sx: { fontSize: "16px", color: editor.isActive(isActive) ? "#272323" : "inherit" },
                     })}
                   </IconButton>
-                  <FontAwesomeIcon
-                    icon={faTrash}
-                    className="text-drag-text absolute -right-1 -top-1 text-xxxs hover:scale-105 active:scale-95 transition-all duration-200 ease-in-out p-1 cursor-pointer"
-                    onMouseDown={() => handleDeleteDynamicFields(id)}
-                  />
                 </div>
               ))}
             </div>
+          ) : (
+            <>
+              <p
+                className="text-drag-text absolute left-0.5 -top-1"
+              >
+                {getIconByType()}
+              </p>
+              <p
+                className="text-drag-text absolute -right-1 -top-1 text-[8px] hover:scale-105 active:scale-95 transition-all duration-200 ease-in-out p-1 cursor-pointer opacity-0"
+                onMouseDown={() => handleDeleteDynamicFields(id)}
+              >
+                ❌
+              </p>
+            </>
           )}
-          <EditorContent editor={editor}  className="qbot-editor" />
+          <EditorContent editor={editor}  className="qbot-editor mt-2" />
         </div>
       );
     };
@@ -416,72 +825,86 @@ const CustomNode: React.FC<NodeProps<CustomNodeData>> = ({ data, id }) => {
       options:void, 
       editor:any, 
       index:number, 
-      isReplay:boolean
+      isReplay:boolean,
+      type:any,
+      slots: any,
     ) => {
       switch (field) {
         case 'preference':
-          return renderFieldPreference(id, options, index);
+          return renderFieldPreference(id, options, index, type, slots);
         case 'messages':
-          return renderFieldMessages(id, editor, field);
+          return renderFieldInputs(id, editor, field, type);
         case 'replay':
-          return renderFieldMessages(id, editor, field, isReplay,);
+          return renderFieldInputs(id, editor, field, type, isReplay,);
         default:
           return <div>Unsupported field type</div>;
       }
     };
-  
+
     return (
       <div className="flex flex-col gap-2">
         {data.inputs.filter(({ id }) => editorRefs.current.has(id))
         .map(({ 
           id, 
           field, 
-          options
+          options,
+          type,
+          slots,
         }, index) => {
           const editor = editorRefs.current.get(id);
           if (!editor) return null;
           const isReplay = FieldIndex === index && field === "replay";
           if (isReplay) handilRef.current = index;
+
+          const getIconByType = () => {
+            const found = Preference.find((item) => item.type === type && item?.field === 'preference');
+            return found ? found.icon : null;
+          };
   
           return (
             <div
               key={`${field}-editor-${id}`}
-              className={`flex flex-col rounded-md p-${field === 'preference' ? '4' : '1'} ${
+              className={`flex flex-col rounded-md ${field === 'preference' && type !== 'Slot' ? 'py-6 px-4' : 'p-1'} ${
                 isFocused === id ? `border-${field}-node` : `${field}-node-normal relative`
               }`}
             > 
-              {field === 'preference' && (
-                <FontAwesomeIcon
-                  icon={faTrash}
-                  className="text-drag-text absolute right-[1px] -top-[1px] text-xxxs hover:scale-105 active:scale-95 transition-all duration-200 ease-in-out p-1 cursor-pointer"
-                  onClick={() => handleDeleteDynamicFields(id)}
-                />
+              {field === 'preference' && type !== "Slot" && (
+                <p
+                  className="text-drag-text absolute left-1 -top-0.5"
+                >
+                  {getIconByType()}
+                </p>
               )}
-              {loadEditor && renderField(id, field, options, editor, index, isReplay)}
+              {loadEditor && renderField(id, field, options, editor, index, isReplay, type, slots)}
             </div>
           );
         })}
       </div>
     );
   };
-  
+
   return (
-    <div className="group rounded w-44" onDrop={onDropInput} onDragOver={onDragOver}>
-      <h2 className={`${!data.inputs.length ? "text-center" : "text-left"} font-semibold text-sm font-sans mb-2 text-text-theme dark:text-dark-text`}>
-        {!data.inputs.length ? DEFAULT : data.label}
-      </h2>
-      <Handle id={`target-${data.inputs.length}`} type="target" position={Position.Left} className="absolute -!right-3 !top-4 !h-7 opacity-0" />
-      {data.nodeCount > 1 && (
-        <FontAwesomeIcon
-          icon={faTrash}
-          className="text-drag-text absolute right-1 top-1 text-xxxs hover:scale-105 active:scale-95 transition-all duration-200 ease-in-out p-1 cursor-pointer opacity-0 group-hover:opacity-100"
-          onClick={handleDeleteNode}
-        />
-      )}
-        {RenderDynamicField()}
-    </div>
+    <>
+      <div className="nodes rounded w-40" onDrop={onDropInput} onDragOver={onDragOver}>
+        <h2 className={`${!data.inputs.length ? "text-center" : "text-left"} font-semibold text-sm font-sans mb-2 text-text-theme dark:text-dark-text`}>
+          {!data.inputs.length ? DEFAULT : data.label}
+        </h2>
+        <Handle id={`target-${data.inputs.length}`} type="target" position={Position.Left} className="absolute -!right-3 !top-4 !h-7 opacity-0" />
+        {data.nodeCount > 1 && (
+          <span 
+            className="node-x absolute right-1 top-1 text-xxss hover:scale-105 active:scale-95 transition-all duration-200 ease-in-out p-1 cursor-pointer opacity-0" 
+            onClick={handleDeleteNode}
+          >
+            ❌ 
+          </span>
+        )}
+          {RenderDynamicField()}
+      </div>
+    </>
   );
 };
 
 export default CustomNode;
+
+
 

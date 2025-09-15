@@ -200,6 +200,8 @@
   --color-status-bg-reactive:#ff8c00c4;
   --color-status-bg-completed:#ffffffa8;
   --color-notify: #14acff17;
+  --color-custom-border: #6f6f6f24;
+  --color-node-pop: #e4e7ec87;
 
   /* Font Sizes */
   --text-xxss: 8px;
@@ -454,6 +456,86 @@
   pointer-events: none;
 }
 
+/**datepicker dark mode color**/
+html.dark .react-datepicker {
+  background-color:  #0a0f16;
+  color: #ffffff;
+}
+
+/* Header */
+html.dark .react-datepicker__header {
+  background-color:  #0a0f16;
+}
+
+html.dark .react-datepicker__current-month,
+html.dark .react-datepicker-time__header {
+  color: #ffffff;
+  font-weight: 500;
+}
+
+/* Days of the week */
+html.dark .react-datepicker__day-name {
+  color: #ffffff;
+}
+
+/* Individual days */
+html.dark .react-datepicker__day,
+html.dark .react-datepicker__time-name {
+  color: #ffffff;
+}
+
+/* Disabled days and time options */
+html.dark .react-datepicker__day--disabled,
+html.dark .react-datepicker__time-list-item--disabled {
+  color: #888888;
+}
+
+/* Selected day or time */
+html.dark .react-datepicker__day--selected,
+html.dark .react-datepicker__day--keyboard-selected,
+html.dark .react-datepicker__time-list-item--selected {
+  background-color: #3b82f6;
+  color: #ffffff;
+}
+
+/* Hover (only for enabled date items) */
+html.dark .react-datepicker__day:not(.react-datepicker__day--disabled):hover {
+  background-color: #3b82f6;
+  color: #ffffff;
+}
+
+/* Hover (only for enabled time items) */
+html.dark .react-datepicker__time-list-item:not(.react-datepicker__time-list-item--disabled):hover,
+html.dark .react-datepicker__time-list-item:not(.react-datepicker__time-list-item--disabled):hover button {
+  background-color: #3b82f6!important;
+  color: #ffffff!important;
+}
+
+/* Time picker container background */
+html.dark .react-datepicker__time-container .react-datepicker__time {
+  background-color: #0a0f16;
+}
+
+/* Time picker list items */
+html.dark .react-datepicker__time-list-item {
+  color: #ffffff;
+}
+
+/* Custom scrollbar for time picker */
+html.dark .react-datepicker__time-list {
+  scrollbar-width: thin; /* Firefox */
+  scrollbar-color: #3b82f6 #1e1e1e; /* Firefox: thumb color + track color */
+}
+
+/* Webkit browsers (Chrome, Edge, Safari) */
+html.dark .react-datepicker__time-list::-webkit-scrollbar {
+  width: 4px;
+}
+
+html.dark .react-datepicker__time-list::-webkit-scrollbar-track {
+  background: #0a0f16!important 
+}
+
 /**textEditor Tiptap section**/
 /* Set minimum height for the content area */
 .tiptap-editor-container .ProseMirror {
@@ -483,6 +565,16 @@
 .dark .disable-editor-bi-messages svg,
 .dark .disable-editor-bi-replay svg {
   color:#ffffffE6!important;
+}
+.inputs:hover .text-drag-text {
+  opacity: 100;
+}
+.nodes:hover .node-x {
+  opacity: 100;
+}
+
+.dark .MuiPaper-root {
+  background-color: #0a0f16 !important;
 }
 
 /*** error popup style****/

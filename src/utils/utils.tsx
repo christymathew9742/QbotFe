@@ -12,10 +12,11 @@ import Filter1Icon from '@mui/icons-material/Filter1';
 import FileUploadIcon from '@mui/icons-material/FileUpload';
 import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
 import AccessTimeFilledIcon from '@mui/icons-material/AccessTimeFilled';
-import AddBoxIcon from '@mui/icons-material/AddBox';
+import BookIcon from '@mui/icons-material/Book';
 import ViewListIcon from '@mui/icons-material/ViewList';
 import AudioFileIcon from '@mui/icons-material/AudioFile';
 import SmartButtonIcon from '@mui/icons-material/SmartButton';
+
 import {
   isToday,
   isYesterday,
@@ -42,33 +43,32 @@ type Status = {
   rescheduled?: number;
 };
 
+const iconProps = { sx: { fontSize: '14px', marginRight: '4px',  } };
+
 export const messageIcons = [
-  { type: 'Text', icon: <WysiwygIcon sx={{ fontSize: '14px', marginRight: '4px', color: MESSAGE }} /> },
-  { type: 'Image', icon: <ImageIcon sx={{ fontSize: '14px', marginRight: '4px', color: MESSAGE }} /> },
-  { type: 'Video', icon: <VideoLibraryIcon sx={{ fontSize: '14px', marginRight: '4px', color: MESSAGE }} /> },
-  { type: 'Audio', icon: <AudioFileIcon sx={{ fontSize: '14px', marginRight: '4px', color: MESSAGE }} /> },
-  { type: 'Location', icon: <LocationOnIcon sx={{ fontSize: '14px', marginRight: '4px', color: MESSAGE }} /> },
-  { type: 'Doc', icon: <InsertDriveFileIcon sx={{ fontSize: '14px', marginRight: '4px', color: MESSAGE }} /> },
+  { type: 'Text', field: 'messages', icon: <WysiwygIcon sx={{ ...iconProps.sx, color: MESSAGE }}  /> },
+  { type: 'Image', field: 'messages', icon: <ImageIcon sx={{ ...iconProps.sx, color: MESSAGE }}  /> },
+  { type: 'Video', field: 'messages', icon: <VideoLibraryIcon sx={{ ...iconProps.sx, color: MESSAGE }}  /> },
+  { type: 'Audio', field: 'messages', icon: <AudioFileIcon sx={{ ...iconProps.sx, color: MESSAGE }}  /> },
+  { type: 'Location', field: 'messages', icon: <LocationOnIcon sx={{ ...iconProps.sx, color: MESSAGE }}  /> },
+  { type: 'Doc', field: 'messages', icon: <InsertDriveFileIcon sx={{ ...iconProps.sx, color: MESSAGE }}  /> },
 ];
 
 export const replayIcons = [
-  { type: 'Text', icon: <TextFieldsIcon sx={{ fontSize: '14px', marginRight: '4px', color: REPLAY }} /> },
-  { type: 'Email', icon: <ContactMailIcon sx={{ fontSize: '14px', marginRight: '4px', color: REPLAY }} /> },
-  { type: 'Phone', icon: <ContactPhoneIcon sx={{ fontSize: '14px', marginRight: '4px', color: REPLAY }} /> },
-  { type: 'Number', icon: <Filter1Icon sx={{ fontSize: '14px', marginRight: '4px', color: REPLAY }} /> },
-  { type: 'Location', icon: <LocationOnIcon sx={{ fontSize: '14px', marginRight: '4px', color: REPLAY }} /> },
-  { type: 'File', icon: <FileUploadIcon sx={{ fontSize: '14px', marginRight: '4px', color: REPLAY }} /> },
-  { type: 'Date', icon: <CalendarMonthIcon sx={{ fontSize: '14px', marginRight: '4px', color: REPLAY }} /> },
-  { type: 'Time', icon: <AccessTimeFilledIcon sx={{ fontSize: '14px', marginRight: '4px', color: REPLAY }} /> },
+  { type: 'Text', field: 'replay', icon: <TextFieldsIcon sx={{ ...iconProps.sx, color: REPLAY }}  /> },
+  { type: 'Email', field: 'replay', icon: <ContactMailIcon sx={{ ...iconProps.sx, color: REPLAY }} /> },
+  { type: 'Phone', field: 'replay', icon: <ContactPhoneIcon sx={{ ...iconProps.sx, color: REPLAY }} /> },
+  { type: 'Number', field: 'replay', icon: <Filter1Icon sx={{ ...iconProps.sx, color: REPLAY }} /> },
+  { type: 'Location', field: 'replay', icon: <LocationOnIcon sx={{ ...iconProps.sx, color: REPLAY }} /> },
+  { type: 'File', field: 'replay', icon: <FileUploadIcon sx={{ ...iconProps.sx, color: REPLAY }} /> },
+  { type: 'Date', field: 'replay', icon: <CalendarMonthIcon sx={{ ...iconProps.sx, color: REPLAY }} /> },
+  { type: 'Time', field: 'replay', icon: <AccessTimeFilledIcon sx={{ ...iconProps.sx, color: REPLAY }} /> },
 ];
 
 export const Preference = [
-  { type: 'List', icon: <ViewListIcon sx={{ fontSize: '14px', marginRight: '4px', color: PREFERENCE }} /> },
-  { type: 'Button', icon: <SmartButtonIcon sx={{ fontSize: '14px', marginRight: '4px', color: PREFERENCE }} /> },
-];
-
-export const groupIcons = [
-  { type: 'Drag New', icon: <AddBoxIcon sx={{ fontSize: '16px', marginRight: '6px', color: GROUP }} /> },
+  { type: 'List', field: 'preference', icon: <ViewListIcon sx={{ ...iconProps.sx, color: PREFERENCE }} /> },
+  { type: 'Button', field: 'preference', icon: <SmartButtonIcon sx={{ ...iconProps.sx, color: PREFERENCE }} /> },
+  { type: 'Slot', field: 'preference', icon: <BookIcon sx={{ ...iconProps.sx, color: PREFERENCE }} /> },
 ];
 
 export const useEmojiPicker = () => {

@@ -171,7 +171,7 @@ const AppointmentDetails: React.FC = () => {
                             </div>
                             <div className="p-4 border-t dark:border-gray-800 sm:p-6 overflow-y-auto custom-scrollbar h-[350px] space-y-4">
                                 <div className="w-full flex justify-center">
-                                    <span className="text-xxs mb-2 rounded-[6px] font-light block w-auto text-center dark:text-white dark:bg-white/30 px-2 py-1">
+                                    <span className="text-xxs mb-2 rounded-[6px] font-light block w-auto text-center bg-[#8c97b8] text-white dark:bg-white/30 px-2 py-1">
                                         {formatString(appointment?.status || "")}{" "}
                                         {formatStringDate(appointment?.updatedAt || "")}
                                     </span>
@@ -195,8 +195,8 @@ const AppointmentDetails: React.FC = () => {
                                         <div
                                             className={`relative min-w-[20%] max-w-[50%] px-4 py-2 rounded-[12px] text-sm font-light ${
                                                 isAI
-                                                ? "bg-[#465fff54] text-white !rounded-br-none"
-                                                : "bg-[#822cc76e] text-white !rounded-bl-none"
+                                                ? "bg-[#822cc7b0] dark:bg-[#465fff54] text-white !rounded-br-none"
+                                                : "bg-[#465fffcf] dark:bg-[#822cc76e] text-white !rounded-bl-none"
                                             }`}
                                         >
                                             {Array.isArray(item.message) ? (

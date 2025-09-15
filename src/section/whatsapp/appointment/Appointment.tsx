@@ -134,7 +134,7 @@ const Appoinment = () => {
                 onChange={handleStatusChange}
                 className="dark:bg-white/[0.02] text-gray-800 dark:!text-gray-100"
               />
-              <ThemeProvider theme={darkTheme}>
+              {/* <ThemeProvider theme={darkTheme}> */}
                 <LocalizationProvider dateAdapter={AdapterDayjs}>
                   <DatePicker
                     sx={customInputStyles}
@@ -142,7 +142,7 @@ const Appoinment = () => {
                     onChange={handleDateChange}
                   />
                 </LocalizationProvider>
-              </ThemeProvider>
+              {/* </ThemeProvider> */}
             </div>
             <div className="p-4 border-t dark:border-gray-800 sm:p-6">
               <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-6">

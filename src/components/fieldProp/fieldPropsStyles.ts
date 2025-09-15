@@ -40,10 +40,10 @@ export const customInputStyles: SxProps = {
         height: '45px',
         '& .MuiPickersSectionList-root': {
             backgroundColor: 'transparent',
-            color:'white',
+            // color:'white',
         },
         '& .MuiIconButton-root' : {
-            color:'white',
+            // color:'white',
         },
         '&:hover fieldset': {
             borderWidth: '1px !important',

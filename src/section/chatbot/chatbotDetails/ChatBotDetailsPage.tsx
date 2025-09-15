@@ -2,6 +2,7 @@
 
 import React, { useState, useCallback, useEffect, useRef} from "react";
 import CustomNode from "./CustomNode";
+import CustomEdge from "./CustomEdge";
 import ReactFlow, {
   addEdge,
   applyNodeChanges,
@@ -27,12 +28,13 @@ import {
 } from "@/redux/reducers/chatBot/actions";
 import { POST_BOT_REQUEST,UPDATE_BOT_REQUEST } from "@/redux/reducers/chatBot/actionTypes";
 import { useDispatch, useSelector } from 'react-redux';
-import { messageIcons, groupIcons, replayIcons, Preference } from "@/utils/utils";
+import { messageIcons, replayIcons, Preference } from "@/utils/utils";
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import "reactflow/dist/style.css";
 import {constantsText} from "../../../constant/constant"
 import { toast } from "react-toastify";
 import { baseURL } from "@/utils/url";
+import { CloseIcon } from "@/icons";
 
 const {
   BOT:{
@@ -50,8 +52,10 @@ type Input = {
   id: string;
   type: string;
   field: string;
-  value: string; 
   editor?: any;
+  options?:any;
+  icon?: any;
+  slots?: any[];
 }
 
 type CustomNodeData = {
@@ -116,14 +120,15 @@ const nodeTypes = {
   customNode: CustomNode,
 };
 
-const edgeTypes:any = {
-  type: 'smoothstep',
+const edgeTypes = {
+  customEdge: CustomEdge,
 };
+
 
 const isValidConnection = (connection:any) => {
   const { sourceHandle, targetHandle } = connection;
   if (sourceHandle.startsWith('option') && targetHandle.startsWith('replay')) {
-    return false; // Prevent option handles from connecting to message handles
+    return false;
   }
   return true;
 };
@@ -141,11 +146,11 @@ const ChatBotDetails = () => {
   const router = useRouter();
   const currentPath = usePathname()
   const chatbotId:string | any = searchParams.get('botId'); 
-  // const isConnected = useSelector(getWebSocketStatusSelector);
-  // const isPending = useSelector(getPendingSelector);
   const generatedId:string | any = botData?.data?._id || '';
   const { screenToFlowPosition } = useReactFlow();
-  const createNodeId = `group-${Date.now()}`; 
+  const createNodeId = Date.now(); 
+  const newNodeId = `group-${createNodeId}`; 
+  const [isLoading, setIsLoading] = useState(true);
 
   const onNodesChange = useCallback(
     (changes: NodeChange[]) =>
@@ -155,25 +160,19 @@ const ChatBotDetails = () => {
 
   const onEdgesChange = useCallback(
     (changes: EdgeChange[]) => {
-      setEdges((eds) => {
-        const updatedEdges = applyEdgeChanges(changes, eds);
-        return updatedEdges.map((edge) => ({
-          ...edge,
-          label:"x",
-          markerEnd: {
-            type: MarkerType.ArrowClosed,
-            color: '#b00707'
-          },
-          type: 'smoothstep',
-        }));
-      });
-    },[]
+      setEdges((eds) => applyEdgeChanges(changes, eds));
+    },
+    []
   );
 
   const onEdgeClick = useCallback(
     (event: React.MouseEvent, edge: { id: string }) => {
       event.stopPropagation();
-      setEdges((eds) => eds.filter((e) => e.id !== edge.id));
+  
+      const target = event.target as HTMLElement;
+      if (target.closest('div') && target.textContent === 'X') {
+        setEdges((eds) => eds.filter((e) => e.id !== edge.id));
+      }
     },
     []
   );
@@ -191,51 +190,66 @@ const ChatBotDetails = () => {
             edge.source === params.source &&
             edge.sourceHandle === params.sourceHandle
         );
+
+        if (params.source === params.target) {
+          console.warn(`Cannot connect node ${params.source} to itself.`);
+          return eds;
+        }
   
         if (isSourceConnectedToAnotherTarget) {
           console.warn(
             `Source ${params.source} is already connected to another target. Restricting new connection.`
           );
-          return eds; 
+          return eds;
         }
-
+  
         const newEdge: Edge = {
           ...params,
           id: `${params.source}-${params.sourceHandle}-${params.target}-${params.targetHandle}`,
           source: params.source,
           target: params.target,
-          label: "x",
-          markerEnd: {
-            type: MarkerType.ArrowClosed,
-            color: "#b00707",
-          },
-          type: "smoothstep",
+          type: 'customEdge',
+          data: { label: 'X' },
         };
   
         return addEdge(newEdge, eds);
       });
     },
-    [] 
+    []
   );
   
-  const onDropNode = useCallback(
+  const onDropNode = useCallback (
     (event: React.DragEvent) => {
       event.preventDefault();
+      event.stopPropagation();
 
-      const nodeType = event.dataTransfer.getData("application/reactflow-node");
-      if (!nodeType) return;
+      const jsonData = event.dataTransfer.getData("application/reactflow-node");
+
+      if (!jsonData) return;
+      const inputData = JSON.parse(jsonData);
+      let newInput: Input | null = null;
+
+      if (inputData?.field === "replay") return;
+
+      newInput = {
+        id: `${newNodeId}-input-${createNodeId}`,
+        field: inputData?.field,
+        type: inputData?.type,
+        slots: [],
+        options: inputData?.type  == "List" || inputData?.type  == "Button" ?
+          [{ id: createNodeId, ...inputData, value:"" }] : [],
+      };
 
       const position = screenToFlowPosition({
         x:event.clientX, 
         y:event.clientY
       });
-      const newNodeId = createNodeId; 
       const newNode: Node<CustomNodeData> = {
         id: newNodeId,
-        type: nodeType,
+        type: inputData?.node,
         position,
         data: {
-          inputs: [],
+          inputs: newInput ? [newInput] : [],
           nodeCount: nodes.length+1,
           label: `${STEP}${nodes.length+1}`,
           setInputs: (callback) =>
@@ -402,7 +416,7 @@ const ChatBotDetails = () => {
     botData: InitialBotData | null,
     reactFlowInstance: ReactFlowInstance |  FlowInstance | any
   ) => {
-    const initialNode = createNode(createNodeId, "customNode", { x: 0, y: 0 }, {
+    const initialNode = createNode(newNodeId, "customNode", { x: 0, y: 0 }, {
       inputs: [],
       nodeCount: nodes.length,
       label: `${STEP}1`,
@@ -421,10 +435,10 @@ const ChatBotDetails = () => {
       );
 
       setNodes(sanitizedNodes);
-      setEdges(botData.data.edges);
+      setEdges(botData?.data?.edges);
 
-      if (reactFlowInstance.current) {
-        reactFlowInstance.current.setViewport(botData.data.viewport);
+      if (reactFlowInstance?.current) {
+        reactFlowInstance?.current?.setViewport(botData.data.viewport);
       }
     } else {
       !chatbotId && setNodes([initialNode]);
@@ -460,6 +474,7 @@ const ChatBotDetails = () => {
     if (botData) {
       initializeNodeData(botData, reactFlowInstance.current);
       setTitle(chatbotId ? botData?.data?.title : `${BOT_TITLE}` || '');
+      setIsLoading(false);
     }
   }, [botData, reactFlowInstance]);
 
@@ -482,6 +497,18 @@ const ChatBotDetails = () => {
     setTitle(e.target.value);
     setIsTitleEmpt(value === "")
   }, [title]);
+
+  if (isLoading) {
+    return (
+      <div className="w-full h-screen flex items-center justify-center">
+         <img
+            src="/gif/botLoad1.gif"
+            width={80}
+            height={80}
+          />
+      </div>
+    );
+  }
 
   return (
     <div className="h-screen w-full">
@@ -509,13 +536,13 @@ const ChatBotDetails = () => {
         <h4 className="text-drag-text mb-1 text-xxs font-bold dark:text-dark-text">{ICON_TITLE1}</h4>
         <hr className="mb-3 mt-2 border-b border-divider dark:border-dark-border"/>
         <div className="grid grid-cols-2 gap-y-2 gap-x-1">
-          {messageIcons.map(({ type, icon }) => (
+          {messageIcons.map(({ type, icon, field }) => (
             <div
               key={type}
               draggable
               onDragStart={(e) => {
-                const inputData = { type, field: "messages" };
-                e.dataTransfer.setData("application/reactflow-input", JSON.stringify(inputData));
+                const inputData = { type, field, node: "customNode", icon  };
+                e.dataTransfer.setData("application/reactflow-node", JSON.stringify(inputData));
               }}
               className="bg-node-active border-2 border-dotted border-drag-border p-[4px] rounded cursor-grab text-drag-text text-xxxs mb-1 dark:bg-black dark:border-1 dark:border-dark-border dark:text-dark-text"
             >
@@ -526,13 +553,13 @@ const ChatBotDetails = () => {
         <h4 className="text-drag-text mb-1 mt-3 text-xxs font-bold dark:text-dark-text">{ICON_TITLE2}</h4>
         <hr className="mb-3 dark:mt-2 border-b border-divider dark:border-dark-border"/>
         <div className="grid grid-cols-2 gap-y-2 gap-x-1">
-          {replayIcons.map(({ type, icon }) => (
+          {replayIcons.map(({ type, icon, field }) => (
             <div
               key={type}
               draggable
               onDragStart={(e) => {
-                const inputData = { type, field: "replay" };
-                e.dataTransfer.setData("application/reactflow-input", JSON.stringify(inputData));
+                const inputData = { type, field, node: "", icon  };
+                e.dataTransfer.setData("application/reactflow-node", JSON.stringify(inputData));
               }}
               className="bg-node-active border-2 border-dotted border-drag-border p-[4px] rounded cursor-grab text-drag-text text-xxxs mb-1 dark:bg-black dark:border-1 dark:border-dark-border dark:text-dark-text"
             >
@@ -543,31 +570,15 @@ const ChatBotDetails = () => {
         <h4 className="text-drag-text mb-1 mt-3 text-xxs font-bold dark:text-dark-text">{ICON_TITLE3}</h4>
         <hr className="mb-3 dark:mt-2 border-b border-divider dark:border-dark-border"/>
         <div className="grid grid-cols-2 gap-y-2 gap-x-1">
-          {Preference.map(({ type, icon }) => (
+          {Preference.map(({ type, icon, field }) => (
             <div
               key={type}
               draggable
               onDragStart={(e) => {
-                const inputData = { type, field: "preference" };
-                e.dataTransfer.setData("application/reactflow-input", JSON.stringify(inputData));
+                const inputData = { type, field, node: "customNode", icon };
+                e.dataTransfer.setData("application/reactflow-node", JSON.stringify(inputData));
               }}
               className="bg-node-active border-2 border-dotted border-drag-border p-[4px] rounded cursor-grab text-drag-text text-xxxs mb-1 dark:bg-black dark:border-1 dark:border-dark-border dark:text-dark-text"
-            >
-              {icon} {type}
-            </div>
-          ))}
-        </div>
-        <h4 className="text-drag-text mb-1 mt-3 text-xxs font-bold dark:text-dark-text">{ICON_TITLE4}</h4>
-        <hr className="mb-3  dark:mt-2 border-b border-divider dark:border-dark-border"/>
-        <div>
-          {groupIcons.map(({ type, icon }) => (
-            <div
-              key={type}
-              draggable
-              onDragStart={(e) => {
-                e.dataTransfer.setData("application/reactflow-node", 'customNode');
-              }}
-              className="bg-node-active border-2 border-dotted border-drag-border p-[4px] rounded cursor-grab text-drag-text text-xxxs mb-1 dark:border-1 dark:border-dark-border dark:text-dark-text dark:bg-black"
             >
               {icon} {type}
             </div>
@@ -603,13 +614,28 @@ const ChatBotDetails = () => {
   );
 };
 
-export default function OrderWrapper() {
+export default function ChatBotWrapper() {
   return (
     <ReactFlowProvider>
       <ChatBotDetails />
     </ReactFlowProvider>
   );
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

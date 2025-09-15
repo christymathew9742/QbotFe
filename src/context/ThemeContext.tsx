@@ -1,14 +1,12 @@
 // "use client";
 
 // import type React from "react";
-// import { createContext, useState, useContext, useEffect } from "react";
-// import Cookies from 'universal-cookie';
-
-
-// type Theme = "light" | "dark";
+// import { createContext, useContext, useEffect } from "react";
+// import Cookies from "universal-cookie";
+// import { usePathname } from "next/navigation";
 
 // type ThemeContextType = {
-//   theme: Theme;
+//   theme: "dark";
 //   toggleTheme: () => void;
 // };
 
@@ -18,34 +16,25 @@
 // export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({
 //   children,
 // }) => {
-//   const [theme, setTheme] = useState<Theme>("light");
-//   const [isInitialized, setIsInitialized] = useState(false);
-  
-//   useEffect(() => {
-//     const savedTheme =  cookies.get('theme') as Theme | undefined;
-//     const initialTheme = savedTheme || "light"; // Default to light theme
-
-//     setTheme(initialTheme);
-//     setIsInitialized(true);
-//   }, []);
+//   const pathname = usePathname();
+//   const isAuthPage = pathname === "/signin" || pathname === "/signup";
 
 //   useEffect(() => {
-//     if (isInitialized) {
-//       cookies.set('theme', theme);
-//       if (theme === "dark") {
-//         document.documentElement.classList.add("dark");
-//       } else {
-//         document.documentElement.classList.remove("dark");
-//       }
+//     if (!isAuthPage) {
+//       cookies.set("theme", "dark");
+//       document.documentElement.classList.add("dark");
+//       document.documentElement.classList.remove("light");
+//     } else {
+//       document.documentElement.classList.remove("dark");
 //     }
-//   }, [theme, isInitialized]);
+//   }, [pathname]);
 
 //   const toggleTheme = () => {
-//     setTheme((prevTheme) => (prevTheme === "light" ? "dark" : "light"));
+//     // No-op because only dark theme is allowed
 //   };
 
 //   return (
-//     <ThemeContext.Provider value={{ theme, toggleTheme }}>
+//     <ThemeContext.Provider value={{ theme: "dark", toggleTheme }}>
 //       {children}
 //     </ThemeContext.Provider>
 //   );
@@ -62,15 +51,14 @@
 "use client";
 
 import type React from "react";
-import { createContext, useState, useContext, useEffect } from "react";
-import Cookies from "universal-cookie";
+import { createContext, useContext, useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
+import Cookies from "universal-cookie";
 
-type Theme = "light" | "dark";
+type Theme = "dark" | "light";
 
 type ThemeContextType = {
   theme: Theme;
-  toggleTheme: () => void;
 };
 
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
@@ -79,49 +67,48 @@ const cookies = new Cookies();
 export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
-  const [theme, setTheme] = useState<Theme>("light");
-  const [isInitialized, setIsInitialized] = useState(false);
   const pathname = usePathname();
-
   const isAuthPage = pathname === "/signin" || pathname === "/signup";
+  const [theme, setTheme] = useState<Theme>("light");
+
+  const applyTheme = (newTheme: Theme) => {
+    document.documentElement.classList.remove("dark", "light");
+    document.documentElement.classList.add(newTheme);
+    setTheme(newTheme);
+  };
 
   useEffect(() => {
     if (isAuthPage) {
-      setTheme("light");
-      setIsInitialized(true);
-    } else {
-      const savedTheme = cookies.get("theme") as Theme | undefined;
-      const initialTheme = savedTheme || "light";
-      setTheme(initialTheme);
-      setIsInitialized(true);
-    }
-  }, [pathname]);
-
-  useEffect(() => {
-    if (!isInitialized) return;
-
-    if (isAuthPage) {
-      document.documentElement.classList.remove("dark");
+      document.documentElement.classList.remove("dark", "light");
       return;
     }
 
-    cookies.set("theme", theme);
-    if (theme === "dark") {
-      document.documentElement.classList.add("dark");
-      document.documentElement.classList.remove("light");
-    } else {
-      document.documentElement.classList.remove("dark");
-      document.documentElement.classList.add("light");
-    }
-  }, [theme, isInitialized, pathname]);
+    const systemPrefersDark = window.matchMedia(
+      "(prefers-color-scheme: dark)"
+    ).matches;
+    const initialTheme: Theme = systemPrefersDark ? "dark" : "light";
+    applyTheme(initialTheme);
+    cookies.set("theme", initialTheme);
 
-  const toggleTheme = () => {
-    if (isAuthPage) return;
-    setTheme((prevTheme) => (prevTheme === "light" ? "dark" : "light"));
-  };
+    // Listen to system theme changes dynamically
+    const listener = (e: MediaQueryListEvent) => {
+      applyTheme(e.matches ? "dark" : "light");
+      cookies.set("theme", e.matches ? "dark" : "light");
+    };
+
+    window
+      .matchMedia("(prefers-color-scheme: dark)")
+      .addEventListener("change", listener);
+
+    return () => {
+      window
+        .matchMedia("(prefers-color-scheme: dark)")
+        .removeEventListener("change", listener);
+    };
+  }, [pathname]);
 
   return (
-    <ThemeContext.Provider value={{ theme, toggleTheme }}>
+    <ThemeContext.Provider value={{ theme }}>
       {children}
     </ThemeContext.Provider>
   );
@@ -134,3 +121,4 @@ export const useTheme = () => {
   }
   return context;
 };
+
