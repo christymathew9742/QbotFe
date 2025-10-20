@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import WysiwygIcon from '@mui/icons-material/Wysiwyg';
 import ImageIcon from '@mui/icons-material/Image';
 import VideoLibraryIcon from '@mui/icons-material/VideoLibrary';
@@ -25,6 +24,7 @@ import {
   differenceInYears,
   format,
 } from 'date-fns';
+import api from './axios';
 
 const {
   BOT:{
@@ -32,16 +32,9 @@ const {
       MESSAGE,
       REPLAY,
       PREFERENCE,
-      GROUP,
     }
   }
 } = constantsText;
-
-type Status = {
-  booked?: number;
-  completed?: number;
-  rescheduled?: number;
-};
 
 const iconProps = { sx: { fontSize: '14px', marginRight: '4px',  } };
 
@@ -71,42 +64,12 @@ export const Preference = [
   { type: 'Slot', field: 'preference', icon: <BookIcon sx={{ ...iconProps.sx, color: PREFERENCE }} /> },
 ];
 
-export const useEmojiPicker = () => {
-  const [showEmojiPicker, setShowEmojiPicker] = useState(false);
-  const emojiList = [
-    '😊', '😂', '😢', '😍', '😎', '🥺', '😇', '🤔', '😜', '😏', '😋', '😱',
-    '🤩', '😜', '😤', '🥳', '😆', '🥺', '😝', '👻', '💩', '🎉', '🔥', '🌹',
-  ];
-
-  // Toggle the visibility of the emoji picker
-  const toggleEmojiPicker = () => {
-    setShowEmojiPicker((prev) => !prev);
-  };
-
-  // Insert emoji into the specified editor
-  const insertEmoji = (emoji: string, editor: any) => {
-    if (editor) {
-      editor.chain().focus().insertContent(emoji).run();
-    }
-    setShowEmojiPicker(false); // Close the emoji picker after inserting an emoji
-  };
-
-  return {
-    showEmojiPicker,
-    emojiList,
-    toggleEmojiPicker,
-    insertEmoji,
-  };
-};
-
-
 export  const decodeHtml = (html: string): string => {
   const doc = new DOMParser().parseFromString(html, 'text/html');
   return doc.body.innerHTML;
 };
 
 export function isQueryParamString(str:any) {
-  // Check if the string matches the general query parameter format
   return /^(\w+=[^&]*&)*(\w+=[^&]*)$/.test(str);
 }
 
@@ -115,7 +78,7 @@ export const formatTime = (iso:any) => {
   return date.toLocaleTimeString(undefined, {
     hour: '2-digit',
     minute: '2-digit',
-    hour12: true, // for AM/PM
+    hour12: true, 
   });
 };
 
@@ -188,6 +151,76 @@ export const formatUpdatedDate = (iso: string) => {
   const yearsDiff = differenceInYears(now, date);
   return `${yearsDiff}y ago`;
 };
+
+export function isFileType(type: string): boolean {
+  const fileTypes = ["Image", "Video", "Doc", "Location", "Audio"];
+  return fileTypes.includes(type);
+}
+
+export const updateTempFilesToPermanent = async (inputs: any[], setInputs: any, chatbotId: string) => {
+  if (!inputs?.length) return;
+
+  const hasTempFiles = inputs.some(input =>
+    input.fileData?.some((file:any) => file?.key?.includes("temp/"))
+  );
+  if (!hasTempFiles) return;
+
+  try {
+    const updatedInputs = await Promise.all(
+      inputs.map(async (input: any) => {
+        if (!input.fileData) return input;
+
+        const updatedFileData = await Promise.all(
+          input.fileData.map(async (file: any) => {
+            if (file?.key?.includes("temp/") && file.type !== "Test" && file.type !== "Location") {
+              try {
+                const { data: res } = await api.get(
+                  `/createbots/${chatbotId}/permanent-url`,
+                  { params: { tempKey: file.key, filename: file.name } }
+                );
+                if (!res.permanentKey || !res.permanentUrl) return { ...file, saveToDb: false };
+                return { ...file, key: res.permanentKey, url: res.permanentUrl, preview: res.permanentUrl, saveToDb: true };
+              } catch {
+                return { ...file, saveToDb: false };
+              }
+            }
+            return file;
+          })
+        );
+
+        return { ...input, fileData: updatedFileData };
+      })
+    );
+
+    setInputs(updatedInputs);
+    console.log("✅ Temp files updated before save");
+  } catch (err: any) {
+    console.error("handleFileUpdates failed:", err.message);
+  }
+};
+
+export const extractFileKeys = (inputs: any[] | undefined): string[] => {
+  const fileKeys: string[] = [];
+
+  if (!Array.isArray(inputs)) return fileKeys;
+
+  inputs.forEach((input) => {
+    input = Array.isArray(input) ? input[0] : input;
+    if (
+      input?.field === "messages" &&
+      !["Location", "Text"].includes(input?.type) &&
+      Array.isArray(input?.fileData)
+    ) {
+      input.fileData.forEach((file:any) => {
+        if (file?.key) fileKeys.push(file.key);
+      });
+    }
+  });
+
+  return fileKeys;
+};
+
+
 
 
 

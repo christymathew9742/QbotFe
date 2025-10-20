@@ -136,7 +136,7 @@ const AppointmentDetails: React.FC = () => {
                                         </span>
                                     </div>
                                 </div>
-                                <div className="border dark:border-gray-700 rounded-[4px]">
+                                {/* <div className="border dark:border-gray-700 rounded-[4px]">
                                     {Object.entries(appointment?.data ?? {}).map(
                                         ([key, value], index) =>
                                         value && typeof value !== "object" ? (
@@ -157,6 +157,50 @@ const AppointmentDetails: React.FC = () => {
                                             </div>
                                         ) : null
                                     )}
+                                </div> */}
+
+                                <div className="border dark:border-gray-700 rounded-[4px]">
+                                    {Object.entries(appointment?.data ?? {}).map(([key, value], index) => {
+                                        if (value === undefined || value === null) return null;
+                                        if (key === "preference" && Array.isArray(value)) {
+                                            return (
+                                                <div key={index}>
+                                                    {value.map((pref, i) =>
+                                                        Object.entries(pref).map(([pKey, pVal], j) => (
+                                                        <div
+                                                            className={`${index > 0 ? "border-t" : ""} dark:border-gray-700 cursor-text`}
+                                                            key={`${i}-${j}`}
+                                                        >
+                                                            <div className="p-2">
+                                                                <p className="text-sm text-gray-400 dark:text-gray-400 mb-2 ml-2">
+                                                                {formatString(pKey)} :
+                                                                </p>
+                                                                <p className="text-base font-semibold text-gray-900 dark:text-white ml-2">
+                                                                    {String(pVal)}
+                                                                </p>
+                                                            </div>
+                                                        </div>
+                                                        ))
+                                                    )}
+                                                </div>
+                                            );
+                                        }
+                                        return typeof value !== "object" ? (
+                                        <div
+                                            key={index}
+                                            className={`${index > 0 ? "border-t" : ""} dark:border-gray-700 cursor-text`}
+                                        >
+                                            <div className="p-2">
+                                            <p className="text-sm text-gray-400 dark:text-gray-400 mb-2 ml-2">
+                                                {formatString(key)} :
+                                            </p>
+                                            <p className="text-base font-semibold text-gray-900 dark:text-white ml-2">
+                                                {String(value)}
+                                            </p>
+                                            </div>
+                                        </div>
+                                        ) : null;
+                                    })}
                                 </div>
                             </div>
                             <div className="grid grid-cols-1 gap-2  px-4 py-2 border-t dark:border-gray-800 "></div>

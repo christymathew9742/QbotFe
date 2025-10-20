@@ -107,8 +107,8 @@ export default function NotificationDropdown() {
       <Dropdown
         isOpen={isOpen}
         onClose={handleClose}
-        className={`absolute -right-[240px] mt-[17px] flex flex-col rounded-2xl border border-gray-200 bg-white p-3 shadow-theme-lg dark:border-gray-800 dark:bg-gray-dark sm:w-[361px] lg:right-0 ${
-          notifications.length ? "h-[480px] w-[350px]" : "h-[200px] w-[350px]"
+        className={`absolute -right-[240px] mt-[4px] flex flex-col rounded-2xl border border-gray-200 bg-white p-3 shadow-theme-lg dark:border-gray-800 dark:bg-gray-dark sm:w-[361px] lg:right-0 ${
+          notifications.length ? "h-[480px] w-[300px]" : "h-[200px] w-[300px]"
         }`}
       >
         <div className="flex items-center justify-between pb-3 mb-3 border-b border-gray-100 dark:border-gray-700">
@@ -148,8 +148,7 @@ export default function NotificationDropdown() {
                 </li>
               ))}
             </ul>
-            {/* Show more button */}
-            {notifications.length > 5 && (
+            {notifications.length >= 5 && (
               <button
                 onClick={handleShowAllNotifi}
                 className="block px-4 py-2 mt-3 text-sm font-medium text-center text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-100 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-gray-700"

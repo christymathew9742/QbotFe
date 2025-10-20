@@ -15,9 +15,8 @@ import ReactFlow, {
   useReactFlow,
   ReactFlowInstance,
   ReactFlowProvider,
-  MarkerType,
 } from "reactflow";
-import { getBotSelector } from "@/redux/reducers/chatBot/selectors";
+import { getBotSelector, getFetchPendingSelector, getPostPendingSelector, getUpdatePendingSelector } from "@/redux/reducers/chatBot/selectors";
 import { useSearchParams,useRouter, usePathname } from 'next/navigation';
 import { AppDispatch } from "@/redux/store";
 import {
@@ -28,13 +27,18 @@ import {
 } from "@/redux/reducers/chatBot/actions";
 import { POST_BOT_REQUEST,UPDATE_BOT_REQUEST } from "@/redux/reducers/chatBot/actionTypes";
 import { useDispatch, useSelector } from 'react-redux';
-import { messageIcons, replayIcons, Preference } from "@/utils/utils";
+import { messageIcons, replayIcons, Preference, isFileType, updateTempFilesToPermanent } from "@/utils/utils";
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import "reactflow/dist/style.css";
 import {constantsText} from "../../../constant/constant"
 import { toast } from "react-toastify";
 import { baseURL } from "@/utils/url";
-import { CloseIcon } from "@/icons";
+import { useSaveFlowData } from "@/hooks/useSaveFlowData";
+import { SaveEventProvider, useSaveEvent } from "@/context/SaveDataContext";
+import SaveLoader from "@/components/saveLoader/SaveLoader";
+import { CircularProgress } from "@mui/material";
+import { useStatus } from "@/context/StatusContext";
+ 
 
 const {
   BOT:{
@@ -43,7 +47,6 @@ const {
     ICON_TITLE1,
     ICON_TITLE2,
     ICON_TITLE3,
-    ICON_TITLE4,
     BOT_TITLE,
   },
 } = constantsText;
@@ -56,6 +59,7 @@ type Input = {
   options?:any;
   icon?: any;
   slots?: any[];
+  fileData?: any[];
 }
 
 type CustomNodeData = {
@@ -82,16 +86,6 @@ interface Viewport {
   x: number;
   y: number;
   zoom: number;
-}
-
-interface FlowData {
-  title:string;
-  nodes: Nod[];
-  edges: Edge[];
-  viewport: Viewport;
-  status: boolean;
-  update: boolean;
-  data:any;
 }
 
 interface InitialNodeData {
@@ -151,21 +145,25 @@ const ChatBotDetails = () => {
   const createNodeId = Date.now(); 
   const newNodeId = `group-${createNodeId}`; 
   const [isLoading, setIsLoading] = useState(true);
+  const [startSave,setStartSave] = useState(false)
+  const [isResult,setIsResult] = useState<boolean | any>(true);
+  const { triggerSave } = useSaveEvent();
+  const { status } = useStatus();
 
-  const onNodesChange = useCallback(
+  const onNodesChange = useCallback (
     (changes: NodeChange[]) =>
       setNodes((nds) => applyNodeChanges(changes, nds)),
     []
   );
 
-  const onEdgesChange = useCallback(
+  const onEdgesChange = useCallback (
     (changes: EdgeChange[]) => {
       setEdges((eds) => applyEdgeChanges(changes, eds));
     },
     []
   );
 
-  const onEdgeClick = useCallback(
+  const onEdgeClick = useCallback (
     (event: React.MouseEvent, edge: { id: string }) => {
       event.stopPropagation();
   
@@ -177,7 +175,7 @@ const ChatBotDetails = () => {
     []
   );
 
-  const onConnect = useCallback(
+  const onConnect = useCallback (
     (params: any) => {
       if (!params.source || !params.target) {
         console.error("Invalid connection params:", params);
@@ -217,42 +215,54 @@ const ChatBotDetails = () => {
     },
     []
   );
-  
+
   const onDropNode = useCallback (
     (event: React.DragEvent) => {
       event.preventDefault();
       event.stopPropagation();
-
+  
       const jsonData = event.dataTransfer.getData("application/reactflow-node");
-
       if (!jsonData) return;
+  
       const inputData = JSON.parse(jsonData);
-      let newInput: Input | null = null;
-
       if (inputData?.field === "replay") return;
-
-      newInput = {
+  
+      const newInput = {
         id: `${newNodeId}-input-${createNodeId}`,
         field: inputData?.field,
         type: inputData?.type,
         slots: [],
-        options: inputData?.type  == "List" || inputData?.type  == "Button" ?
-          [{ id: createNodeId, ...inputData, value:"" }] : [],
+        options:
+          inputData?.type === "List" || inputData?.type === "Button"
+            ? [{ id: createNodeId, ...inputData, value: "" }]
+            : [],
+        fileData: [],
       };
-
+  
       const position = screenToFlowPosition({
-        x:event.clientX, 
-        y:event.clientY
+        x: event.clientX,
+        y: event.clientY,
       });
+  
+      let labelIndex = nodes.length + 1;
+      let generatedLabel = `${STEP}${labelIndex}`;
+      const existingLabels = nodes.map((node) => node.data.label);
+  
+      while (existingLabels.includes(generatedLabel)) {
+        labelIndex++;
+        generatedLabel = `${STEP}${labelIndex}`;
+      }
+  
       const newNode: Node<CustomNodeData> = {
         id: newNodeId,
         type: inputData?.node,
         position,
         data: {
-          inputs: newInput ? [newInput] : [],
-          nodeCount: nodes.length+1,
-          label: `${STEP}${nodes.length+1}`,
+          inputs: [newInput],
+          nodeCount: nodes.length + 1,
+          label: generatedLabel,
           setInputs: (callback) =>
+            typeof callback === "function" &&
             setNodes((nds) =>
               nds.map((node) =>
                 node.id === newNodeId
@@ -276,110 +286,30 @@ const ChatBotDetails = () => {
             ),
         },
       };
+  
       setNodes((nds) => [...nds, newNode]);
     },
     [nodes, screenToFlowPosition]
   );
-
+  
   const onDragOver = (event: React.DragEvent) => {
     event.preventDefault();
     event.dataTransfer.dropEffect = "move";
   };
 
-  const sanitizeNode = (node: Nod): Nod => ({
-    ...node,
-    data: {
-      ...node.data,
-      deleteField: null,
-      setInputs: null,
-      inputs: node.data?.inputs?.map((input) => {
-        if (input.editor) {
-          const { editor, ...rest } = input;
-          return {
-            ...rest,
-            options: input.options?.map((option:any) => ({
-              ...option,
-            })) || [],
-          };
-        }
-        return input;
-      }) || [],
-    },
+  const { saveData } = useSaveFlowData({
+    reactFlowInstance,
+    dispatch,
+    chatbotId,
+    title,
+    isTitleEmpt,
+    toast,
+    postBotRequest,
+    updateBotRequest,
+    POST_BOT_REQUEST,
+    UPDATE_BOT_REQUEST,
+    isFileType,
   });
-
-  const isEmptyField = (data: { inputs?: { value: string }[] }): boolean => {
-    return (
-      Array.isArray(data?.inputs) &&
-      data.inputs.length > 0 &&
-      data.inputs.every(({ value }) => {
-        const content =
-          new DOMParser().parseFromString(value, "text/html").body.textContent || "";
-        return content.trim() !== "";
-      })
-    );
-  };
-  
-  const sanitizeFlowData = (flowData: FlowData): FlowData => ({
-    ...flowData,
-    title: title,
-    nodes: flowData.nodes.map((node) => sanitizeNode(node)),
-    edges: flowData.edges.map((edge) => ({
-      ...edge,
-    })),
-    status: true,
-    viewport: {
-      ...flowData.viewport,
-    },
-  });
-
-  const saveData = useCallback(
-    async () => {
-      if (!reactFlowInstance?.current) {
-        console.error("React Flow instance is not available");
-        return;
-      }
-      const flowData: FlowData | any = reactFlowInstance?.current.toObject();
-      const sanitizedData = sanitizeFlowData(flowData);
-      const botData = { ...sanitizedData };
-      const update = flowData.nodes.length > 0 
-        && flowData.nodes.every((node:FlowData) => 
-          isEmptyField(node?.data));
-      
-      if (isTitleEmpt) {
-        toast.error('The title cannot be empty');
-        return;
-      }
-  
-      if (!update) {
-        toast.error('The node or its fields are empty.');
-        return;
-      }
-
-      try {
-        const action = chatbotId
-        ? updateBotRequest({ id: chatbotId, payload: { ...botData } })
-        : postBotRequest({ ...botData });
-        const result = await dispatch(action);
-        const handleSuccess = (message: string) => 
-          toast.success(message);
-        const handleError = (message: string) => toast.error(message);
-        switch (result.type) {
-          case POST_BOT_REQUEST:
-            handleSuccess('Saved.');
-            break;
-          case UPDATE_BOT_REQUEST:
-            handleSuccess('Updated');
-            break;
-          default:
-            handleError("Error saving data.");
-        }
-      } catch (error) {
-        console.error("Error saving data:", error);
-        toast.error("Error saving data");
-      }
-    },
-    [chatbotId, dispatch,title]
-  );
 
   const updateNodeData = (nodeId: string, updateCallback: (data: InitialNodeData) => InitialNodeData) => {
     setNodes((nds:any) =>
@@ -400,15 +330,44 @@ const ChatBotDetails = () => {
     position,
     data: {
       ...dataOverrides,
-      setInputs: (callback:any) => 
-        updateNodeData(id, (data) => 
-          ({ ...data, inputs: callback(data.inputs) })),
 
-      deleteField: (fieldId:any) =>
-        updateNodeData(id, (data) => ({
-          ...data,
-          inputs: data.inputs.filter((input) => input.id !== fieldId),
-        })),
+      setInputs: (callback: ((inputs: typeof dataOverrides.inputs) => any) | any) =>
+        updateNodeData(id, (data) => {
+          let newInputs;
+          if (typeof callback === "function") {
+            try {
+              newInputs = callback(data.inputs);
+            } catch (err) {
+              console.error("Error in setInputs callback:", err);
+              newInputs = data.inputs;
+            }
+          } else {
+            newInputs = callback;
+          }
+
+          if (!Array.isArray(newInputs)) {
+            console.warn(
+              "setInputs expected an array, got:",
+              newInputs,
+              "falling back to previous inputs"
+            );
+            newInputs = data.inputs;
+          }
+
+          return { ...data, inputs: newInputs };
+        }),
+
+      deleteField: (fieldId: any) =>
+        updateNodeData(id, (data) => {
+          if (!Array.isArray(data.inputs)) {
+            console.warn("deleteField: inputs is not an array", data.inputs);
+            return data;
+          }
+          return {
+            ...data,
+            inputs: data.inputs.filter((input) => input.id !== fieldId),
+          };
+        }),
     },
   });
 
@@ -512,6 +471,7 @@ const ChatBotDetails = () => {
 
   return (
     <div className="h-screen w-full">
+      <SaveLoader pending={startSave} color = {isResult? 'rgb(15 171 73)' : '#f11946'}/>
       <ReactFlow
         nodes={nodes}
         edges={edges}
@@ -525,6 +485,7 @@ const ChatBotDetails = () => {
         nodeTypes={nodeTypes}
         onInit={onInit}
         edgeTypes={edgeTypes} 
+        onClick = {() => setIsResult(true)}
       >
         <Background 
           gap={2} 
@@ -532,9 +493,9 @@ const ChatBotDetails = () => {
           className="bg-cover bg-center bg-no-repeat object-cover dark:bg-black" 
         />
       </ReactFlow>
-      <div className="fixed top-2 bottom-2 right-2 overflow-auto w-full sm:w-48 bg-node-active p-3 rounded-lg shadow-lg overflow-y-auto z-50 dark:bg-black dark:border-[1px] dark:border-dark-border">
+      <div className="fixed top-2 bottom-2 right-2 overflow-auto w-full sm:w-48 bg-node-active p-3 rounded-lg shadow-lg overflow-y-auto z-50 dark:bg-black dark:border-[1px] dark:border-dark-border-node">
         <h4 className="text-drag-text mb-1 text-xxs font-bold dark:text-dark-text">{ICON_TITLE1}</h4>
-        <hr className="mb-3 mt-2 border-b border-divider dark:border-dark-border"/>
+        <hr className="mb-3 mt-2 border-b border-divider dark:border-dark-border-node"/>
         <div className="grid grid-cols-2 gap-y-2 gap-x-1">
           {messageIcons.map(({ type, icon, field }) => (
             <div
@@ -544,14 +505,14 @@ const ChatBotDetails = () => {
                 const inputData = { type, field, node: "customNode", icon  };
                 e.dataTransfer.setData("application/reactflow-node", JSON.stringify(inputData));
               }}
-              className="bg-node-active border-2 border-dotted border-drag-border p-[4px] rounded cursor-grab text-drag-text text-xxxs mb-1 dark:bg-black dark:border-1 dark:border-dark-border dark:text-dark-text"
+              className="bg-node-active border-2 border-dotted border-drag-border p-[4px] rounded cursor-grab text-drag-text text-xxxs mb-1 dark:bg-black dark:border-1 dark:border-dark-border-node dark:text-dark-text"
             >
               {icon} {type}
             </div>
           ))}
         </div>
         <h4 className="text-drag-text mb-1 mt-3 text-xxs font-bold dark:text-dark-text">{ICON_TITLE2}</h4>
-        <hr className="mb-3 dark:mt-2 border-b border-divider dark:border-dark-border"/>
+        <hr className="mb-3 dark:mt-2 border-b border-divider dark:border-dark-border-node"/>
         <div className="grid grid-cols-2 gap-y-2 gap-x-1">
           {replayIcons.map(({ type, icon, field }) => (
             <div
@@ -561,14 +522,14 @@ const ChatBotDetails = () => {
                 const inputData = { type, field, node: "", icon  };
                 e.dataTransfer.setData("application/reactflow-node", JSON.stringify(inputData));
               }}
-              className="bg-node-active border-2 border-dotted border-drag-border p-[4px] rounded cursor-grab text-drag-text text-xxxs mb-1 dark:bg-black dark:border-1 dark:border-dark-border dark:text-dark-text"
+              className="bg-node-active border-2 border-dotted border-drag-border p-[4px] rounded cursor-grab text-drag-text text-xxxs mb-1 dark:bg-black dark:border-1 dark:border-dark-border-node dark:text-dark-text"
             >
               {icon} {type}
             </div>
           ))}
         </div>
         <h4 className="text-drag-text mb-1 mt-3 text-xxs font-bold dark:text-dark-text">{ICON_TITLE3}</h4>
-        <hr className="mb-3 dark:mt-2 border-b border-divider dark:border-dark-border"/>
+        <hr className="mb-3 dark:mt-2 border-b border-divider dark:border-dark-border-node"/>
         <div className="grid grid-cols-2 gap-y-2 gap-x-1">
           {Preference.map(({ type, icon, field }) => (
             <div
@@ -578,23 +539,23 @@ const ChatBotDetails = () => {
                 const inputData = { type, field, node: "customNode", icon };
                 e.dataTransfer.setData("application/reactflow-node", JSON.stringify(inputData));
               }}
-              className="bg-node-active border-2 border-dotted border-drag-border p-[4px] rounded cursor-grab text-drag-text text-xxxs mb-1 dark:bg-black dark:border-1 dark:border-dark-border dark:text-dark-text"
+              className="bg-node-active border-2 border-dotted border-drag-border p-[4px] rounded cursor-grab text-drag-text text-xxxs mb-1 dark:bg-black dark:border-1 dark:border-dark-border-node dark:text-dark-text"
             >
               {icon} {type}
             </div>
           ))}
         </div>
       </div>
-      <div className="fixed top-2 left-1 w-[90%] sm:w-[30%] h-auto bg-node-active p-1 rounded-lg shadow-lg z-50 flex flex-col sm:flex-row gap-2 dark:bg-black dark:border-[1px] dark:border-dark-border">
+      <div className="fixed top-2 left-1 w-[90%] sm:w-[30%] h-auto bg-node-active p-1 rounded-lg shadow-lg z-50 flex flex-col sm:flex-row gap-2 dark:bg-black dark:border-[1px] dark:border-dark-border-node">
         <input
           type="text"
           ref={titleRef}
           value={title || ""}
           onChange={handleInputTitleChange}
-          className={`text-xxs text-text-theme flex-1 h-4 p-[10px] rounded focus:outline-none hover:outline-none border-1 border-solid ${isTitleEmpt ? 'border-error' : 'border-drag-border dark:border-1 dark:border-dark-border dark:text-dark-text dark:bg-black'}`}
+          className={`text-xxs text-text-theme flex-1 h-4 p-[10px] rounded focus:outline-none hover:outline-none border-1 border-solid ${isTitleEmpt ? 'border-error' : 'border-drag-border dark:border-1 dark:border-dark-border-node dark:text-dark-text dark:bg-black'}`}
         />
         <button
-          className="flex items-center -ml-1 justify-center h-4 p-[10px] bg-[rgb(240 241 246)] rounded shadow border-1 border-solid border-drag-border dark:border-1 dark:border-dark-border dark:text-dark-text dark:bg-black"
+          className="flex items-center -ml-1 justify-center h-4 p-[10px] bg-[rgb(240 241 246)] rounded shadow border-1 border-solid border-drag-border dark:border-1 dark:border-dark-border-node dark:text-dark-text dark:bg-black"
           onClick={()=> router.push('/chatbot')}
         >
           <ArrowBackIcon  
@@ -604,10 +565,19 @@ const ChatBotDetails = () => {
           />
         </button>
         <button
-          className="flex text-xxs items-center -ml-1 justify-center h-4 p-[10px] bg-[rgb(240 241 246)] rounded shadow border-1 border-solid border-drag-border dark:border-1 dark:border-dark-border dark:text-dark-text dark:bg-black"
-          onClick={saveData}
+          className="flex text-xxs items-center -ml-1 justify-center h-4 p-[10px] bg-[rgb(240 241 246)] rounded shadow border-1 border-solid border-drag-border dark:border-1 dark:border-dark-border-node dark:text-dark-text dark:bg-black"
+          onClick={async () => {
+            if(!status) {
+              triggerSave();
+              setStartSave(true)
+              const result = await saveData();
+              setStartSave(false)
+              setIsResult(result);
+            }
+          }}
+          disabled={status || startSave}
         >
-          {SAVE}
+          {status || startSave ? <img src="/gif/pulsegif.gif" width={20} height={25} /> : SAVE} 
         </button>
       </div>
     </div>
@@ -617,7 +587,9 @@ const ChatBotDetails = () => {
 export default function ChatBotWrapper() {
   return (
     <ReactFlowProvider>
-      <ChatBotDetails />
+      <SaveEventProvider>
+        <ChatBotDetails />
+      </SaveEventProvider>
     </ReactFlowProvider>
   );
 }

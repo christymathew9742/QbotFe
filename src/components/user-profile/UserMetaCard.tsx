@@ -53,7 +53,7 @@ export default function UserMetaCard() {
   const cancelTokenRef = useRef<ReturnType<typeof axios.CancelToken.source> | null>(null);
   cancelTokenRef.current = axios.CancelToken.source();
   cancelTokenRef.current.token
-  const userProfileImage = userData?.profilepick?.fileUrl ? userData?.profilepick?.fileUrl :userData?.googleProfilePic;
+  const userProfileImage = userData?.profilepic?.fileUrl ? userData?.profilepic?.fileUrl :userData?.googleProfilePic;
 
   const initialValues = useMemo<ProfileData>(() => ({
     displayname: userData.displayname || '',

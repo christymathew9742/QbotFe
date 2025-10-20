@@ -11,6 +11,7 @@ interface StatCardProps {
     todaysCancelledAppointments?: number;
     todaysCompletedAppointments?: number;
     totalAppointments?: number;
+    totalCancelledAppointments?: number;
   };
   pendingStatus?: boolean;
 }
@@ -27,6 +28,7 @@ const WhatsAppStatCard: React.FC<StatCardProps> = ({
   appointmentStatus,
   pendingStatus = false,
 }) => {
+  console.log(appointmentStatus,'appointmentStatus')
   const stats: StatCardItem[] = [
     {
       title: "Total Appointments",
@@ -45,7 +47,7 @@ const WhatsAppStatCard: React.FC<StatCardProps> = ({
     {
       title: "Cancelled Appointments",
       subtitle: "Today's Cancelled",
-      total: appointmentStatus?.totalStatusCounts?.cancelled ?? 0,
+      total: appointmentStatus?.totalCancelledAppointments ?? 0,
       today: appointmentStatus?.todaysCancelledAppointments ?? 0,
       theme: "bg-red-500/[0.08] text-red-500",
     },

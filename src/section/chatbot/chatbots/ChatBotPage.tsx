@@ -20,7 +20,9 @@ import PageBreadcrumb from "@/components/common/PageBreadCrumb";
 import { Metadata } from "next";
 import { Table, TableBody, TableCell, TableHeader, TableRow } from "@/components/ui/table";
 import { EditIcon, DeleteIcon } from "@/icons";
-import { formatUpdatedDate } from "@/utils/utils";
+import { extractFileKeys, formatUpdatedDate } from "@/utils/utils";
+import useLocalStorage from "@/hooks/useLocalStorage";
+import api from "@/utils/axios";
 
 export const metadata: Metadata = {
   title: "List all Qbot",
@@ -33,6 +35,7 @@ interface Bot {
   status: boolean;
   updatedAt: string;
   user: string;
+  nodes: any[];
 }
 
 const ChatBot = () => {
@@ -79,8 +82,16 @@ const ChatBot = () => {
   }, [botData]);
   
   const handleDelete = useCallback(
-    async (id: any, title: string) => {
+    async (bot:Bot) => {
+      const { _id: id, title, nodes } = bot;
+      const inputs = nodes.map(node => node.data.inputs);
       try {
+        let fileKey:any = extractFileKeys(inputs);
+        if (fileKey || fileKey.length > 1){
+          await api.delete(`/createbots/${id}/files`, {
+          data: { fileKey, chatbotId:id },
+          });
+        }
         await dispatch(deleteBotRequest(id));
         toast.success(`${title} deleted successfully`);
       } catch (error) {
@@ -221,7 +232,7 @@ const ChatBot = () => {
                               </Link>
                             </IconButton>
                             <IconButton
-                              onClick={() => handleDelete(bot._id, bot.title)}
+                              onClick={() => handleDelete(bot)}
                               className="w-[35px]"
                             >
                               <DeleteIcon className="text-gray-500 hover:text-gray-600 dark:hover:text-gray-400 text-xxs" />

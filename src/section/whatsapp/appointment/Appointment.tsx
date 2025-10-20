@@ -153,7 +153,7 @@ const Appoinment = () => {
                 ) : appointmentData?.data?.length ? (
                   appointmentData.data.map((card: any) => {
                     const date = new Date(card?.createdAt);
-                    const month = date.toLocaleString("default", { month: "long" });
+                    const month = date.toLocaleString("default", { month: "short" });
                     const day = date.getDate();
                     const time = date.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
 
@@ -187,7 +187,12 @@ const Appoinment = () => {
                                 }`}                                
                               />
                               <p className="text-sm text-[#666] dark:text-gray-400 mt-4">
-                                📅 {card?.flowTitle}
+                                📅 {
+                                      card?.flowTitle?.length > 16 
+                                      ? card.flowTitle.slice(0, 13) + "..." 
+                                      : card?.flowTitle
+                                    }
+
                               </p>
                             </div>
                           </div>

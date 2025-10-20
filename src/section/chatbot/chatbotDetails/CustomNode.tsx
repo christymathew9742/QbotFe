@@ -9,14 +9,16 @@ import {
 } from "reactflow";
 
 import { Editor, EditorContent } from '@tiptap/react';
+import { createPortal } from "react-dom";
 import { Extension } from '@tiptap/core';
 import AddBoxIcon from '@mui/icons-material/AddBox';
 import DeleteIcon from '@mui/icons-material/Delete';
 import StarterKit from '@tiptap/starter-kit';
 import Highlight from '@tiptap/extension-highlight';
 import Typography from '@tiptap/extension-typography';
-import Image from '@tiptap/extension-image';
-import Youtube from "@tiptap/extension-youtube";
+import Link from '@tiptap/extension-link';
+import { useSearchParams} from 'next/navigation';
+import Picker from '@emoji-mart/react';
 import { Plugin } from 'prosemirror-state';
 import { Mark } from '@tiptap/core';
 import "reactflow/dist/style.css";
@@ -27,10 +29,17 @@ import FormatItalicIcon from '@mui/icons-material/FormatItalic';
 import { toast } from "react-toastify";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
-import "react-datepicker/dist/react-datepicker.css";
 import Dialog from '@mui/material/Dialog';
-import { messageIcons, replayIcons, Preference } from "@/utils/utils";
+import { messageIcons, replayIcons, Preference, isFileType, updateTempFilesToPermanent, extractFileKeys } from "@/utils/utils";
 import BookIcon from '@mui/icons-material/Book';
+import { ReusableFileUploader } from "@/components/fileUploader/fileUploader";
+import { CloseFullscreen } from "@mui/icons-material";
+import "leaflet/dist/leaflet.css";
+import api from "@/utils/axios";
+import { AxiosError } from "axios";
+import { useSaveEvent } from "@/context/SaveDataContext";
+import useLocalStorage from "@/hooks/useLocalStorage";
+import { useStatus } from "@/context/StatusContext";
 
 const {
   BOT:{
@@ -39,6 +48,7 @@ const {
 } = constantsText;
 
 interface TimeSlot {
+  id?: number;
   start: Date;
   end: Date;
   interval: String;
@@ -66,6 +76,7 @@ type Input = {
   editor?: any;
   options?: any;
   slots?: any;
+  fileData?: any;
 }
 
 type CustomNodeData = {
@@ -75,6 +86,46 @@ type CustomNodeData = {
   setInputs: (callback: (inputs: Input[]) => Input[]) => void;
   deleteField: (id: string) => void;
 };
+
+interface UploadedFile {
+  file?: File;
+  preview?: string;
+  uploaded?: boolean;
+  serverId?: string;
+  name?: string;
+  type: string;
+  size?: number;
+  url?: string;
+  uploadedAt?: string;
+  uploadError?: boolean;
+  lat?: number;
+  lng?: number;
+  key?: string,
+  saveToDb?: boolean;
+}
+
+interface Location {
+  lat?: number;
+  lng?: number;
+  name?: string;
+  type?: string;
+}
+
+interface UploadResult {
+  name: string;
+  type?: string;
+  size?: number;
+  preview?: string;
+  url?: string;
+  uploadedAt?: string;
+  isUploading?: boolean;
+  uploadError?: boolean;
+  lat?: number;
+  lng?: number;
+  key?: string;
+  progress?: number;
+  saveToDb?: boolean;
+}
 
 const BackgroundColorMark = Mark.create({
   name: 'backgroundColor',
@@ -164,13 +215,190 @@ const CustomNode: React.FC<NodeProps<CustomNodeData>> = ({ data, id }) => {
   const { deleteElements, getEdges } = useReactFlow();
   const [loadEditor, setLoadEditor] = useState(false);
   const createNewId = Date.now();
-
+  const searchParams = useSearchParams();
+  const chatbotId:string | any = searchParams.get('botId'); 
   const [open, setOpen] = useState(false);
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const [startTime, setStartTime] = useState<Date | null>(null);
   const [endTime, setEndTime] = useState<Date | null>(null);
   const [selectedValue, setSelectedValue] = useState('');
   const [selectedBuffer, setSelectedBuffer] = useState('');
+  const [showEmojiPicker, setShowEmojiPicker] = useState(false)
+  const [focusedEditorId, setFocusedEditorId] = useState<string | null>(null);
+  const [fileKeys, setFileKeys] = useLocalStorage<string[]>( `${chatbotId}-${id}-deletedFileKeys`,[]);
+  const { registerOnSave } = useSaveEvent();
+  const { setStatus, status } = useStatus();
+
+  const MAX_RETRIES = 3;
+  const RETRY_DELAY = 1000;
+
+  const uploadWithRetry = async (
+    uploadUrl: string,
+    file: File,
+    contentType: string,
+    onProgress?: (percent: number) => void
+  ) => {
+    for (let attempt = 1; attempt <= MAX_RETRIES; attempt++) {
+      try {
+        await new Promise<void>((resolve, reject) => {
+          const xhr = new XMLHttpRequest();
+          xhr.open("PUT", uploadUrl, true);
+          xhr.setRequestHeader("Content-Type", contentType);
+
+          xhr.upload.onprogress = (event) => {
+            if (event.lengthComputable && onProgress) {
+              const percent = Math.round((event.loaded / event.total) * 100);
+              onProgress(percent);
+            }
+          };
+
+          xhr.onload = () => {
+            if (xhr.status >= 200 && xhr.status < 300) resolve();
+            else reject(new Error(`Upload failed with status ${xhr.status}`));
+          };
+
+          xhr.onerror = () => reject(new Error("Upload failed due to network error"));
+          xhr.send(file);
+        });
+        return;
+      } catch (err) {
+        if (attempt < MAX_RETRIES) await new Promise(res => setTimeout(res, RETRY_DELAY));
+        else throw err;
+      }
+    }
+  };
+
+  const handleSave = useCallback(async () => {
+    if (!chatbotId || !fileKeys?.length) return;
+    try {
+      await api.delete(`/createbots/${chatbotId}/files`, {
+        data: { fileKey: fileKeys, chatbotId },
+      });
+      setFileKeys([]);
+    } catch (err) {
+      console.error("Error deleting files:", err);
+    }
+  }, [chatbotId, fileKeys]);
+
+  useEffect(() => {
+    registerOnSave(handleSave);
+  }, [registerOnSave, handleSave]);
+
+  const serializeFiles = (
+    files: (UploadedFile | Location)[],
+    chatbotId: string,
+    onProgress?: (updated: UploadResult[]) => void
+  ): { fileData: UploadResult[]; uploadPromises: Promise<void>[] } => {
+    const fileData: UploadResult[] = [];
+    const uploadPromises: Promise<void>[] = [];
+
+    files.forEach(f => {
+      if (f.type === "Location") {
+        fileData.push({
+          name: f.name ?? '', 
+          type: f.type,  
+          lat: f.lat,
+          lng: f.lng,
+        });
+        return;
+      }
+
+      const fileObj = f as UploadedFile;
+
+      if (!fileObj.file && fileObj.url) {
+        fileData.push({
+          name: fileObj.name || "Unknown File",
+          type: fileObj.type || "File",
+          size: fileObj.size || 0,
+          preview: fileObj.url,
+          key: fileObj.key,
+          url: fileObj.url,
+          uploadedAt: fileObj.uploadedAt || new Date().toISOString(),
+          isUploading: false,
+          saveToDb: fileObj.saveToDb,
+        });
+        return;
+      }
+
+      const fileInfo: UploadResult = {
+        name: fileObj.file?.name || "Unknown File",
+        type: fileObj.file?.type || "File",
+        size: fileObj.file?.size || 0,
+        key: fileObj.key,
+        preview: fileObj.preview || URL.createObjectURL(fileObj.file!),
+        isUploading: true,
+        saveToDb: false,
+        progress: 0, 
+      };
+
+      fileData.push(fileInfo);
+      onProgress?.([...fileData]);
+
+      const promise = api
+        .get(`/createbots/${chatbotId}/upload-url`, {
+          params: { filename: fileObj.file!?.name, contentType: fileObj.file!?.type },
+        })
+        .then(async ({ data: signedData }) => {
+          const { uploadUrl, publicUrl, key } = signedData;
+          await uploadWithRetry(uploadUrl, fileObj.file!, fileObj.file!.type, (percent) => {
+            fileInfo.progress = percent;
+            onProgress?.([...fileData]);
+            setStatus(true)
+          });
+
+          fileInfo.url = publicUrl;
+          fileInfo.preview = publicUrl;
+          fileInfo.key = key;
+          fileInfo.uploadedAt = new Date().toISOString();
+          fileInfo.isUploading = false;
+          fileInfo.progress = 100;
+          onProgress?.([...fileData]);
+        })
+        .catch(err => {
+          console.warn("Upload failed for:", fileObj.file?.name, err);
+          toast.error(`Upload failed for,${fileObj.file?.name}`);
+          fileInfo.uploadError = true;
+          fileInfo.isUploading = false;
+          onProgress?.([...fileData]);
+        });
+      uploadPromises.push(promise);
+    });
+
+    return { fileData, uploadPromises };
+  };
+
+  const handleUploadFile = useCallback(
+    async (files: (UploadedFile | Location)[] | any) => {
+      const { fileData, uploadPromises } = serializeFiles(files, chatbotId, updated => {
+
+        if (typeof data?.setInputs === "function") {
+          data.setInputs((prev: any) =>
+            prev.map((input: any) => ({
+              ...input,
+              fileData: updated,
+            }))
+          );
+        } else {
+          console.warn("setInputs is not available — skipping update");
+        }
+      });
+
+      await Promise.all(uploadPromises);
+      setStatus(false)
+
+      if (typeof data?.setInputs === "function") {
+        data.setInputs((prev: any) =>
+          prev.map((input: any) => ({
+            ...input,
+            fileData,
+          }))
+        );
+      } else {
+        console.warn("setInputs is not available — skipping update");
+      }
+    },
+    [chatbotId, data]
+  );
 
   const handleIntervalChange = (event:any) => {
     setSelectedValue(event.target.value);
@@ -192,10 +420,90 @@ const CustomNode: React.FC<NodeProps<CustomNodeData>> = ({ data, id }) => {
     setOpen(false);
   };
   
-  const addTimeSlot = () => {
-    if (!selectedDate || !startTime || !endTime || !selectedValue) return;
+  // const addTimeSlot = () => {
+  //   if (!selectedDate || !startTime || !endTime || !selectedValue) return;
   
+  //   const now = new Date();
+  //   const dId = Date.now();
+
+  //   const startDateTime = new Date(
+  //     selectedDate.getFullYear(),
+  //     selectedDate.getMonth(),
+  //     selectedDate.getDate(),
+  //     startTime.getHours(),
+  //     startTime.getMinutes(),
+  //     0,
+  //     0
+  //   );
+  
+  //   const endDateTime = new Date(
+  //     selectedDate.getFullYear(),
+  //     selectedDate.getMonth(),
+  //     selectedDate.getDate(),
+  //     endTime.getHours(),
+  //     endTime.getMinutes(),
+  //     0,
+  //     0
+  //   );
+  
+  //   const formatDate = (date: Date) => {
+  //     const year = date.getFullYear();
+  //     const month = (date.getMonth() + 1).toString().padStart(2, '0');
+  //     const day = date.getDate().toString().padStart(2, '0');
+  //     return `${year}-${month}-${day}`;
+  //   };
+
+  //   if (startDateTime <= now || endDateTime <= now || endDateTime <= startDateTime) return;
+  
+  //   const dateStr = formatDate(selectedDate);
+  //   const newSlot: TimeSlot = { id:dId, start: startDateTime, end: endDateTime, interval: selectedValue, buffer: selectedBuffer };
+  //   const existingInputs = data.inputs || [];
+  //   const existingSlots = existingInputs[0]?.slots || [];
+  //   const dateEntry = existingSlots.find((d: TimeSlot) => d.date === dateStr);
+  
+  //   let updatedSlots;
+  //   if (dateEntry) {
+  //     updatedSlots = existingSlots.map((d: TimeSlot) =>
+  //       d.date === dateStr
+  //         ? { ...d, slots: [...d.slots, newSlot] }
+  //         : d
+  //     );
+  //   } else {
+  //     updatedSlots = [...existingSlots, { id: dId, date: dateStr, slots: [newSlot] }];
+  //   }
+  
+  //   const serializedDateSlots = updatedSlots.map((ds: TimeSlot) => ({
+  //     date: ds.date,
+  //     slots: ds.slots.map((slot: TimeSlot) => ({
+  //       id: slot.id,
+  //       start: slot.start instanceof Date ? slot.start.toISOString() : slot.start,
+  //       end: slot.end instanceof Date ? slot.end.toISOString() : slot.end,
+  //       interval: slot?.interval || 0,
+  //       buffer: slot?.buffer || 0,
+  //     }))
+  //     .sort((a:any, b:any) => new Date(a.start).getTime() - new Date(b.start).getTime()),
+  //   }));
+
+  //   serializedDateSlots.sort((a:any, b:any) => new Date(a.date).getTime() - new Date(b.date).getTime());
+  
+  //   data.setInputs((prevInputs) =>
+  //     prevInputs.map((input: any) => {
+  //       return { ...input, id: dId, slots: serializedDateSlots };
+  //     })
+  //   );
+
+  //   setStartTime(null);
+  //   setEndTime(null);
+  //   setSelectedValue('');
+  //   setSelectedBuffer('');
+  // };
+
+
+  const addTimeSlot = useCallback(() => {
+    if (!selectedDate || !startTime || !endTime || !selectedValue) return;
+
     const now = new Date();
+    const dId = Date.now();
 
     const startDateTime = new Date(
       selectedDate.getFullYear(),
@@ -206,7 +514,7 @@ const CustomNode: React.FC<NodeProps<CustomNodeData>> = ({ data, id }) => {
       0,
       0
     );
-  
+
     const endDateTime = new Date(
       selectedDate.getFullYear(),
       selectedDate.getMonth(),
@@ -216,61 +524,103 @@ const CustomNode: React.FC<NodeProps<CustomNodeData>> = ({ data, id }) => {
       0,
       0
     );
-  
+
     const formatDate = (date: Date) => {
       const year = date.getFullYear();
-      const month = (date.getMonth() + 1).toString().padStart(2, '0');
-      const day = date.getDate().toString().padStart(2, '0');
+      const month = (date.getMonth() + 1).toString().padStart(2, "0");
+      const day = date.getDate().toString().padStart(2, "0");
       return `${year}-${month}-${day}`;
     };
 
     if (startDateTime <= now || endDateTime <= now || endDateTime <= startDateTime) return;
-  
-    const dateStr = formatDate(selectedDate);
-  
-    const newSlot: TimeSlot = { start: startDateTime, end: endDateTime, interval: selectedValue, buffer: selectedBuffer };
 
-    const existingInputs = data.inputs || [];
-    const existingSlots = existingInputs[0]?.slots || [];
-  
-    const dateEntry = existingSlots.find((d: TimeSlot) => d.date === dateStr);
-  
-    let updatedSlots;
-    if (dateEntry) {
-      updatedSlots = existingSlots.map((d: TimeSlot) =>
-        d.date === dateStr
-          ? { ...d, slots: [...d.slots, newSlot] }
-          : d
+    const intervalMs = Number(selectedValue) * 60 * 1000;
+    const bufferMs = Number(selectedBuffer || 0) * 60 * 1000;
+    const totalDuration = endDateTime.getTime() - startDateTime.getTime();
+    const totalChildSlots = Math.floor(totalDuration / (intervalMs + bufferMs));
+
+    if (totalChildSlots > 10) {
+      const maxSlots = 10;
+      const suggestedEndTimeMs = startDateTime.getTime() + maxSlots * (intervalMs + bufferMs);
+      const suggestedEndDate = new Date(suggestedEndTimeMs);
+
+      alert(
+        `⚠️ Too many child slots!\n\n` +
+        `Between ${startTime.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit", hour12: true })} and ${endTime.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit", hour12: true })}, you would generate approximately ${totalChildSlots} child slots.\n\n` +
+        `📌 Suggested common slot:\nStart: ${startTime.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit", hour12: true })}\nEnd: ${suggestedEndDate.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit", hour12: true })}\nInterval: ${selectedValue} min\nBuffer: ${selectedBuffer || 0} min\n\n` +
+        `Please use this range to keep the number of child slots ≤ 10.`
       );
-    } else {
-      updatedSlots = [...existingSlots, { date: dateStr, slots: [newSlot] }];
+      return;
     }
-  
-    const serializedDateSlots = updatedSlots.map((ds: TimeSlot) => ({
-      date: ds.date,
-      slots: ds.slots.map((slot: TimeSlot) => ({
-        start: slot.start instanceof Date ? slot.start.toISOString() : slot.start,
-        end: slot.end instanceof Date ? slot.end.toISOString() : slot.end,
-        interval: slot?.interval || 0,
-        buffer: slot?.buffer || 0,
-      }))
-      .sort((a:any, b:any) => new Date(a.start).getTime() - new Date(b.start).getTime()),
-    }));
 
-    serializedDateSlots.sort((a:any, b:any) => new Date(a.date).getTime() - new Date(b.date).getTime());
-  
-    data.setInputs((prevInputs) =>
-      prevInputs.map((input: any) => {
+    const dateStr = formatDate(selectedDate);
+    const newSlot: TimeSlot = {
+      id: dId,
+      start: startDateTime,
+      end: endDateTime,
+      interval: selectedValue,
+      buffer: selectedBuffer,
+    };
+
+    let totalSlotsWithNew = 0;
+    data.setInputs((prevInputs: any[]) => {
+      return prevInputs.map((input: any) => {
+        const existingSlots = input.slots || [];
+        const totalExistingSlots = existingSlots.reduce((acc: number, dateEntry: any) => {
+          return acc + (dateEntry.slots?.length || 0);
+        }, 0);
+        totalSlotsWithNew = totalExistingSlots + 1;
+
+        if (totalSlotsWithNew > 10) {
+          return input;
+        }
+
+        const dateEntry = existingSlots.find((d: any) => d.date === dateStr);
+        let updatedSlots;
+        if (dateEntry) {
+          updatedSlots = existingSlots.map((d: any) =>
+            d.date === dateStr
+              ? { ...d, slots: [...d.slots, newSlot].sort((a, b) => new Date(a.start).getTime() - new Date(b.start).getTime()) }
+              : d
+          );
+        } else {
+          updatedSlots = [
+            ...existingSlots,
+            {
+              id: dId,
+              date: dateStr,
+              slots: [newSlot],
+            },
+          ];
+        }
+
+        const serializedDateSlots = updatedSlots
+          .map((ds: any) => ({
+            date: ds.date,
+            slots: ds.slots.map((slot: any) => ({
+              id: slot.id,
+              start: slot.start instanceof Date ? slot.start.toISOString() : slot.start,
+              end: slot.end instanceof Date ? slot.end.toISOString() : slot.end,
+              interval: slot?.interval || 0,
+              buffer: slot?.buffer || 0,
+            })),
+          }))
+          .sort((a: any, b: any) => new Date(a.date).getTime() - new Date(b.date).getTime());
+
         return { ...input, slots: serializedDateSlots };
-      })
-    );
-  
+      });
+    });
+
+    if (totalSlotsWithNew > 10) {
+      alert(`⚠️ Maximum total slots reached!, Cannot add more than 10 slots.`);
+    }
+
     setStartTime(null);
     setEndTime(null);
-    setSelectedValue('');
-    setSelectedBuffer('');
-  };
-  
+    setSelectedValue("");
+    setSelectedBuffer("");
+  }, [selectedDate, startTime, endTime, selectedValue, selectedBuffer, data]);
+
   const handleRemoveSlot = (date: string, start: unknown, end: unknown) => {
     data.setInputs((prev) =>
       prev.map((input) => ({
@@ -330,11 +680,22 @@ const CustomNode: React.FC<NodeProps<CustomNodeData>> = ({ data, id }) => {
     [data]
   );
 
-  const handleDeleteNode = () => {
-    const edgesToRemove = getEdges().filter(
-      (edge) => edge.source === id || edge.target === id
-    );
-    deleteElements({ nodes: [{ id }], edges: edgesToRemove });
+  const handleDeleteNode = async (data: CustomNodeData) => {
+    try {
+      if (!id) throw new Error("Node ID is undefined");
+      const edgesToRemove = getEdges().filter(
+        (edge) => edge.source === id || edge.target === id
+      );
+      deleteElements({ nodes: [{ id }], edges: edgesToRemove });
+
+      const fileKey = extractFileKeys(data?.inputs);
+      if (!fileKey || fileKey.length < 1) return;
+
+      setFileKeys(fileKey)
+
+    } catch (error) {
+      console.error("Error deleting node:", error);
+    }
   };
 
   const handleDeleteDynamicFields = (fieldId: string) => {
@@ -348,6 +709,10 @@ const CustomNode: React.FC<NodeProps<CustomNodeData>> = ({ data, id }) => {
       );
       deleteElements({ edges: edgesToRemove });
     }
+    const fileKey = extractFileKeys(data?.inputs);
+    if (!fileKey || fileKey.length < 1) return;
+
+    setFileKeys(fileKey)
   };
   
   const createEditor = (inputId: string, initialContent: string = "") => {
@@ -359,11 +724,17 @@ const CustomNode: React.FC<NodeProps<CustomNodeData>> = ({ data, id }) => {
             Highlight,
             Typography,
             HighlightMarker,
-            Image,
-            Youtube.configure({ controls: false, nocookie: true }),
+            Link.configure({
+              HTMLAttributes: {
+                class: 'text-blue-600 underline max-w-xs',
+              },
+            }),
           ],
           content: initialContent,
-          onFocus: () => setIsFocused(inputId),
+          onFocus: () => {
+            setIsFocused(inputId)
+            setFocusedEditorId(inputId);
+          },
           onBlur: () => setIsFocused(null),
         });
         editorRefs.current.set(inputId, editor);
@@ -373,6 +744,13 @@ const CustomNode: React.FC<NodeProps<CustomNodeData>> = ({ data, id }) => {
       console.error("Editor initialization failed:", error);
       toast.error("Editor initialization failed, please try again!");
     }
+  };
+
+  const addEmoji = (emoji: any) => {
+    if (!focusedEditorId) return;
+    const editor = editorRefs.current.get(focusedEditorId);
+    if (!editor) return;
+    editor.chain().focus().insertContent(emoji.native).run();
   };
 
   const onDropInput = (event: React.DragEvent) => {
@@ -395,22 +773,12 @@ const CustomNode: React.FC<NodeProps<CustomNodeData>> = ({ data, id }) => {
       if (hasPreferenceAlready) return;
 
       if (field === "preference" && data.inputs.length > 0) return;
-  
-      let options: Input | undefined;
-      if (field === "preference") {
-        options = {
-          id: createNewId,
-          type,
-          field,
-          value: "",
-        };
-      }
-  
+
       const newInput: Input = {
         id: newNodeId,
         type,
         field: field || "messages",
-        options: options ? [options] : [],
+        options: [],
         value: field !== "preference" ? "" : undefined,
       };
   
@@ -520,7 +888,7 @@ const CustomNode: React.FC<NodeProps<CustomNodeData>> = ({ data, id }) => {
             className={`px-2 py-[2px] bg-white rounded-l-md w-full text-xxxs focus:outline-none hover:outline-none border border-solid ${
               opIndex > 0 ? " border-red-200 dark:border-[#fb2c3657]" : "border-blue-200 dark:border-blue-500"
             } dark:text-dark-text dark:bg-black dark:borde-[1px]`}
-            placeholder={
+            placeholder = {
               opIndex > 0
                 ? `${type.toLowerCase()} option-${opIndex}`
                 : "Title"
@@ -538,7 +906,7 @@ const CustomNode: React.FC<NodeProps<CustomNodeData>> = ({ data, id }) => {
             </button>
           ) : (
             <button
-              className="bg-red-500 dark:bg-[#fb2c3657] text-white px-2 py-[1px] rounded-r-md"
+              className="bg-[#fb2c36] text-white px-2 py-[1px] rounded-r-md"
               onClick={() => handleDeleteOptions(option?.id, index, id)}
             >
               <DeleteIcon className="!text-xxxs dark:text-dark-text mb-1" />
@@ -550,20 +918,20 @@ const CustomNode: React.FC<NodeProps<CustomNodeData>> = ({ data, id }) => {
     [handleInputChange, handleAddOptions, handleDeleteOptions]
   );
   
-  const renderSlotOptions = useCallback(
+  const renderSlotOptions = useCallback (
     (id: string, index: number, savedSlots:any) => {
       return (
-        <div>
+        <div className="p-2">
           <Handle
             type="source"
-            id={`option-slot-${id}`}
+            id={`slot-${savedSlots?.id}-${id}`}
             position={Position.Right}
             className="absolute !right-[-10px] top-1/2 text-[10px] !w-[8px] !h-[8px] !bg-node-active !border-2 !border-solid !border-op-handil"
           />
           <span
-            className="flex items-center justify-center p-2"
+            className="flex items-center justify-center p-1 border-1 border-[rgb(134,219,231)] rounded-lg cursor-pointer transition m-auto w-[50%] !opacity-[50]"
           >
-            <BookIcon  onClick={handleOpen} className="!text-[40px] cursor-pointer !transition-transform !duration-200 !ease-in-out hover:scale-110 hover:text-[#8adfea] text-[rgb(134,219,231)]" />
+            <BookIcon  onClick={handleOpen} className="!text-[30px] !transition-transform !duration-200 !ease-in-out hover:scale-110 hover:text-[#8adfea] text-[rgb(134,219,231)]" />
           </span>
           <Dialog
             open={open}
@@ -572,10 +940,11 @@ const CustomNode: React.FC<NodeProps<CustomNodeData>> = ({ data, id }) => {
             sx={{ '& .MuiDialog-paper': {  width:'100%', height:'1000px', borderRadius:'10px'} }}
           >
             <div className="flex py-1 px-4 items-center justify-between w-full">
-              <div className="text-lg font-medium text-gray-800 dark:text-dark-text dark:font-normal">Add new slots</div>
-              <div className="cursor-pointer text-2xl text-gray-800 dark:text-dark-text !transition-transform !duration-200 !ease-in-out hover:scale-110 font-light" onClick={handleClose}>
-                X
-              </div>
+              <div className="text-lg font-medium text-gray-800 dark:text-dark-text dark:font-normal">Set your Availability</div>
+              <CloseFullscreen 
+                className="cursor-pointer mt-2 !text-lg text-gray-400 dark:dark:text-dark-text hover:scale-110 transition-transform duration-200 font-light"
+                onClick={handleClose}
+              />
             </div>
             <hr className="mb-3 mt-2 border-0.5 border-divider dark:border-custom-border" />
             <div className="flex items-center gap-2  p-4">
@@ -596,7 +965,7 @@ const CustomNode: React.FC<NodeProps<CustomNodeData>> = ({ data, id }) => {
                   onChange={(date) => setStartTime(date)}
                   showTimeSelect
                   showTimeSelectOnly
-                  timeIntervals={60}
+                  timeIntervals={5}
                   dateFormat="h:mm aa"
                   placeholderText="Start Time"
                   minTime={getMinStartTime()}
@@ -610,7 +979,7 @@ const CustomNode: React.FC<NodeProps<CustomNodeData>> = ({ data, id }) => {
                   onChange={(date) => setEndTime(date)}
                   showTimeSelect
                   showTimeSelectOnly
-                  timeIntervals={60}
+                  timeIntervals={5}
                   dateFormat="h:mm aa"
                   placeholderText="End Time"
                   minTime={getMinEndTime()}
@@ -658,12 +1027,17 @@ const CustomNode: React.FC<NodeProps<CustomNodeData>> = ({ data, id }) => {
             </div>
             <hr className="mb-3 mt-2 border-0.5 dark:border-custom-border border-divider justify-center m-auto w-[95%]" />
             <div className="overflow-y-auto custom-scrollbar h-[350px]" >
-              {savedSlots.length > 0 ? (
+              {savedSlots?.length > 0 ? (
                 <div className="space-y-2 mt-0 px-10">
                   <p className="text-lg font-medium text-center text-gray-800 dark:text-dark-text dark:font-normal">Common availability</p>
-                  {savedSlots.map((ds:DateSlot, dateIdx:number) => (
+                  {savedSlots?.map((ds:DateSlot, dateIdx:number) => (
                     <div key={dateIdx} className="p-2 rounded">
-                      <h3 className="font-bold text-base mb-4  text-gray-500 dark:text-dark-text dark:font-normal">{ds.date}</h3>
+                      <h3 className="font-medium text-base mb-2 text-gray-500 dark:text-dark-text dark:font-normal">
+                        {new Date(ds.date).toLocaleDateString([], {
+                          day: "2-digit",
+                          month: "short",
+                        })} :
+                      </h3>
                       <ul className="space-y-2">
                         {ds.slots.map((slot, slotIdx) => (
                           <li
@@ -747,18 +1121,93 @@ const CustomNode: React.FC<NodeProps<CustomNodeData>> = ({ data, id }) => {
           return <div>Unsupported field type!</div>;
       }
     };
-  
+
+    function renderToolbarSections(editor:any, field:string) {
+      return buttonConfigs.map(({ icon, action, isActive }, tbIndex) => (
+        <div
+          key={`messages-toolbar-${id}-${tbIndex}`}
+          className="ml-2 flex items-center justify-center space-x-1"
+        >
+          <IconButton
+            onMouseDown={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              editor?.chain().focus()[action]().run();
+            }}
+            className={`${
+              editor.isActive(isActive)
+                ? `active-editor-bi-${field}`
+                : `disable-editor-bi-${field}`
+            }`}
+            sx={{
+              padding: '5px',
+              fontWeight: editor.isActive(isActive) ? 'bold' : 'normal',
+            }}
+          >
+            {React.cloneElement(icon, {
+              sx: {
+                fontSize: '16px',
+                color: editor.isActive(isActive) ? '#272323' : 'inherit',
+              },
+            })}
+          </IconButton>
+        </div>
+      ));
+    }
+
+    const handleFileDelete = useCallback (
+      async (file: UploadResult) => {
+        const fileKey = file?.key;
+        
+        if (!fileKey) {
+          console.warn("No file key found — cannot delete file.");
+          return;
+        }
+
+        try {
+          await api.delete(`/createbots/${chatbotId}/files`, {
+            data: { fileKey, chatbotId },
+          });
+          console.log(`File deleted successfully: ${fileKey}`);
+        } catch (error) {
+          const err = error as AxiosError<{ message?: string }>;
+          if (err.response) {
+            console.error("File delete failed:", err.response.data?.message);
+          } else if (err.request) {
+            console.error("Network error: No response from server.", err.request);
+          } else {
+            console.error("Error setting up delete request:", err.message);
+          }
+        }
+      },
+      [chatbotId]
+    );
+
+    function renderUploadSctions(fileData: UploadResult[], type: string, accept?: string) {
+      return (
+        <ReusableFileUploader
+          accept={accept}
+          maxFiles={20}
+          value={fileData || []}
+          type={type}
+          onFileDelete={handleFileDelete}
+          onChange={handleUploadFile}
+        />
+      );
+    }
+
     const renderFieldInputs = (
       id:string, 
       editor:any, 
       field:string, 
       type: string,
-      isReplay:boolean = false,
+      fileData:any, 
+      isReplay:boolean = false, 
     ) => {
       const allIcons = [...messageIcons, ...replayIcons];
       const getIconByType = () => {
         const found = allIcons.find((item) => item.type === type && item.field === field);
-        return found ? found.icon : null;
+        return found && !isFileType(type)  ? found.icon : null;
       };
       return (
         <div
@@ -768,42 +1217,47 @@ const CustomNode: React.FC<NodeProps<CustomNodeData>> = ({ data, id }) => {
           {isReplay && (
             <Handle
               type="source"
-              id={`replay-source-edge`}
+              id="replay-source-edge"
               position={Position.Right}
               className="absolute !right-[-13px] top-1/2 text-[10px] !w-[8px] !h-[8px] !bg-node-active !border-2 !border-solid !border-[#f069b1]"
             />
           )}
           {isFocused === id ? (
-            <div className="grid grid-cols-8 gap-x-1 border-b border-divider dark:border-dark-border pb-0">
-              {buttonConfigs.map(({ icon, action, isActive }, tbIndex) => (
-                <div
-                  key={`messages-toolbar-${id}-${tbIndex}`}
-                  className="ml-2 flex items-center justify-center space-x-1"
-                >
-                  <IconButton
+            <div className="grid grid-cols-8 gap-x-1 border-b border-divider dark:border-dark-border-tiptap pb-0">
+              {renderToolbarSections(editor, field)}
+              <button
+                onMouseDown={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  setShowEmojiPicker((prev) => !prev);
+                }}
+                className="ml-2 text-xxs mb-0.5"
+              >
+                😊
+              </button>
+              {showEmojiPicker &&
+                createPortal(
+                  <div 
+                    className="fixed inset-0 bg-opacity-10 bg-[#00000061] z-[9998]"
                     onMouseDown={(e) => {
                       e.preventDefault();
                       e.stopPropagation();
-                      editor?.chain().focus()[action]().run();
                     }}
-                    className={`${ editor.isActive(isActive) ? `active-editor-bi-${field}` : `disable-editor-bi-${field}`}`}
-                    sx={{
-                      padding: '5px',
-                      fontWeight: editor.isActive(isActive) ? 'bold' : 'normal'
-                    }}
+                    onClick={() => setShowEmojiPicker(false)}
                   >
-                    {React.cloneElement(icon, {
-                      sx: { fontSize: "16px", color: editor.isActive(isActive) ? "#272323" : "inherit" },
-                    })}
-                  </IconButton>
-                </div>
-              ))}
+                    <div className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-[9999] shadow-lg mb-4"
+                      onClick={(e) => e.stopPropagation()}
+                    >
+                      <Picker onEmojiSelect={addEmoji} />
+                    </div>,
+                  </div>,
+                  document.body
+                )
+              }              
             </div>
           ) : (
             <>
-              <p
-                className="text-drag-text absolute left-0.5 -top-1"
-              >
+              <p className="text-drag-text absolute left-0.5 -top-1 !opacity-50">
                 {getIconByType()}
               </p>
               <p
@@ -814,11 +1268,32 @@ const CustomNode: React.FC<NodeProps<CustomNodeData>> = ({ data, id }) => {
               </p>
             </>
           )}
-          <EditorContent editor={editor}  className="qbot-editor mt-2" />
+          <div className="mt-2">
+            {(() => {
+              switch (type) {
+                case 'Image':
+                  return renderUploadSctions(fileData, type, 'image/*');
+                case 'Video':
+                  return renderUploadSctions(fileData, type, 'video/*');
+                case 'Audio':
+                  return renderUploadSctions(fileData, type, 'audio/*');
+                case 'Doc':
+                  return renderUploadSctions(
+                    fileData,
+                    type,
+                    'application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document'
+                  );
+                case 'Location':
+                  return renderUploadSctions(fileData, type);
+                default:
+                  return <EditorContent editor={editor} className="qbot-editor" />;
+              }
+            })()}
+          </div>
         </div>
       );
     };
-  
+
     const renderField = (
       id:string, 
       field:string | any, 
@@ -828,14 +1303,15 @@ const CustomNode: React.FC<NodeProps<CustomNodeData>> = ({ data, id }) => {
       isReplay:boolean,
       type:any,
       slots: any,
+      fileData: any,
     ) => {
       switch (field) {
         case 'preference':
           return renderFieldPreference(id, options, index, type, slots);
         case 'messages':
-          return renderFieldInputs(id, editor, field, type);
+          return renderFieldInputs(id, editor, field, type, fileData);
         case 'replay':
-          return renderFieldInputs(id, editor, field, type, isReplay,);
+          return renderFieldInputs(id, editor, field, type, fileData, isReplay);
         default:
           return <div>Unsupported field type</div>;
       }
@@ -850,6 +1326,7 @@ const CustomNode: React.FC<NodeProps<CustomNodeData>> = ({ data, id }) => {
           options,
           type,
           slots,
+          fileData,
         }, index) => {
           const editor = editorRefs.current.get(id);
           if (!editor) return null;
@@ -870,12 +1347,12 @@ const CustomNode: React.FC<NodeProps<CustomNodeData>> = ({ data, id }) => {
             > 
               {field === 'preference' && type !== "Slot" && (
                 <p
-                  className="text-drag-text absolute left-1 -top-0.5"
+                  className="text-drag-text absolute left-1 -top-0.5 !opacity-50"
                 >
                   {getIconByType()}
                 </p>
               )}
-              {loadEditor && renderField(id, field, options, editor, index, isReplay, type, slots)}
+              {loadEditor && renderField(id, field, options, editor, index, isReplay, type, slots, fileData)}
             </div>
           );
         })}
@@ -885,20 +1362,22 @@ const CustomNode: React.FC<NodeProps<CustomNodeData>> = ({ data, id }) => {
 
   return (
     <>
-      <div className="nodes rounded w-40" onDrop={onDropInput} onDragOver={onDragOver}>
-        <h2 className={`${!data.inputs.length ? "text-center" : "text-left"} font-semibold text-sm font-sans mb-2 text-text-theme dark:text-dark-text`}>
-          {!data.inputs.length ? DEFAULT : data.label}
-        </h2>
-        <Handle id={`target-${data.inputs.length}`} type="target" position={Position.Left} className="absolute -!right-3 !top-4 !h-7 opacity-0" />
-        {data.nodeCount > 1 && (
-          <span 
-            className="node-x absolute right-1 top-1 text-xxss hover:scale-105 active:scale-95 transition-all duration-200 ease-in-out p-1 cursor-pointer opacity-0" 
-            onClick={handleDeleteNode}
-          >
-            ❌ 
-          </span>
-        )}
-          {RenderDynamicField()}
+      <div className="rounded w-40" onDrop={onDropInput} onDragOver={onDragOver}>
+        <div className="nodes">
+          <h2 className={`${!data.inputs.length ? "text-center" : "text-left"} font-semibold text-sm font-sans mb-2 text-text-theme dark:text-dark-text`}>
+            {!data.inputs.length ? DEFAULT : data.label}
+          </h2>
+          <Handle id={`target-${data.inputs.length}`} type="target" position={Position.Left} className="absolute -!right-3 !top-4 !h-7 opacity-0" />
+          {data.nodeCount > 1 && (
+            <span 
+              className="node-x absolute right-1 top-1 text-xxss hover:scale-105 active:scale-95 transition-all duration-200 ease-in-out p-1 cursor-pointer opacity-0" 
+              onClick={() => handleDeleteNode(data)}
+            >
+              ❌ 
+            </span>
+          )}
+        </div>
+        {RenderDynamicField()}
       </div>
     </>
   );

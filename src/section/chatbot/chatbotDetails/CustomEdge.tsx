@@ -1,9 +1,7 @@
-
 "use client";
 
 import { EdgeProps, getSmoothStepPath } from 'reactflow';
 import { memo, useState } from 'react';
-import CloseIcon from '@mui/icons-material/Close';
 
 const CustomEdge = memo(({ id, sourceX, sourceY, targetX, targetY, sourcePosition, targetPosition, data }: EdgeProps) => {
     const [hovered, setHovered] = useState<boolean>(false);
@@ -17,7 +15,7 @@ const CustomEdge = memo(({ id, sourceX, sourceY, targetX, targetY, sourcePositio
         targetPosition,
     });
     
-    const edgeColor = id?.includes('option') ? '#17C4DC' : id?.includes('replay') ? '#f069b1' : 'gray';
+    const edgeColor = id?.includes('option') || id?.includes('slot') ? '#17C4DC' : id?.includes('replay') ? '#f069b1' : 'gray';
     const markerEnd = `url(#arrow-${id})`;
 
     return (
@@ -40,7 +38,6 @@ const CustomEdge = memo(({ id, sourceX, sourceY, targetX, targetY, sourcePositio
                     </marker>
                 </defs>
             </svg>
-
             <path
                 id={id}
                 d={edgePath}
@@ -53,35 +50,35 @@ const CustomEdge = memo(({ id, sourceX, sourceY, targetX, targetY, sourcePositio
                 markerEnd={markerEnd}
             />
 
-        <foreignObject
-            width={20}
-            height={20}
-            x={labelX - 10}
-            y={labelY - 12}
-            requiredExtensions="http://www.w3.org/1999/xhtml"
-        >
-            <div
-                style={{
-                    display: 'flex',
-                    justifyContent: 'center',
-                    alignItems: 'center',
-                    width: '20px',
-                    height: '20px',
-                    fontSize: '12px',
-                    backgroundColor: hovered ? 'red' : 'white',
-                    color: hovered ? 'white' : 'red',
-                    borderRadius: '4px',
-                    border: '1px solid #ccc',
-                    cursor: 'pointer',
-                    userSelect: 'none',
-                    transition: 'background-color 0.2s, color 0.2s',
-                }}
-                onMouseEnter={() => setHovered(true)}
-                onMouseLeave={() => setHovered(false)}
-                >
-                {data?.label ?? 'X'}
-            </div>
-        </foreignObject>
+            <foreignObject
+                width={20}
+                height={20}
+                x={labelX - 10}
+                y={labelY - 12}
+                requiredExtensions="http://www.w3.org/1999/xhtml"
+            >
+                <div
+                    style={{
+                        display: 'flex',
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                        width: '20px',
+                        height: '20px',
+                        fontSize: '12px',
+                        backgroundColor: hovered ? 'red' : 'white',
+                        color: hovered ? 'white' : 'red',
+                        borderRadius: '4px',
+                        border: '1px solid #ccc',
+                        cursor: 'pointer',
+                        userSelect: 'none',
+                        transition: 'background-color 0.2s, color 0.2s',
+                    }}
+                    onMouseEnter={() => setHovered(true)}
+                    onMouseLeave={() => setHovered(false)}
+                    >
+                    {data?.label ?? 'X'}
+                </div>
+            </foreignObject>
         </>
     );
 });
