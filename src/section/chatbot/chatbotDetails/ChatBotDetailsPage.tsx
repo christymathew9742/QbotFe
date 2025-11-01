@@ -16,7 +16,7 @@ import ReactFlow, {
   ReactFlowInstance,
   ReactFlowProvider,
 } from "reactflow";
-import { getBotSelector, getFetchPendingSelector, getPostPendingSelector, getUpdatePendingSelector } from "@/redux/reducers/chatBot/selectors";
+import { getBotSelector} from "@/redux/reducers/chatBot/selectors";
 import { useSearchParams,useRouter, usePathname } from 'next/navigation';
 import { AppDispatch } from "@/redux/store";
 import {
@@ -36,7 +36,6 @@ import { baseURL } from "@/utils/url";
 import { useSaveFlowData } from "@/hooks/useSaveFlowData";
 import { SaveEventProvider, useSaveEvent } from "@/context/SaveDataContext";
 import SaveLoader from "@/components/saveLoader/SaveLoader";
-import { CircularProgress } from "@mui/material";
 import { useStatus } from "@/context/StatusContext";
  
 

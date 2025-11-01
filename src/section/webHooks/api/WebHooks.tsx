@@ -14,7 +14,6 @@ const WebHooks = () => {
     const dispatch = useDispatch<AppDispatch>();
     const [isUpdate, setIsUpdate] = useState(false);
     const [isFetching, setIsFetching] = useState(true);
-    const [isload, setIsLoad] = useState(true)
 
     const currentUser = useSelector(getUserSelector);
     const pendingStatus:any = useSelector(getUpdateUserPendingSelector);

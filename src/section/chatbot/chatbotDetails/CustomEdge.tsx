@@ -2,8 +2,23 @@
 
 import { EdgeProps, getSmoothStepPath } from 'reactflow';
 import { memo, useState } from 'react';
+import { constantsText } from '@/constant/constant';
+const {
+  BOT:{
+    ICON:{
+      MESSAGE,
+      REPLAY,
+      PREFERENCE,
+    }
+  }
+} = constantsText;
 
-const CustomEdge = memo(({ id, sourceX, sourceY, targetX, targetY, sourcePosition, targetPosition, data }: EdgeProps) => {
+interface CustomEdgeProps extends EdgeProps {
+  sourceHandle?: string;
+  targetHandle?: string;
+}
+
+const CustomEdge = memo(({ id, sourceX, sourceY, targetX, targetY, sourcePosition, targetPosition, data }: CustomEdgeProps) => {
     const [hovered, setHovered] = useState<boolean>(false);
 
     const [edgePath, labelX, labelY] = getSmoothStepPath({
@@ -15,7 +30,7 @@ const CustomEdge = memo(({ id, sourceX, sourceY, targetX, targetY, sourcePositio
         targetPosition,
     });
     
-    const edgeColor = id?.includes('option') || id?.includes('slot') ? '#17C4DC' : id?.includes('replay') ? '#f069b1' : 'gray';
+    const edgeColor = id?.includes('option') || id?.includes('slot') ? PREFERENCE : id?.includes('replay') ? REPLAY : MESSAGE;
     const markerEnd = `url(#arrow-${id})`;
 
     return (

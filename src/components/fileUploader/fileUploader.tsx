@@ -11,7 +11,7 @@ import "leaflet/dist/leaflet.css";
 
 import DescriptionIcon from "@mui/icons-material/Description";
 import InsertDriveFileIcon from "@mui/icons-material/InsertDriveFile";
-import { messageIcons } from "@/utils/utils";
+import { allowedExtensions, messageIcons } from "@/utils/utils";
 import { useStatus } from "@/context/StatusContext";
 import { toast } from "react-toastify";
 
@@ -78,16 +78,47 @@ const FileUploadPanel: React.FC<FileUploadPanelProps> = ({
     const handleFileSelect = (selectedFiles: File[]) => {
         if (maxFiles && files.length + selectedFiles.length > maxFiles) {
             toast.error(`You can only upload up to ${maxFiles} files`);
-        return;
+            return;
         }
 
-        const newFiles: UploadedFile[] = selectedFiles.map((file) => ({
+        const limits: Record<string, number> = {
+            image: 10,
+            video: 50,
+            audio: 20,
+            application: 100,
+        };
+
+        const invalidFiles: string[] = [];
+        const validFiles = selectedFiles.filter((file) => {
+            const sizeMB = file.size / 1_048_576;
+            const typeKey =
+            Object.keys(limits).find((t) => file.type.startsWith(t)) || "other";
+            const maxSize = limits[typeKey] || 10;
+
+            if (sizeMB > maxSize) {
+                const shortName =
+                    file.name.length > 25 ? file.name.slice(0, 22) + "..." : file.name;
+                invalidFiles.push(`"${shortName}" (${sizeMB.toFixed(1)} MB > ${maxSize} MB)`);
+                return false;
+            }
+
+            return true;
+        });
+
+        if (invalidFiles.length > 0) {
+            toast.error(
+             `Some files exceed their size limits:\n${invalidFiles.join("\n")}`
+            );
+            return;
+        }
+
+        const newFiles: UploadedFile[] = validFiles.map((file) => ({
             file,
             preview: URL.createObjectURL(file),
             uploaded: false,
             name: file.name,
             type: file.type,
-            key: file.name + Date.now(),
+            key: `${file.name}-${Date.now()}`,
             isUploading: false,
             progress: 0,
         }));
@@ -98,12 +129,18 @@ const FileUploadPanel: React.FC<FileUploadPanelProps> = ({
     };
 
     const validateFiles = (files: File[], accept?: string): File[] => {
+        const globalAllowed = Object.values(allowedExtensions).flat();
         const allowedTypes = accept
             ? accept.split(",").map((type) => type.trim().toLowerCase())
             : [];
 
-        return files.filter((file) => {
+        const validFiles = files.filter((file) => {
             const fileType = file.type.toLowerCase();
+            const ext = file.name.split(".").pop()?.toLowerCase() || "";
+
+            if (!globalAllowed.includes(ext)) return false;
+            if (allowedTypes.length === 0) return true;
+
             return allowedTypes.some((type) => {
                 if (type.endsWith("/*")) {
                     const baseType = type.replace("/*", "");
@@ -112,6 +149,7 @@ const FileUploadPanel: React.FC<FileUploadPanelProps> = ({
                 return fileType === type;
             });
         });
+        return validFiles;
     };
 
     const handleUploadChange = ({ e, accept }: HandleFileChangeProps) => {
@@ -190,7 +228,6 @@ const FileUploadPanel: React.FC<FileUploadPanelProps> = ({
         }
     }, [onChange, onFileDelete]);
 
-
     const renderFilePreview = (f: UploadedFile) => {
         if (!f) return null;
 
@@ -215,8 +252,8 @@ const FileUploadPanel: React.FC<FileUploadPanelProps> = ({
         )
         return (
             <div className="flex flex-col items-center justify-center w-full h-full bg-gray-100 text-gray-700 text-xs font-medium">
-            <DescriptionIcon sx={{ color: "#1565c0", fontSize: 28, mb: 0.5 }} />
-            <span className="truncate w-5/6 text-center">{f?.name || "Document"}</span>
+                <DescriptionIcon sx={{ color: "#1565c0", fontSize: 28, mb: 0.5 }} />
+                <span className="truncate w-5/6 text-center">{f?.name || "Document"}</span>
             </div>
         );
 
@@ -230,12 +267,12 @@ const FileUploadPanel: React.FC<FileUploadPanelProps> = ({
 
     return (
         <div className="max-w-3xl mx-auto pb-2">
-            <div className="flex items-center justify-center p-1 border-1 border-[rgba(15,171,73,0.42)] rounded-lg cursor-pointer transition m-auto w-[50%] !opacity-[50]">
+            <div className="flex items-center justify-center p-1 border-1 border-[rgba(15,171,73,0.42)] rounded-lg transition m-auto w-[50%] !opacity-[50]">
                 <div
-                onClick={() => setOpen(true)}
-                className="uplodFields !transition-transform !duration-200 !ease-in-out hover:scale-110"
+                    onClick={() => setOpen(true)}
+                    className="uplodFields !transition-transform !duration-200 !ease-in-out hover:scale-110 cursor-pointer"
                 >
-                {(messageIcons.find((item: any) => item.type === type) || {}).icon || null}
+                    {(messageIcons.find((item: any) => item.type === type) || {}).icon || null}
                 </div>
             </div>
 

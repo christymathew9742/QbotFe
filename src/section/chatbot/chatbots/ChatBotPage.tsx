@@ -21,7 +21,6 @@ import { Metadata } from "next";
 import { Table, TableBody, TableCell, TableHeader, TableRow } from "@/components/ui/table";
 import { EditIcon, DeleteIcon } from "@/icons";
 import { extractFileKeys, formatUpdatedDate } from "@/utils/utils";
-import useLocalStorage from "@/hooks/useLocalStorage";
 import api from "@/utils/axios";
 
 export const metadata: Metadata = {

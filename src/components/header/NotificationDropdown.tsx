@@ -18,7 +18,6 @@ import {
 } from "@/redux/reducers/notification/actions";
 import { getUserSelector } from "@/redux/reducers/user/selectors";
 import {formatStringDate}   from "@/utils/utils";
-import Link from "next/link";
 
 export default function NotificationDropdown() {
   const [isOpen, setIsOpen] = useState(false);

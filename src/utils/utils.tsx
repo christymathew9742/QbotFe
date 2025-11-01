@@ -88,7 +88,6 @@ export const formatStringDate = (iso: string) => {
 
   const diffMs = now.getTime() - date.getTime();
   const diffMins = Math.floor(diffMs / (1000 * 60));
-  const diffHours = Math.floor(diffMs / (1000 * 60 * 60));
   const oneDay = 24 * 60 * 60 * 1000;
 
   if (diffMins < 1) return "Just now";
@@ -117,7 +116,6 @@ export const formatStringDate = (iso: string) => {
     return `${dateStr} at ${timeStr}`;
   }
 };
-
 
 export const formatString = (string: any): string => {
   if (typeof string === 'string' && string?.trim()) {
@@ -218,6 +216,13 @@ export const extractFileKeys = (inputs: any[] | undefined): string[] => {
   });
 
   return fileKeys;
+};
+
+export const allowedExtensions = {
+  image: ["jpg", "jpeg", "png", "webp"],
+  video: ["mp4", "3gp"],
+  audio: ["mp3", "aac", "m4a", "amr", "ogg", "opus"],
+  doc: ["pdf", "doc", "docx", "xls", "xlsx", "ppt", "pptx", "txt", "csv", "rtf", "zip", "rar"],
 };
 
 

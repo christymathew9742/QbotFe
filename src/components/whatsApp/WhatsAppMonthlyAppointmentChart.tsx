@@ -4,7 +4,6 @@ import { ApexOptions } from "apexcharts";
 import dynamic from "next/dynamic";
 import { Skeleton, Box } from "@mui/material";
 
-// Dynamically import the ReactApexChart component
 const ReactApexChart = dynamic(() => import("react-apexcharts"), {
   ssr: false,
 });

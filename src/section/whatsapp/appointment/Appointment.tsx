@@ -98,13 +98,13 @@ const Appoinment = () => {
     []
   );
 
-  const darkTheme = useMemo(
-    () =>
-      createTheme({
-        palette: { mode: "dark" },
-      }),
-    []
-  );
+  // const darkTheme = useMemo(
+  //   () =>
+  //     createTheme({
+  //       palette: { mode: "dark" },
+  //     }),
+  //   []
+  // );
 
   return (
     <>

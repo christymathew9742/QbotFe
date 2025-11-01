@@ -24,7 +24,7 @@ export default   async function RootLayout({
   return (
     <html lang="en"  className={theme}>
       <body className={`${outfit.className} dark:bg-gray-900`}>
-        {/* <InternetStatusWrapper> */}
+        <InternetStatusWrapper>
           <ReduxProvider>
             <StatusProvider>
               <AuthProvider>
@@ -39,7 +39,7 @@ export default   async function RootLayout({
               </AuthProvider>
             </StatusProvider>
           </ReduxProvider>
-        {/* </InternetStatusWrapper> */}
+        </InternetStatusWrapper>
       </body>
     </html>
   );

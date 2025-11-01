@@ -44,7 +44,8 @@ import { useStatus } from "@/context/StatusContext";
 const {
   BOT:{
     DEFAULT,
-  },
+    SOURCE_EDGE,
+  }
 } = constantsText;
 
 interface TimeSlot {
@@ -87,21 +88,32 @@ type CustomNodeData = {
   deleteField: (id: string) => void;
 };
 
-interface UploadedFile {
-  file?: File;
-  preview?: string;
-  uploaded?: boolean;
-  serverId?: string;
-  name?: string;
-  type: string;
+interface UploadBase {
+  name: string;
+  type?: string;
   size?: number;
+  preview?: string;
   url?: string;
   uploadedAt?: string;
   uploadError?: boolean;
   lat?: number;
   lng?: number;
-  key?: string,
+  key?: string;
   saveToDb?: boolean;
+  fileId?: string;
+  mId?: string;
+}
+
+interface UploadResult extends UploadBase {
+  isUploading?: boolean;
+  progress?: number;
+  location?: any;
+}
+
+interface UploadedFile extends UploadBase {
+  file?: File;
+  uploaded?: boolean;
+  serverId?: string;
 }
 
 interface Location {
@@ -109,22 +121,7 @@ interface Location {
   lng?: number;
   name?: string;
   type?: string;
-}
-
-interface UploadResult {
-  name: string;
-  type?: string;
-  size?: number;
-  preview?: string;
-  url?: string;
-  uploadedAt?: string;
-  isUploading?: boolean;
-  uploadError?: boolean;
-  lat?: number;
-  lng?: number;
-  key?: string;
-  progress?: number;
-  saveToDb?: boolean;
+  location?: any;
 }
 
 const BackgroundColorMark = Mark.create({
@@ -210,9 +207,8 @@ const buttonConfigs = [
 
 const CustomNode: React.FC<NodeProps<CustomNodeData>> = ({ data, id }) => {
   const editorRefs = useRef<Map<string, Editor>>(new Map());
-  const handilRef = useRef<number | null>(null);
   const [isFocused, setIsFocused] = useState<string | null>(null);
-  const { deleteElements, getEdges } = useReactFlow();
+  const { deleteElements, getEdges, setEdges } = useReactFlow();
   const [loadEditor, setLoadEditor] = useState(false);
   const createNewId = Date.now();
   const searchParams = useSearchParams();
@@ -227,8 +223,7 @@ const CustomNode: React.FC<NodeProps<CustomNodeData>> = ({ data, id }) => {
   const [focusedEditorId, setFocusedEditorId] = useState<string | null>(null);
   const [fileKeys, setFileKeys] = useLocalStorage<string[]>( `${chatbotId}-${id}-deletedFileKeys`,[]);
   const { registerOnSave } = useSaveEvent();
-  const { setStatus, status } = useStatus();
-
+  const { setStatus } = useStatus();
   const MAX_RETRIES = 3;
   const RETRY_DELAY = 1000;
 
@@ -287,10 +282,13 @@ const CustomNode: React.FC<NodeProps<CustomNodeData>> = ({ data, id }) => {
   const serializeFiles = (
     files: (UploadedFile | Location)[],
     chatbotId: string,
-    onProgress?: (updated: UploadResult[]) => void
+    onProgress?: (updated: UploadResult[]) => void,
+    mediaFile?:UploadedFile,
   ): { fileData: UploadResult[]; uploadPromises: Promise<void>[] } => {
     const fileData: UploadResult[] = [];
     const uploadPromises: Promise<void>[] = [];
+    const sF = (n: string) => n.replace(/\s+/g,"_").replace(/[^a-zA-Z0-9._-]/g,"").toLowerCase();
+    const gUF = (n: string) => sF(`qbot-${Date.now()}-${Math.random().toString(36)?.slice(2,8)}.${n?.split(".").pop()||""}`);
 
     files.forEach(f => {
       if (f.type === "Location") {
@@ -299,6 +297,8 @@ const CustomNode: React.FC<NodeProps<CustomNodeData>> = ({ data, id }) => {
           type: f.type,  
           lat: f.lat,
           lng: f.lng,
+          location: `${f.lat}-${f.lng}`,
+          fileId: `FI-${Date.now()}`,
         });
         return;
       }
@@ -307,11 +307,13 @@ const CustomNode: React.FC<NodeProps<CustomNodeData>> = ({ data, id }) => {
 
       if (!fileObj.file && fileObj.url) {
         fileData.push({
-          name: fileObj.name || "Unknown File",
+          name: gUF(fileObj.file!?.name) || "Unknown File",
           type: fileObj.type || "File",
           size: fileObj.size || 0,
           preview: fileObj.url,
           key: fileObj.key,
+          mId: fileObj.mId,
+          fileId: fileObj.fileId,
           url: fileObj.url,
           uploadedAt: fileObj.uploadedAt || new Date().toISOString(),
           isUploading: false,
@@ -321,10 +323,12 @@ const CustomNode: React.FC<NodeProps<CustomNodeData>> = ({ data, id }) => {
       }
 
       const fileInfo: UploadResult = {
-        name: fileObj.file?.name || "Unknown File",
+        name: gUF(fileObj.file!?.name)|| "Unknown File",
         type: fileObj.file?.type || "File",
         size: fileObj.file?.size || 0,
         key: fileObj.key,
+        mId: fileObj.mId,
+        fileId: fileObj.fileId,
         preview: fileObj.preview || URL.createObjectURL(fileObj.file!),
         isUploading: true,
         saveToDb: false,
@@ -336,7 +340,7 @@ const CustomNode: React.FC<NodeProps<CustomNodeData>> = ({ data, id }) => {
 
       const promise = api
         .get(`/createbots/${chatbotId}/upload-url`, {
-          params: { filename: fileObj.file!?.name, contentType: fileObj.file!?.type },
+          params: { filename: gUF(fileObj.file!?.name), contentType: fileObj.file!?.type },
         })
         .then(async ({ data: signedData }) => {
           const { uploadUrl, publicUrl, key } = signedData;
@@ -349,14 +353,16 @@ const CustomNode: React.FC<NodeProps<CustomNodeData>> = ({ data, id }) => {
           fileInfo.url = publicUrl;
           fileInfo.preview = publicUrl;
           fileInfo.key = key;
+          fileInfo.mId = '';
+          fileInfo.fileId = `FI-${Date.now()}`;
           fileInfo.uploadedAt = new Date().toISOString();
           fileInfo.isUploading = false;
           fileInfo.progress = 100;
           onProgress?.([...fileData]);
         })
         .catch(err => {
-          console.warn("Upload failed for:", fileObj.file?.name, err);
-          toast.error(`Upload failed for,${fileObj.file?.name}`);
+          console.warn("Upload failed for:", gUF(fileObj.file!?.name), err);
+          toast.error(`Upload failed for,${gUF(fileObj.file!?.name)}`);
           fileInfo.uploadError = true;
           fileInfo.isUploading = false;
           onProgress?.([...fileData]);
@@ -368,30 +374,32 @@ const CustomNode: React.FC<NodeProps<CustomNodeData>> = ({ data, id }) => {
   };
 
   const handleUploadFile = useCallback(
-    async (files: (UploadedFile | Location)[] | any) => {
+    async (files: (UploadedFile | Location)[] | any, id: string, mediaFile:UploadResult | any) => {
       const { fileData, uploadPromises } = serializeFiles(files, chatbotId, updated => {
 
         if (typeof data?.setInputs === "function") {
           data.setInputs((prev: any) =>
-            prev.map((input: any) => ({
-              ...input,
-              fileData: updated,
-            }))
+            prev.map((input: any) =>
+              input.id === id 
+                ? { ...input, fileData: updated }
+                : input
+            )
           );
         } else {
           console.warn("setInputs is not available — skipping update");
         }
-      });
+      }, mediaFile);
 
       await Promise.all(uploadPromises);
       setStatus(false)
 
       if (typeof data?.setInputs === "function") {
         data.setInputs((prev: any) =>
-          prev.map((input: any) => ({
-            ...input,
-            fileData,
-          }))
+          prev.map((input: any) =>
+            input.id === id 
+              ? { ...input, fileData }
+              : input
+          )
         );
       } else {
         console.warn("setInputs is not available — skipping update");
@@ -419,85 +427,6 @@ const CustomNode: React.FC<NodeProps<CustomNodeData>> = ({ data, id }) => {
     setEndTime(null);
     setOpen(false);
   };
-  
-  // const addTimeSlot = () => {
-  //   if (!selectedDate || !startTime || !endTime || !selectedValue) return;
-  
-  //   const now = new Date();
-  //   const dId = Date.now();
-
-  //   const startDateTime = new Date(
-  //     selectedDate.getFullYear(),
-  //     selectedDate.getMonth(),
-  //     selectedDate.getDate(),
-  //     startTime.getHours(),
-  //     startTime.getMinutes(),
-  //     0,
-  //     0
-  //   );
-  
-  //   const endDateTime = new Date(
-  //     selectedDate.getFullYear(),
-  //     selectedDate.getMonth(),
-  //     selectedDate.getDate(),
-  //     endTime.getHours(),
-  //     endTime.getMinutes(),
-  //     0,
-  //     0
-  //   );
-  
-  //   const formatDate = (date: Date) => {
-  //     const year = date.getFullYear();
-  //     const month = (date.getMonth() + 1).toString().padStart(2, '0');
-  //     const day = date.getDate().toString().padStart(2, '0');
-  //     return `${year}-${month}-${day}`;
-  //   };
-
-  //   if (startDateTime <= now || endDateTime <= now || endDateTime <= startDateTime) return;
-  
-  //   const dateStr = formatDate(selectedDate);
-  //   const newSlot: TimeSlot = { id:dId, start: startDateTime, end: endDateTime, interval: selectedValue, buffer: selectedBuffer };
-  //   const existingInputs = data.inputs || [];
-  //   const existingSlots = existingInputs[0]?.slots || [];
-  //   const dateEntry = existingSlots.find((d: TimeSlot) => d.date === dateStr);
-  
-  //   let updatedSlots;
-  //   if (dateEntry) {
-  //     updatedSlots = existingSlots.map((d: TimeSlot) =>
-  //       d.date === dateStr
-  //         ? { ...d, slots: [...d.slots, newSlot] }
-  //         : d
-  //     );
-  //   } else {
-  //     updatedSlots = [...existingSlots, { id: dId, date: dateStr, slots: [newSlot] }];
-  //   }
-  
-  //   const serializedDateSlots = updatedSlots.map((ds: TimeSlot) => ({
-  //     date: ds.date,
-  //     slots: ds.slots.map((slot: TimeSlot) => ({
-  //       id: slot.id,
-  //       start: slot.start instanceof Date ? slot.start.toISOString() : slot.start,
-  //       end: slot.end instanceof Date ? slot.end.toISOString() : slot.end,
-  //       interval: slot?.interval || 0,
-  //       buffer: slot?.buffer || 0,
-  //     }))
-  //     .sort((a:any, b:any) => new Date(a.start).getTime() - new Date(b.start).getTime()),
-  //   }));
-
-  //   serializedDateSlots.sort((a:any, b:any) => new Date(a.date).getTime() - new Date(b.date).getTime());
-  
-  //   data.setInputs((prevInputs) =>
-  //     prevInputs.map((input: any) => {
-  //       return { ...input, id: dId, slots: serializedDateSlots };
-  //     })
-  //   );
-
-  //   setStartTime(null);
-  //   setEndTime(null);
-  //   setSelectedValue('');
-  //   setSelectedBuffer('');
-  // };
-
 
   const addTimeSlot = useCallback(() => {
     if (!selectedDate || !startTime || !endTime || !selectedValue) return;
@@ -698,23 +627,36 @@ const CustomNode: React.FC<NodeProps<CustomNodeData>> = ({ data, id }) => {
     }
   };
 
-  const handleDeleteDynamicFields = (fieldId: string) => {
-    const edgeIndex = handilRef.current;
-    if (data.deleteField) {
-      data.deleteField(fieldId);
-    }
-    if (edgeIndex === 1) {
-      const edgesToRemove = getEdges().filter(
-        (edge) => fieldId.includes(edge.source) && edge.sourceHandle === 'replay-source-edge'
-      );
-      deleteElements({ edges: edgesToRemove });
-    }
-    const fileKey = extractFileKeys(data?.inputs);
-    if (!fileKey || fileKey.length < 1) return;
+  const handleDeleteDynamicFields = (fieldId: string, nodeId: string) => {
+    try {
+      if (data.deleteField) data.deleteField(fieldId);
+      const edges = getEdges();
+      const nodeEdges = edges.filter(edge => edge.source === nodeId);
+      const replayOrMessageInputs =
+        data.inputs?.filter(
+          (inp: any) =>
+            inp.field === "replay" ||
+            (inp.field === "messages" && inp.type !== "Text")
+        ) || [];
 
-    setFileKeys(fileKey)
+      const lastInput = replayOrMessageInputs[replayOrMessageInputs.length - 1];
+      const lastFieldEdge = nodeEdges.find(
+        edge =>
+          edge.source === nodeId &&
+          edge.sourceHandle === `${lastInput?.field}-${SOURCE_EDGE}`
+      );
+
+      if (lastInput && lastInput.id === fieldId && lastFieldEdge) {
+        deleteElements({ edges: [lastFieldEdge] });
+      }
+
+      const fileKey = extractFileKeys(data?.inputs);
+      if (fileKey?.length) setFileKeys(fileKey);
+    } catch (error) {
+      console.error("Error in handleDeleteDynamicFields:", error);
+    }
   };
-  
+
   const createEditor = (inputId: string, initialContent: string = "") => {
     try {
       if (!editorRefs.current.has(inputId)) {
@@ -758,14 +700,11 @@ const CustomNode: React.FC<NodeProps<CustomNodeData>> = ({ data, id }) => {
     event.stopPropagation();
   
     const inputDataStr = event.dataTransfer.getData("application/reactflow-node");
-
     if (!inputDataStr) return;
   
     try {
-  
       const { type, field } = JSON.parse(inputDataStr);
       const newNodeId = `${id}-input-${createNewId}`;
-  
       const hasPreferenceAlready = data.inputs.some(
         (input) => input.field === "preference"
       );
@@ -782,8 +721,21 @@ const CustomNode: React.FC<NodeProps<CustomNodeData>> = ({ data, id }) => {
         value: field !== "preference" ? "" : undefined,
       };
   
-      createEditor(newInput.id);
+      createEditor(newInput.id, field === "replay" ? "Collect:" : "");
       data.setInputs((prevInputs) => [...prevInputs, newInput]);
+      
+      if (!id && field === "preference") return;
+      setEdges(prevEdges =>
+        prevEdges.map(edge => {
+          if (edge.source !== id) return edge;
+          const newId = edge.id.replace(/\b(replay|messages)\b/g, field);
+          return {
+            ...edge,
+            id: newId,
+            sourceHandle: `${field}-${SOURCE_EDGE}`,
+          };
+        })
+      );
     } catch (error) {
       console.error("Error parsing input data:", error);
       toast.error("Failed to drop input, please try again!");
@@ -861,12 +813,9 @@ const CustomNode: React.FC<NodeProps<CustomNodeData>> = ({ data, id }) => {
     };
   }, []);
 
-  const FieldIndex = data.inputs.reduce((lastIndex, input, currentIndex) => {
-    if (input.field === 'replay') {
-      return currentIndex;
-    }
-    return lastIndex;
-  }, -1);
+  const FieldIndex = data.inputs.findLastIndex(
+    input => input.field === 'replay' || (input.field === 'messages' && input.type !== 'Text')
+  );
 
   const renderPreferenceOptions = useCallback(
     (options: any[], id: string, type: string, index: number) => {
@@ -919,7 +868,7 @@ const CustomNode: React.FC<NodeProps<CustomNodeData>> = ({ data, id }) => {
   );
   
   const renderSlotOptions = useCallback (
-    (id: string, index: number, savedSlots:any) => {
+    (id: string, savedSlots:any) => {
       return (
         <div className="p-2">
           <Handle
@@ -929,9 +878,9 @@ const CustomNode: React.FC<NodeProps<CustomNodeData>> = ({ data, id }) => {
             className="absolute !right-[-10px] top-1/2 text-[10px] !w-[8px] !h-[8px] !bg-node-active !border-2 !border-solid !border-op-handil"
           />
           <span
-            className="flex items-center justify-center p-1 border-1 border-[rgb(134,219,231)] rounded-lg cursor-pointer transition m-auto w-[50%] !opacity-[50]"
+            className="flex items-center justify-center p-1 border-1 border-[rgb(134,219,231)] rounded-lg transition m-auto w-[50%] !opacity-[50]"
           >
-            <BookIcon  onClick={handleOpen} className="!text-[30px] !transition-transform !duration-200 !ease-in-out hover:scale-110 hover:text-[#8adfea] text-[rgb(134,219,231)]" />
+            <BookIcon  onClick={handleOpen} className="!text-[30px] !transition-transform !duration-200 !ease-in-out hover:scale-110 hover:text-[#8adfea] text-[rgb(134,219,231)] cursor-pointer" />
           </span>
           <Dialog
             open={open}
@@ -1102,7 +1051,7 @@ const CustomNode: React.FC<NodeProps<CustomNodeData>> = ({ data, id }) => {
     ]
   );
   
-  const RenderDynamicField = () => {
+  const RenderDynamicField = (nodeId:string) => {
     const renderFieldPreference  = (
       id:string, 
       options:any, 
@@ -1114,7 +1063,7 @@ const CustomNode: React.FC<NodeProps<CustomNodeData>> = ({ data, id }) => {
         case 'List':
           return renderPreferenceOptions(options, id, type, index)
         case 'Slot':
-          return renderSlotOptions(id, index, slots)
+          return renderSlotOptions(id, slots)
         case 'Button':
           return  renderPreferenceOptions(options, id, type, index)
         default:
@@ -1183,7 +1132,7 @@ const CustomNode: React.FC<NodeProps<CustomNodeData>> = ({ data, id }) => {
       [chatbotId]
     );
 
-    function renderUploadSctions(fileData: UploadResult[], type: string, accept?: string) {
+    function renderUploadSctions(fileData: UploadResult[], type: string, accept?: string, id?:string | any) {
       return (
         <ReusableFileUploader
           accept={accept}
@@ -1191,7 +1140,7 @@ const CustomNode: React.FC<NodeProps<CustomNodeData>> = ({ data, id }) => {
           value={fileData || []}
           type={type}
           onFileDelete={handleFileDelete}
-          onChange={handleUploadFile}
+          onChange={(files) => handleUploadFile(files, id, fileData)}
         />
       );
     }
@@ -1202,8 +1151,10 @@ const CustomNode: React.FC<NodeProps<CustomNodeData>> = ({ data, id }) => {
       field:string, 
       type: string,
       fileData:any, 
-      isReplay:boolean = false, 
+      isEdge:boolean = false, 
+      nodeId:string,
     ) => {
+      const edge =  `${field}-${SOURCE_EDGE}`;
       const allIcons = [...messageIcons, ...replayIcons];
       const getIconByType = () => {
         const found = allIcons.find((item) => item.type === type && item.field === field);
@@ -1214,15 +1165,15 @@ const CustomNode: React.FC<NodeProps<CustomNodeData>> = ({ data, id }) => {
           id={`editor-${id}`}
           className="relative inputs tiptap-editor-container nodrag cursor-text text-left dark:text-dark-text"
         >
-          {isReplay && (
+          {isEdge && (
             <Handle
               type="source"
-              id="replay-source-edge"
+              id={edge}
               position={Position.Right}
-              className="absolute !right-[-13px] top-1/2 text-[10px] !w-[8px] !h-[8px] !bg-node-active !border-2 !border-solid !border-[#f069b1]"
+              className={`absolute !right-[-13px] top-1/2 text-[10px] !w-[8px] !h-[8px] !bg-node-active !border-2 !border-solid ${field === 'replay' ? '!border-[#f069b1]' : '!border-[#0FAB49]'}`}
             />
           )}
-          {isFocused === id ? (
+          {isFocused === id && type === "Text" ? (
             <div className="grid grid-cols-8 gap-x-1 border-b border-divider dark:border-dark-border-tiptap pb-0">
               {renderToolbarSections(editor, field)}
               <button
@@ -1262,7 +1213,7 @@ const CustomNode: React.FC<NodeProps<CustomNodeData>> = ({ data, id }) => {
               </p>
               <p
                 className="text-drag-text absolute -right-1 -top-1 text-[8px] hover:scale-105 active:scale-95 transition-all duration-200 ease-in-out p-1 cursor-pointer opacity-0"
-                onMouseDown={() => handleDeleteDynamicFields(id)}
+                onClick={() =>  handleDeleteDynamicFields(id, nodeId)}
               >
                 ❌
               </p>
@@ -1272,19 +1223,20 @@ const CustomNode: React.FC<NodeProps<CustomNodeData>> = ({ data, id }) => {
             {(() => {
               switch (type) {
                 case 'Image':
-                  return renderUploadSctions(fileData, type, 'image/*');
+                  return renderUploadSctions(fileData, type, 'image/*', id);
                 case 'Video':
-                  return renderUploadSctions(fileData, type, 'video/*');
+                  return renderUploadSctions(fileData, type, 'video/*', id);
                 case 'Audio':
-                  return renderUploadSctions(fileData, type, 'audio/*');
+                  return renderUploadSctions(fileData, type, 'audio/*', id);
                 case 'Doc':
                   return renderUploadSctions(
                     fileData,
                     type,
-                    'application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document'
+                    'application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+                    id
                   );
                 case 'Location':
-                  return renderUploadSctions(fileData, type);
+                  return renderUploadSctions(fileData, type,'', id);
                 default:
                   return <EditorContent editor={editor} className="qbot-editor" />;
               }
@@ -1300,18 +1252,19 @@ const CustomNode: React.FC<NodeProps<CustomNodeData>> = ({ data, id }) => {
       options:void, 
       editor:any, 
       index:number, 
-      isReplay:boolean,
+      isEdge:boolean,
       type:any,
       slots: any,
       fileData: any,
+      nodeId:string,
     ) => {
       switch (field) {
         case 'preference':
           return renderFieldPreference(id, options, index, type, slots);
         case 'messages':
-          return renderFieldInputs(id, editor, field, type, fileData);
+          return renderFieldInputs(id, editor, field, type, fileData, isEdge, nodeId);
         case 'replay':
-          return renderFieldInputs(id, editor, field, type, fileData, isReplay);
+          return renderFieldInputs(id, editor, field, type, fileData, isEdge, nodeId);
         default:
           return <div>Unsupported field type</div>;
       }
@@ -1330,8 +1283,7 @@ const CustomNode: React.FC<NodeProps<CustomNodeData>> = ({ data, id }) => {
         }, index) => {
           const editor = editorRefs.current.get(id);
           if (!editor) return null;
-          const isReplay = FieldIndex === index && field === "replay";
-          if (isReplay) handilRef.current = index;
+          const isEdge = FieldIndex === index && (field === "replay" || (field === "messages" && type !== "Text"));
 
           const getIconByType = () => {
             const found = Preference.find((item) => item.type === type && item?.field === 'preference');
@@ -1352,7 +1304,7 @@ const CustomNode: React.FC<NodeProps<CustomNodeData>> = ({ data, id }) => {
                   {getIconByType()}
                 </p>
               )}
-              {loadEditor && renderField(id, field, options, editor, index, isReplay, type, slots, fileData)}
+              {loadEditor && renderField(id, field, options, editor, index, isEdge, type, slots, fileData, nodeId)}
             </div>
           );
         })}
@@ -1377,7 +1329,7 @@ const CustomNode: React.FC<NodeProps<CustomNodeData>> = ({ data, id }) => {
             </span>
           )}
         </div>
-        {RenderDynamicField()}
+        {RenderDynamicField(id)}
       </div>
     </>
   );
