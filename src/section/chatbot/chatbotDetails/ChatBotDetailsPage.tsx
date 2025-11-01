@@ -143,7 +143,6 @@ const ChatBotDetails = () => {
   const { screenToFlowPosition } = useReactFlow();
   const createNodeId = Date.now(); 
   const newNodeId = `group-${createNodeId}`; 
-  const [isLoading, setIsLoading] = useState(true);
   const [startSave,setStartSave] = useState(false)
   const [isResult,setIsResult] = useState<boolean | any>(true);
   const { triggerSave } = useSaveEvent();
@@ -432,7 +431,6 @@ const ChatBotDetails = () => {
     if (botData) {
       initializeNodeData(botData, reactFlowInstance.current);
       setTitle(chatbotId ? botData?.data?.title : `${BOT_TITLE}` || '');
-      setIsLoading(false);
     }
   }, [botData, reactFlowInstance]);
 
@@ -456,7 +454,7 @@ const ChatBotDetails = () => {
     setIsTitleEmpt(value === "")
   }, [title]);
 
-  if (isLoading) {
+  if (!title) {
     return (
       <div className="w-full h-screen flex items-center justify-center">
          <img
