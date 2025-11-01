@@ -18,7 +18,8 @@ import Highlight from '@tiptap/extension-highlight';
 import Typography from '@tiptap/extension-typography';
 import Link from '@tiptap/extension-link';
 import { useSearchParams} from 'next/navigation';
-import Picker from '@emoji-mart/react';
+import emojiData from '@emoji-mart/data'
+import Picker from '@emoji-mart/react'
 import { Plugin } from 'prosemirror-state';
 import { Mark } from '@tiptap/core';
 import "reactflow/dist/style.css";
@@ -1199,7 +1200,7 @@ const CustomNode: React.FC<NodeProps<CustomNodeData>> = ({ data, id }) => {
                     <div className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-[9999] shadow-lg mb-4"
                       onClick={(e) => e.stopPropagation()}
                     >
-                      <Picker onEmojiSelect={addEmoji} />
+                      <Picker data={emojiData} onEmojiSelect={addEmoji} />
                     </div>,
                   </div>,
                   document.body
