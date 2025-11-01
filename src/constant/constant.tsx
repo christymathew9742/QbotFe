@@ -2,6 +2,7 @@ export const constantsText = {
     BOT: {
         BOT_TITLE:'ChatBot',
         DEFAULT:'Drop here',
+        SOURCE_EDGE:'source-edge',
         STEP:'Group #',
         SAVE:'Save',
         CHAT_BOX:'Create New',
@@ -10,7 +11,7 @@ export const constantsText = {
         ICON_TITLE3:'Choice',
         ICON_TITLE4:'Group',
         ICON:{
-            MESSAGE:'rgb(15 171 73)',
+            MESSAGE:'#0FAB49',
             REPLAY:'#FF1493',
             PREFERENCE: 'rgb(23 196 220)',
             GROUP:'rgb(201 49 201)',

@@ -113,7 +113,7 @@ const AppHeader: React.FC = () => {
             />
           </Link>
           {tockenDetails?.hastocken && (
-            <div className="flex items-center gap-0 text-xxm py-1 px-2 rounded-[4px] font-extralight w-auto bg-error-50 text-error-600 dark:bg-error-500/15 dark:text-[#c96d66]">
+            <div className="flex items-center gap-0  border-1 border-[#c96d66] text-xxm py-1 px-2 rounded-[4px] font-extralight w-auto bg-error-50 text-error-600 dark:bg-error-500/15 dark:text-[#c96d66]">
               <Expried />
               <p>
                 Free trial {tockenDetails?.isExpired ? 'ended' : `ends in `}

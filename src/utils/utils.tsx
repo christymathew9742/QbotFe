@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import WysiwygIcon from '@mui/icons-material/Wysiwyg';
 import ImageIcon from '@mui/icons-material/Image';
 import VideoLibraryIcon from '@mui/icons-material/VideoLibrary';
@@ -12,10 +11,11 @@ import Filter1Icon from '@mui/icons-material/Filter1';
 import FileUploadIcon from '@mui/icons-material/FileUpload';
 import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
 import AccessTimeFilledIcon from '@mui/icons-material/AccessTimeFilled';
-import AddBoxIcon from '@mui/icons-material/AddBox';
+import BookIcon from '@mui/icons-material/Book';
 import ViewListIcon from '@mui/icons-material/ViewList';
 import AudioFileIcon from '@mui/icons-material/AudioFile';
 import SmartButtonIcon from '@mui/icons-material/SmartButton';
+
 import {
   isToday,
   isYesterday,
@@ -24,6 +24,7 @@ import {
   differenceInYears,
   format,
 } from 'date-fns';
+import api from './axios';
 
 const {
   BOT:{
@@ -31,74 +32,37 @@ const {
       MESSAGE,
       REPLAY,
       PREFERENCE,
-      GROUP,
     }
   }
 } = constantsText;
 
-type Status = {
-  booked?: number;
-  completed?: number;
-  rescheduled?: number;
-};
+const iconProps = { sx: { fontSize: '14px', marginRight: '4px',  } };
 
 export const messageIcons = [
-  { type: 'Text', icon: <WysiwygIcon sx={{ fontSize: '14px', marginRight: '4px', color: MESSAGE }} /> },
-  { type: 'Image', icon: <ImageIcon sx={{ fontSize: '14px', marginRight: '4px', color: MESSAGE }} /> },
-  { type: 'Video', icon: <VideoLibraryIcon sx={{ fontSize: '14px', marginRight: '4px', color: MESSAGE }} /> },
-  { type: 'Audio', icon: <AudioFileIcon sx={{ fontSize: '14px', marginRight: '4px', color: MESSAGE }} /> },
-  { type: 'Location', icon: <LocationOnIcon sx={{ fontSize: '14px', marginRight: '4px', color: MESSAGE }} /> },
-  { type: 'Doc', icon: <InsertDriveFileIcon sx={{ fontSize: '14px', marginRight: '4px', color: MESSAGE }} /> },
+  { type: 'Text', field: 'messages', icon: <WysiwygIcon sx={{ ...iconProps.sx, color: MESSAGE }}  /> },
+  { type: 'Image', field: 'messages', icon: <ImageIcon sx={{ ...iconProps.sx, color: MESSAGE }}  /> },
+  { type: 'Video', field: 'messages', icon: <VideoLibraryIcon sx={{ ...iconProps.sx, color: MESSAGE }}  /> },
+  { type: 'Audio', field: 'messages', icon: <AudioFileIcon sx={{ ...iconProps.sx, color: MESSAGE }}  /> },
+  { type: 'Location', field: 'messages', icon: <LocationOnIcon sx={{ ...iconProps.sx, color: MESSAGE }}  /> },
+  { type: 'Doc', field: 'messages', icon: <InsertDriveFileIcon sx={{ ...iconProps.sx, color: MESSAGE }}  /> },
 ];
 
 export const replayIcons = [
-  { type: 'Text', icon: <TextFieldsIcon sx={{ fontSize: '14px', marginRight: '4px', color: REPLAY }} /> },
-  { type: 'Email', icon: <ContactMailIcon sx={{ fontSize: '14px', marginRight: '4px', color: REPLAY }} /> },
-  { type: 'Phone', icon: <ContactPhoneIcon sx={{ fontSize: '14px', marginRight: '4px', color: REPLAY }} /> },
-  { type: 'Number', icon: <Filter1Icon sx={{ fontSize: '14px', marginRight: '4px', color: REPLAY }} /> },
-  { type: 'Location', icon: <LocationOnIcon sx={{ fontSize: '14px', marginRight: '4px', color: REPLAY }} /> },
-  { type: 'File', icon: <FileUploadIcon sx={{ fontSize: '14px', marginRight: '4px', color: REPLAY }} /> },
-  { type: 'Date', icon: <CalendarMonthIcon sx={{ fontSize: '14px', marginRight: '4px', color: REPLAY }} /> },
-  { type: 'Time', icon: <AccessTimeFilledIcon sx={{ fontSize: '14px', marginRight: '4px', color: REPLAY }} /> },
+  { type: 'Text', field: 'replay', icon: <TextFieldsIcon sx={{ ...iconProps.sx, color: REPLAY }}  /> },
+  { type: 'Email', field: 'replay', icon: <ContactMailIcon sx={{ ...iconProps.sx, color: REPLAY }} /> },
+  { type: 'Phone', field: 'replay', icon: <ContactPhoneIcon sx={{ ...iconProps.sx, color: REPLAY }} /> },
+  { type: 'Number', field: 'replay', icon: <Filter1Icon sx={{ ...iconProps.sx, color: REPLAY }} /> },
+  { type: 'Location', field: 'replay', icon: <LocationOnIcon sx={{ ...iconProps.sx, color: REPLAY }} /> },
+  { type: 'File', field: 'replay', icon: <FileUploadIcon sx={{ ...iconProps.sx, color: REPLAY }} /> },
+  { type: 'Date', field: 'replay', icon: <CalendarMonthIcon sx={{ ...iconProps.sx, color: REPLAY }} /> },
+  { type: 'Time', field: 'replay', icon: <AccessTimeFilledIcon sx={{ ...iconProps.sx, color: REPLAY }} /> },
 ];
 
 export const Preference = [
-  { type: 'List', icon: <ViewListIcon sx={{ fontSize: '14px', marginRight: '4px', color: PREFERENCE }} /> },
-  { type: 'Button', icon: <SmartButtonIcon sx={{ fontSize: '14px', marginRight: '4px', color: PREFERENCE }} /> },
+  { type: 'List', field: 'preference', icon: <ViewListIcon sx={{ ...iconProps.sx, color: PREFERENCE }} /> },
+  { type: 'Button', field: 'preference', icon: <SmartButtonIcon sx={{ ...iconProps.sx, color: PREFERENCE }} /> },
+  { type: 'Slot', field: 'preference', icon: <BookIcon sx={{ ...iconProps.sx, color: PREFERENCE }} /> },
 ];
-
-export const groupIcons = [
-  { type: 'Drag New', icon: <AddBoxIcon sx={{ fontSize: '16px', marginRight: '6px', color: GROUP }} /> },
-];
-
-export const useEmojiPicker = () => {
-  const [showEmojiPicker, setShowEmojiPicker] = useState(false);
-  const emojiList = [
-    '😊', '😂', '😢', '😍', '😎', '🥺', '😇', '🤔', '😜', '😏', '😋', '😱',
-    '🤩', '😜', '😤', '🥳', '😆', '🥺', '😝', '👻', '💩', '🎉', '🔥', '🌹',
-  ];
-
-  // Toggle the visibility of the emoji picker
-  const toggleEmojiPicker = () => {
-    setShowEmojiPicker((prev) => !prev);
-  };
-
-  // Insert emoji into the specified editor
-  const insertEmoji = (emoji: string, editor: any) => {
-    if (editor) {
-      editor.chain().focus().insertContent(emoji).run();
-    }
-    setShowEmojiPicker(false); // Close the emoji picker after inserting an emoji
-  };
-
-  return {
-    showEmojiPicker,
-    emojiList,
-    toggleEmojiPicker,
-    insertEmoji,
-  };
-};
-
 
 export  const decodeHtml = (html: string): string => {
   const doc = new DOMParser().parseFromString(html, 'text/html');
@@ -106,7 +70,6 @@ export  const decodeHtml = (html: string): string => {
 };
 
 export function isQueryParamString(str:any) {
-  // Check if the string matches the general query parameter format
   return /^(\w+=[^&]*&)*(\w+=[^&]*)$/.test(str);
 }
 
@@ -115,7 +78,7 @@ export const formatTime = (iso:any) => {
   return date.toLocaleTimeString(undefined, {
     hour: '2-digit',
     minute: '2-digit',
-    hour12: true, // for AM/PM
+    hour12: true, 
   });
 };
 
@@ -125,7 +88,6 @@ export const formatStringDate = (iso: string) => {
 
   const diffMs = now.getTime() - date.getTime();
   const diffMins = Math.floor(diffMs / (1000 * 60));
-  const diffHours = Math.floor(diffMs / (1000 * 60 * 60));
   const oneDay = 24 * 60 * 60 * 1000;
 
   if (diffMins < 1) return "Just now";
@@ -154,7 +116,6 @@ export const formatStringDate = (iso: string) => {
     return `${dateStr} at ${timeStr}`;
   }
 };
-
 
 export const formatString = (string: any): string => {
   if (typeof string === 'string' && string?.trim()) {
@@ -188,6 +149,83 @@ export const formatUpdatedDate = (iso: string) => {
   const yearsDiff = differenceInYears(now, date);
   return `${yearsDiff}y ago`;
 };
+
+export function isFileType(type: string): boolean {
+  const fileTypes = ["Image", "Video", "Doc", "Location", "Audio"];
+  return fileTypes.includes(type);
+}
+
+export const updateTempFilesToPermanent = async (inputs: any[], setInputs: any, chatbotId: string) => {
+  if (!inputs?.length) return;
+
+  const hasTempFiles = inputs.some(input =>
+    input.fileData?.some((file:any) => file?.key?.includes("temp/"))
+  );
+  if (!hasTempFiles) return;
+
+  try {
+    const updatedInputs = await Promise.all(
+      inputs.map(async (input: any) => {
+        if (!input.fileData) return input;
+
+        const updatedFileData = await Promise.all(
+          input.fileData.map(async (file: any) => {
+            if (file?.key?.includes("temp/") && file.type !== "Test" && file.type !== "Location") {
+              try {
+                const { data: res } = await api.get(
+                  `/createbots/${chatbotId}/permanent-url`,
+                  { params: { tempKey: file.key, filename: file.name } }
+                );
+                if (!res.permanentKey || !res.permanentUrl) return { ...file, saveToDb: false };
+                return { ...file, key: res.permanentKey, url: res.permanentUrl, preview: res.permanentUrl, saveToDb: true };
+              } catch {
+                return { ...file, saveToDb: false };
+              }
+            }
+            return file;
+          })
+        );
+
+        return { ...input, fileData: updatedFileData };
+      })
+    );
+
+    setInputs(updatedInputs);
+    console.log("✅ Temp files updated before save");
+  } catch (err: any) {
+    console.error("handleFileUpdates failed:", err.message);
+  }
+};
+
+export const extractFileKeys = (inputs: any[] | undefined): string[] => {
+  const fileKeys: string[] = [];
+
+  if (!Array.isArray(inputs)) return fileKeys;
+
+  inputs.forEach((input) => {
+    input = Array.isArray(input) ? input[0] : input;
+    if (
+      input?.field === "messages" &&
+      !["Location", "Text"].includes(input?.type) &&
+      Array.isArray(input?.fileData)
+    ) {
+      input.fileData.forEach((file:any) => {
+        if (file?.key) fileKeys.push(file.key);
+      });
+    }
+  });
+
+  return fileKeys;
+};
+
+export const allowedExtensions = {
+  image: ["jpg", "jpeg", "png", "webp"],
+  video: ["mp4", "3gp"],
+  audio: ["mp3", "aac", "m4a", "amr", "ogg", "opus"],
+  doc: ["pdf", "doc", "docx", "xls", "xlsx", "ppt", "pptx", "txt", "csv", "rtf", "zip", "rar"],
+};
+
+
 
 
 

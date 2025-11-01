@@ -118,7 +118,7 @@ const AppointmentDetails: React.FC = () => {
                         <div className="h-full rounded-xl p-1">
                             <div className="px-4 py-2 w-full">
                                 <h3 className="text-lg font-semibold text-gray-800 dark:text-white w-full">
-                                Details
+                                    Details
                                 </h3>
                             </div>
                             <div className="p-4 border-t dark:border-gray-800 sm:p-6 overflow-y-auto custom-scrollbar h-[350px]">
@@ -137,26 +137,47 @@ const AppointmentDetails: React.FC = () => {
                                     </div>
                                 </div>
                                 <div className="border dark:border-gray-700 rounded-[4px]">
-                                    {Object.entries(appointment?.data ?? {}).map(
-                                        ([key, value], index) =>
-                                        value && typeof value !== "object" ? (
-                                            <div
-                                                key={index}
-                                                className={`${
-                                                    index > 0 ? "border-t" : ""
-                                                } dark:border-gray-700 cursor-text`}
-                                            >
-                                                <div className="p-2">
-                                                    <p className="text-sm text-gray-400 dark:text-gray-400 mb-2 ml-2">
-                                                        {formatString(key)} :
-                                                    </p>
-                                                    <p className="text-base font-semibold text-gray-900 dark:text-white ml-2">
-                                                        {String(value)}
-                                                    </p>
+                                    {Object.entries(appointment?.data ?? {}).map(([key, value], index) => {
+                                        if (value === undefined || value === null) return null;
+                                        if (key === "preference" && Array.isArray(value)) {
+                                            return (
+                                                <div key={index}>
+                                                    {value.map((pref, i) =>
+                                                        Object.entries(pref).map(([pKey, pVal], j) => (
+                                                        <div
+                                                            className={`${index > 0 ? "border-t" : ""} dark:border-gray-700 cursor-text`}
+                                                            key={`${i}-${j}`}
+                                                        >
+                                                            <div className="p-2">
+                                                                <p className="text-sm text-gray-400 dark:text-gray-400 mb-2 ml-2">
+                                                                {formatString(pKey)} :
+                                                                </p>
+                                                                <p className="text-base font-semibold text-gray-900 dark:text-white ml-2">
+                                                                    {String(pVal)}
+                                                                </p>
+                                                            </div>
+                                                        </div>
+                                                        ))
+                                                    )}
                                                 </div>
+                                            );
+                                        }
+                                        return typeof value !== "object" ? (
+                                        <div
+                                            key={index}
+                                            className={`${index > 0 ? "border-t" : ""} dark:border-gray-700 cursor-text`}
+                                        >
+                                            <div className="p-2">
+                                            <p className="text-sm text-gray-400 dark:text-gray-400 mb-2 ml-2">
+                                                {formatString(key)} :
+                                            </p>
+                                            <p className="text-base font-semibold text-gray-900 dark:text-white ml-2">
+                                                {String(value)}
+                                            </p>
                                             </div>
-                                        ) : null
-                                    )}
+                                        </div>
+                                        ) : null;
+                                    })}
                                 </div>
                             </div>
                             <div className="grid grid-cols-1 gap-2  px-4 py-2 border-t dark:border-gray-800 "></div>
@@ -171,7 +192,7 @@ const AppointmentDetails: React.FC = () => {
                             </div>
                             <div className="p-4 border-t dark:border-gray-800 sm:p-6 overflow-y-auto custom-scrollbar h-[350px] space-y-4">
                                 <div className="w-full flex justify-center">
-                                    <span className="text-xxs mb-2 rounded-[6px] font-light block w-auto text-center dark:text-white dark:bg-white/30 px-2 py-1">
+                                    <span className="text-xxs mb-2 rounded-[6px] font-light block w-auto text-center bg-[#8c97b8] text-white dark:bg-white/30 px-2 py-1">
                                         {formatString(appointment?.status || "")}{" "}
                                         {formatStringDate(appointment?.updatedAt || "")}
                                     </span>
@@ -195,8 +216,8 @@ const AppointmentDetails: React.FC = () => {
                                         <div
                                             className={`relative min-w-[20%] max-w-[50%] px-4 py-2 rounded-[12px] text-sm font-light ${
                                                 isAI
-                                                ? "bg-[#465fff54] text-white !rounded-br-none"
-                                                : "bg-[#822cc76e] text-white !rounded-bl-none"
+                                                ? "bg-[#822cc7b0] dark:bg-[#465fff54] text-white !rounded-br-none"
+                                                : "bg-[#465fffcf] dark:bg-[#822cc76e] text-white !rounded-bl-none"
                                             }`}
                                         >
                                             {Array.isArray(item.message) ? (

@@ -147,7 +147,7 @@ const WhatsappUser = () => {
           </span>
         </TableCell>
         <TableCell colSpan={2} className="px-5 py-2 text-center text-gray-500 text-theme-sm">
-          <span className="text-xxxs px-2 py-1 rounded-full font-medium text-center bg-[#f2f4f75c] text-white">
+          <span className="text-xxxs px-2 py-1 rounded-full font-medium text-center bg-[#cccccc] dark:bg-[#f2f4f75c] text-white">
             {user?.totalAppointments}
           </span>
         </TableCell>

@@ -30,6 +30,7 @@ interface AppointmentStatus {
     todaysCancelledAppointments?: number;
     todaysCompletedAppointments?: number;
     totalAppointments?: number;
+    totalCancelledAppointments?: number;
 }
   
 const Home = () => {
@@ -38,6 +39,8 @@ const Home = () => {
     const pendingStatus = useSelector(getAllPending);
     const globalData =  useSelector(getWhatsAppGlobaleSelector)
     const isPending = !globalData || Object.keys(globalData).length < 1;
+
+    console.log(globalData,'globalDataglobalDataglobalDataglobalData')
     
     useEffect(() => {
         dispatch(fetchAppointmentRequest());
@@ -54,6 +57,7 @@ const Home = () => {
 
     const appointmentStatus:AppointmentStatus = {
         todaysAppointments: globalData?.todaysAppointments || 0,
+        totalCancelledAppointments: globalData?.cancelledCount || 0,
         totalStatusCounts: globalData?.totalStatusCounts || {},
         totalBookings: globalData?.totalBookings || 0,
         appointmentComplited: globalData?.appointmentComplited || 0,

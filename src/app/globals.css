@@ -200,6 +200,11 @@
   --color-status-bg-reactive:#ff8c00c4;
   --color-status-bg-completed:#ffffffa8;
   --color-notify: #14acff17;
+  --color-custom-border: #6f6f6f24;
+  --color-node-pop: #e4e7ec87;
+  /* --color-dark-border-node: #29909fab; */
+  --color-dark-border-node: #7fffd466;
+  --color-dark-border-tiptap: #7fffd426;
 
   /* Font Sizes */
   --text-xxss: 8px;
@@ -330,8 +335,6 @@
   background-color: #344054;
 }
 
-
-
 @layer utilities {
   /* For Remove Date Icon */
   input[type="date"]::-webkit-inner-spin-button,
@@ -362,6 +365,53 @@
   --xy-handle-background-color-default: #ffffff;
   --xy-handle-border-color-default: #AAAAAA;
   --xy-edge-label-color-default: #505050;
+}
+
+/* .dark .react-flow {
+  --xy-theme-selected: #7fffd426;
+  --xy-theme-hover: #7fffd426;
+  --xy-theme-edge-hover: #29909fab;
+  --xy-theme-color-focus: #7fffd426;
+  --xy-node-border-default: 1px solid #7fffd426;
+  --xy-node-boxshadow-default: 
+    0px 3.54px 4.55px 0px #7fffd426, 
+    0px 3.54px 4.55px 0px #7fffd426, 
+    0px 0.51px 1.01px 0px #7fffd426;
+  --xy-node-border-radius-default: 8px;
+  --xy-handle-background-color-default: #7fffd426;
+  --xy-handle-border-color-default: #7fffd426;
+  --xy-edge-label-color-default: #7fffd426;
+} */
+
+.dark .react-flow .react-flow__node-customNode {
+  border: 1px solid hwb(0 0% 100% / 0); /* subtle black border */
+  transition: box-shadow 0.3s ease;
+}
+
+.dark .react-flow .react-flow__node-customNode:hover {
+  border: 0 0 10px 2px lab(26.42% -9.89 -3.16 / 0.605);
+}
+
+.dark .react-flow {
+  /* Selection & Hover */
+  --xy-theme-selected: #7fffd426;
+  --xy-theme-hover: #7fffd426;
+  --xy-theme-edge-hover: #29909fab;
+  --xy-theme-color-focus: #7fffd426;
+
+  /* Node Styling */
+  --xy-node-boxshadow-default: 
+    0px 3px 6px rgba(0, 0, 0, 0.6),
+    0px 6px 12px rgba(0, 0, 0, 0.45),
+    0px 12px 24px rgba(0, 0, 0, 0.3); /* layered black shadow */
+  --xy-node-border-radius-default: 8px;
+
+  /* Handles */
+  --xy-handle-background-color-default: #7fffd4;
+  --xy-handle-border-color-default: #000000cc;
+
+  /* Edge labels */
+  --xy-edge-label-color-default: #7fffd4;
 }
 
 /* Customizing Default Theming */
@@ -454,6 +504,91 @@
   pointer-events: none;
 }
 
+/**datepicker dark mode color**/
+html.dark .react-datepicker {
+  background-color:  #0a0f16;
+  color: #ffffff;
+}
+
+/* Header */
+html.dark .react-datepicker__header {
+  background-color:  #0a0f16;
+}
+
+html.dark .react-datepicker__current-month,
+html.dark .react-datepicker-time__header {
+  color: #ffffff;
+  font-weight: 500;
+}
+
+/* Days of the week */
+html.dark .react-datepicker__day-name {
+  color: #ffffff;
+}
+
+/* Individual days */
+html.dark .react-datepicker__day,
+html.dark .react-datepicker__time-name {
+  color: #ffffff;
+}
+
+/* Disabled days and time options */
+html.dark .react-datepicker__day--disabled,
+html.dark .react-datepicker__time-list-item--disabled {
+  color: #888888;
+}
+
+/* Selected day or time */
+html.dark .react-datepicker__day--selected,
+html.dark .react-datepicker__day--keyboard-selected,
+html.dark .react-datepicker__time-list-item--selected {
+  background-color: #3b82f6;
+  color: #ffffff;
+}
+
+/* Hover (only for enabled date items) */
+html.dark .react-datepicker__day:not(.react-datepicker__day--disabled):hover {
+  background-color: #3b82f6;
+  color: #ffffff;
+}
+
+/* Hover (only for enabled time items) */
+html.dark .react-datepicker__time-list-item:not(.react-datepicker__time-list-item--disabled):hover,
+html.dark .react-datepicker__time-list-item:not(.react-datepicker__time-list-item--disabled):hover button {
+  background-color: #3b82f6!important;
+  color: #ffffff!important;
+}
+
+/* Time picker container background */
+html.dark .react-datepicker__time-container .react-datepicker__time {
+  background-color: #0a0f16;
+}
+
+/* Time picker list items */
+html.dark .react-datepicker__time-list-item {
+  color: #ffffff;
+}
+
+/* Custom scrollbar for time picker */
+html.dark .react-datepicker__time-list {
+  scrollbar-width: thin; /* Firefox */
+  scrollbar-color: #3b82f6 #1e1e1e; /* Firefox: thumb color + track color */
+}
+
+/* Webkit browsers (Chrome, Edge, Safari) */
+html.dark .react-datepicker__time-list::-webkit-scrollbar {
+  width: 4px;
+}
+
+html.dark .react-datepicker__time-list::-webkit-scrollbar-track {
+  background: #0a0f16!important 
+}
+
+/** hide map button**/
+.leaflet-bottom{
+  display: none !important;
+}
+
 /**textEditor Tiptap section**/
 /* Set minimum height for the content area */
 .tiptap-editor-container .ProseMirror {
@@ -483,6 +618,21 @@
 .dark .disable-editor-bi-messages svg,
 .dark .disable-editor-bi-replay svg {
   color:#ffffffE6!important;
+}
+.inputs:hover .text-drag-text {
+  opacity: 100;
+}
+.nodes:hover .node-x {
+  opacity: 100;
+}
+
+.dark .MuiPaper-root {
+  background-color: #0a0f16 !important;
+}
+
+.uplodFields svg {
+  font-size: 2rem!important;
+  color: hwb(142 4% 28% / 0.45) !important
 }
 
 /*** error popup style****/

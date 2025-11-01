@@ -21,8 +21,6 @@ const fetchAppointment = (params: any) => api.get<any[]>(`/appointments${params}
 const updateAppointment = (body: any, id: any) => api.put<any[]>(`/appointments/${id}`, body);
 const deleteAppointment = (id: any) => api.delete<any[]>(`/appointments/${id}`);
 
-
-
 //Fetch appointment
 function* fetchAppointmentSaga(data:any): any {
     const {payload} = data;
@@ -35,7 +33,6 @@ function* fetchAppointmentSaga(data:any): any {
         {yield put(fetchAppointmentFailure({error: e.message}));
     }
 }
-
 
 // Update appointment
 function* updateAppointmentSaga(data: any): any {
