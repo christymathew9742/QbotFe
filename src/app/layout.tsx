@@ -49,33 +49,23 @@
 import { Outfit } from "next/font/google";
 import "./globals.css";
 import { headers } from "next/headers";
-import { StatusProvider } from "@/context/StatusContext";
-import ReduxProvider from "./ReduxProvider";
-import AuthProvider from "./AuthProvider";
 import ClientProviders from "./ClientProviders";
 
 const outfit = Outfit({ subsets: ["latin"] });
 
-export default async function RootLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export default async function RootLayout({ children }: { children: React.ReactNode }) {
   const headersList: any = headers();
-  const theme = (headersList.get("x-theme") || "light") as "light" | "dark";
+  const theme = headersList.get("x-theme") || "light";
 
   return (
     <html lang="en" className={theme}>
       <body className={`${outfit.className} dark:bg-gray-900`}>
-        <ReduxProvider>
-          <StatusProvider>
-            <AuthProvider>
-              <ClientProviders theme={theme}>{children}</ClientProviders>
-            </AuthProvider>
-          </StatusProvider>
-        </ReduxProvider>
+        <ClientProviders theme={theme}>
+          {children}
+        </ClientProviders>
       </body>
     </html>
   );
 }
+
 
