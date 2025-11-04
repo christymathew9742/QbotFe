@@ -139,13 +139,11 @@ export const useSaveFlowData = ({
 
             switch (result.type) {
                 case POST_BOT_REQUEST:
-                    toast.success("Saved successfully.");
                     return true
                 case UPDATE_BOT_REQUEST:
-                    toast.success("Updated successfully.");
+                    toast.success("Updated successfully.")
                     return true
                 default:
-                    toast.error("Error saving data.");
                     return false;
             }
         } catch (error) {

@@ -38,12 +38,12 @@ export const customInputStyles: SxProps = {
         borderRadius: '.5rem',
         backgroundColor: 'transparent',
         height: '45px',
-        '& .MuiPickersSectionList-root': {
+        '.dark & .MuiPickersSectionList-root': {
             backgroundColor: 'transparent',
-            // color:'white',
+            color: 'white',
         },
-        '& .MuiIconButton-root' : {
-            // color:'white',
+        '.dark & .MuiIconButton-root': {
+            color: 'white',
         },
         '&:hover fieldset': {
             borderWidth: '1px !important',
@@ -56,10 +56,13 @@ export const customInputStyles: SxProps = {
             outline:'none!important',
         },
     },
-    '& .MuiPickerPopper-paper' : {
-        backgroundColor:'black',
-        color:'white',
+     '& .MuiPickersLayout-root' :{
+        marginTop: '20px',
     },
+    // '& .MuiPickerPopper-paper' : {
+    //     backgroundColor:'black',
+    //     color:'white',
+    // },
     '& .MuiOutlinedInput-root': {
         minHeight: '2.75rem',
         width: '100%',

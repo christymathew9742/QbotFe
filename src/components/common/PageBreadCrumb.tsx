@@ -9,7 +9,7 @@ interface BreadcrumbProps {
 }
 
 const PageBreadcrumb: React.FC<BreadcrumbProps> = ({ pagePath="" }) => {
-  const pathname = usePathname(); // current URL path
+  const pathname = usePathname(); 
   const isActive = pathname === `/${pagePath}`;
 
   return (

@@ -52,7 +52,7 @@ export const replayIcons = [
   { type: 'Email', field: 'replay', icon: <ContactMailIcon sx={{ ...iconProps.sx, color: REPLAY }} /> },
   { type: 'Phone', field: 'replay', icon: <ContactPhoneIcon sx={{ ...iconProps.sx, color: REPLAY }} /> },
   { type: 'Number', field: 'replay', icon: <Filter1Icon sx={{ ...iconProps.sx, color: REPLAY }} /> },
-  { type: 'Location', field: 'replay', icon: <LocationOnIcon sx={{ ...iconProps.sx, color: REPLAY }} /> },
+  { type: 'Locations', field: 'replay', icon: <LocationOnIcon sx={{ ...iconProps.sx, color: REPLAY }} /> },
   { type: 'File', field: 'replay', icon: <FileUploadIcon sx={{ ...iconProps.sx, color: REPLAY }} /> },
   { type: 'Date', field: 'replay', icon: <CalendarMonthIcon sx={{ ...iconProps.sx, color: REPLAY }} /> },
   { type: 'Time', field: 'replay', icon: <AccessTimeFilledIcon sx={{ ...iconProps.sx, color: REPLAY }} /> },
@@ -62,6 +62,14 @@ export const Preference = [
   { type: 'List', field: 'preference', icon: <ViewListIcon sx={{ ...iconProps.sx, color: PREFERENCE }} /> },
   { type: 'Button', field: 'preference', icon: <SmartButtonIcon sx={{ ...iconProps.sx, color: PREFERENCE }} /> },
   { type: 'Slot', field: 'preference', icon: <BookIcon sx={{ ...iconProps.sx, color: PREFERENCE }} /> },
+];
+
+export const mediaTypes = [
+  'Image',
+  'Video',
+  'Audio',
+  'Location',
+  'Doc'
 ];
 
 export  const decodeHtml = (html: string): string => {
@@ -224,6 +232,35 @@ export const allowedExtensions = {
   audio: ["mp3", "aac", "m4a", "amr", "ogg", "opus"],
   doc: ["pdf", "doc", "docx", "xls", "xlsx", "ppt", "pptx", "txt", "csv", "rtf", "zip", "rar"],
 };
+
+export const extractDateTime = (preference: any[]) => {
+  const result: any[] = [];
+  const temp: any = {};
+
+  preference.forEach((item: any) => {
+    const value = Object.values(item)[0];
+    if (typeof value !== "string") return;
+
+    const dateMatch = value.trim().match(/(\d{1,2})\s*([A-Za-z]{3,})/);
+    if (dateMatch) {
+      temp.date = dateMatch[1];
+      temp.month = dateMatch[2];
+    }
+
+    const timeMatch = value
+      .trim()
+      .match(/(\d{1,2}:\d{2}\s*[APMapm]{2})\s*-\s*(\d{1,2}:\d{2}\s*[APMapm]{2})/);
+    if (timeMatch) {
+      temp.startTime = timeMatch[1];
+      temp.endTime = timeMatch[2];
+    }
+  });
+
+  if (Object.keys(temp).length > 0) result.push(temp);
+  return result;
+};
+
+
 
 
 

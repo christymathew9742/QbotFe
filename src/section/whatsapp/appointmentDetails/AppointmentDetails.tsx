@@ -150,7 +150,7 @@ const AppointmentDetails: React.FC = () => {
                                                         >
                                                             <div className="p-2">
                                                                 <p className="text-sm text-gray-400 dark:text-gray-400 mb-2 ml-2">
-                                                                {formatString(pKey)} :
+                                                                    {formatString(pKey)} :
                                                                 </p>
                                                                 <p className="text-base font-semibold text-gray-900 dark:text-white ml-2">
                                                                     {String(pVal)}
@@ -223,16 +223,16 @@ const AppointmentDetails: React.FC = () => {
                                             {Array.isArray(item.message) ? (
                                                 <div className="mb-4">
                                                     <div className="font-light">
-                                                        {String(item.message[0]?.value)}
+                                                        {String(item?.message[0]?.value?.replace(/\b(MFI-|FI-)[\w-]+\b/g, "📄"))}
                                                     </div>
                                                 </div>
                                             ) : (
-                                                <div className="mb-4">{String(item.message)}</div>
+                                                <div className="mb-4">{String(item.message?.replace(/\b(MFI-|FI-)[\w-]+\b/g, "📄"))}</div>
                                             )}
                                             <span className="absolute bottom-1 right-2 text-[10px] text-white opacity-70">
                                                 {formatTime(item?.timestamp)}
                                             </span>
-                                        </div>
+                                        </div> 
                                     </div>
                                     );
                                 })}

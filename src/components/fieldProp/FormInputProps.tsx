@@ -1,6 +1,5 @@
 'use client';
 
-/* eslint-disable react/display-name */
 import React, { useState, useMemo } from 'react';
 import {
     TextField,
@@ -35,7 +34,6 @@ export type FieldType =
   | 'hidden'
   | 'textarea'
   | 'select';
-
 
 interface FieldPropsConfig {
     name: string;

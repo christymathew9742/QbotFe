@@ -10,7 +10,6 @@ export default function TextAreaInput() {
   return (
     <ComponentCard title="Textarea input field">
       <div className="space-y-6">
-        {/* Default TextArea */}
         <div>
           <Label>Description</Label>
           <TextArea
@@ -19,14 +18,10 @@ export default function TextAreaInput() {
             rows={6}
           />
         </div>
-
-        {/* Disabled TextArea */}
         <div>
           <Label>Description</Label>
           <TextArea rows={6} disabled />
         </div>
-
-        {/* Error TextArea */}
         <div>
           <Label>Description</Label>
           <TextArea
