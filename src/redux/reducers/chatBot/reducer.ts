@@ -97,7 +97,7 @@ export default (state = initialState, action: botActions) => {
                 ...state,
                 pending: { ...state.pending, update: false },
                 botResponse: action.payload,
-                bot: state.bot.map((botItem) =>
+                bot: state?.bot?.map((botItem) =>
                     botItem.id === action.payload.id ? { ...botItem, ...action.payload } : botItem
                 ),
                 error: null,

@@ -82,8 +82,6 @@ const CopyField = ({ id, label, value, title, disabled=false, onClick, update, t
           )}
         </div>
       </div>
-
-
     </div>
   );
 };

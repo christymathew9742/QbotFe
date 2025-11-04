@@ -24,10 +24,11 @@ import {
   fetchBotRequest, 
   updateBotRequest,
   webSocketConnected,
+  postBotFailure,
 } from "@/redux/reducers/chatBot/actions";
 import { POST_BOT_REQUEST,UPDATE_BOT_REQUEST } from "@/redux/reducers/chatBot/actionTypes";
 import { useDispatch, useSelector } from 'react-redux';
-import { messageIcons, replayIcons, Preference, isFileType, updateTempFilesToPermanent } from "@/utils/utils";
+import { messageIcons, replayIcons, Preference, isFileType } from "@/utils/utils";
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import "reactflow/dist/style.css";
 import {constantsText} from "../../../constant/constant"
@@ -38,7 +39,6 @@ import { SaveEventProvider, useSaveEvent } from "@/context/SaveDataContext";
 import SaveLoader from "@/components/saveLoader/SaveLoader";
 import { useStatus } from "@/context/StatusContext";
  
-
 const {
   BOT:{
     STEP,
@@ -69,24 +69,6 @@ type CustomNodeData = {
   deleteField: (id: string) => void;
 };
 
-interface NodeData {
-  deleteField?: any;
-  setInputs?: any;
-  inputs?: Array<{ editor?: any; [key: string]: any }>;
-}
-
-interface Nod {
-  data: NodeData;
-  id: string; 
-  [key: string]: any;
-}
-
-interface Viewport {
-  x: number;
-  y: number;
-  zoom: number;
-}
-
 interface InitialNodeData {
   inputs: any[];
   value?: any;
@@ -116,7 +98,6 @@ const nodeTypes = {
 const edgeTypes = {
   customEdge: CustomEdge,
 };
-
 
 const isValidConnection = (connection:any) => {
   const { sourceHandle, targetHandle } = connection;
@@ -304,6 +285,7 @@ const ChatBotDetails = () => {
     toast,
     postBotRequest,
     updateBotRequest,
+    postBotFailure,
     POST_BOT_REQUEST,
     UPDATE_BOT_REQUEST,
     isFileType,

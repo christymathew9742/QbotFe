@@ -21,6 +21,7 @@ import {
     fetchWhatsAppFailure,
 } from './actions';
 import { isQueryParamString } from '@/utils/utils';
+import { toast } from 'react-toastify';
 
 //operations
 const updateUserData = (body: any) => api.put(`/auth/update`, body);
@@ -85,13 +86,17 @@ function* postUserSaga(action: any): any {
 
 // Update User data
 function* updateUserSaga(action: any): any {
-    const { payload } = action;
-    try {
-        const response: any = yield call(updateUserData, payload);
-        yield put(updateUserSuccess({ user: response.data }));
-    } catch (e: any) {
-        yield put(updateUserFailure({ error: e.message }));
-    }
+  const { payload } = action;
+  try {
+    const response: any = yield call(updateUserData, payload);
+    yield put(updateUserSuccess({ user: response.data }));
+    toast.success(response?.data?.message)
+  } catch (e: any) {
+    const errorMessage:any =
+      e.response?.data?.message || e.message || 'Something went wrong';
+    yield put(updateUserFailure({ error: errorMessage }));
+    toast.error(errorMessage)
+  }
 }
 
 function* UserSaga() {

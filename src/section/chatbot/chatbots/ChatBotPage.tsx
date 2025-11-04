@@ -91,8 +91,10 @@ const ChatBot = () => {
           data: { fileKey, chatbotId:id },
           });
         }
-        await dispatch(deleteBotRequest(id));
-        toast.success(`${title} deleted successfully`);
+        if (window.confirm(`Are you sure you want to delete ${title}?.`)) {
+          await dispatch(deleteBotRequest(id));
+          toast.success(`${title} deleted successfully`);
+        } 
       } catch (error) {
         console.error("Error in deleting ChatBot:", error);
         toast.error(`Error in deleting ${title}`);

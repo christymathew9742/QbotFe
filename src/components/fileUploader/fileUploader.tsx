@@ -82,7 +82,7 @@ const FileUploadPanel: React.FC<FileUploadPanelProps> = ({
         }
 
         const limits: Record<string, number> = {
-            image: 10,
+            image: 50,
             video: 50,
             audio: 20,
             application: 100,
@@ -303,56 +303,55 @@ const FileUploadPanel: React.FC<FileUploadPanelProps> = ({
                             onDrop={(e:any) => handleDrop({ e, accept })}
                             className={`flex items-center justify-center p-6 border-2 ${
                                 isDragging ? "border-blue-400 bg-blue-50" : "border-dashed"
-                            } dark:border-0.5 dark:border-[#7fffd408] dark:border-solid rounded-lg cursor-pointer w-full`}
+                            } dark:border-0.5 dark:border-[#7fffd408] dark:border-solid rounded-lg cursor-pointer w-full ${status && '!cursor-no-drop'}`}
                         >
                             <AiOutlineUpload size={40} className="text-blue-500 mr-4" />
                             <span className="text-gray-600 dark:text-dark-text font-extralight">
                                 Click to select files or drag and drop here
                             </span>
-                            <input type="file" multiple accept={accept} className="hidden"  onChange={(e) => handleFileChange({ e, accept })} />
+                            <input type="file" multiple accept={accept} className="hidden"  onChange={(e) => handleFileChange({ e, accept })} disabled={status}/>
                         </label>
 
                         {files.length > 0 ? (
-                        <div className="flex flex-col p-1">
-                            <div className="mt-6 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-1 overflow-y-auto custom-scrollbar h-[250px]">
-                            {files.map((f, idx) => (
-                                <div
-                                    key={idx}
-                                    className="relative border rounded p-1 dark:border-[#7fffd426] flex flex-col items-center h-32 w-32 group overflow-hidden"
-                                >
-                                <div className="relative w-full h-full">{renderFilePreview(f)}</div>
-
-                                    {f?.isUploading && (
-                                        <div className="absolute inset-0 flex items-center justify-center bg-[#f0f0f0] rounded-full m-auto w-full max-w-[30%] h-[32%]">
-                                            <CircularProgress
-                                                variant="determinate"
-                                                value={f?.progress ?? 0}
-                                                size={30}
-                                                thickness={3}
-                                                className="!text-[#988888]"
-                                            />
-                                            <span className="absolute text-xxss font-medium text-gray-600">
-                                                {Math.round(f?.progress ?? 0)}%
-                                            </span>
-                                        </div>
-                                    )}
-
-                                    {!f?.isUploading  && !status && (
-                                        <span
-                                            className="opacity-0 group-hover:opacity-100 absolute top-12 text-red-500 cursor-pointer"
-                                            onClick={() => handleDelete(f, idx)}
+                            <div className="flex flex-col p-1">
+                                <div className="mt-6 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-1 overflow-y-auto custom-scrollbar h-[250px]">
+                                    {files.map((f, idx) => (
+                                        <div
+                                            key={idx}
+                                            className="relative border rounded p-1 dark:border-[#7fffd426] flex flex-col items-center h-32 w-32 group overflow-hidden"
                                         >
-                                            <DeleteOutlineIcon className="!text-[16px] hover:scale-150 active:scale-100 transition-all duration-400 ease-in-out" />
-                                        </span>
-                                    )}
+                                            <div className="relative w-full h-full">{renderFilePreview(f)}</div>
+                                            {f?.isUploading && (
+                                                <div className="absolute inset-0 flex items-center justify-center bg-[#f0f0f0] rounded-full m-auto w-full max-w-[30%] h-[32%]">
+                                                    <CircularProgress
+                                                        variant="determinate"
+                                                        value={f?.progress ?? 0}
+                                                        size={30}
+                                                        thickness={3}
+                                                        className="!text-[#988888]"
+                                                    />
+                                                    <span className="absolute text-xxss font-medium text-gray-600">
+                                                        {Math.round(f?.progress ?? 0)}%
+                                                    </span>
+                                                </div>
+                                            )}
+
+                                            {!f?.isUploading  && !status && (
+                                                <span
+                                                    className="opacity-0 group-hover:opacity-100 absolute top-12 text-red-500 cursor-pointer"
+                                                    onClick={() => handleDelete(f, idx)}
+                                                >
+                                                    <DeleteOutlineIcon className="!text-[16px] hover:scale-150 active:scale-100 transition-all duration-400 ease-in-out" />
+                                                </span>
+                                            )}
+                                        </div>
+                                    ))}
                                 </div>
-                            ))}
                             </div>
-                        </div>
                         ) : (
-                        <div className="flex items-center justify-center h-[300px]">
-                            <p className="text-2xl font-extralight text-center text-gray-500 dark:text-dark-text">{type} not found!</p>
-                        </div>
+                            <div className="flex items-center justify-center h-[300px]">
+                                <p className="text-2xl font-extralight text-center text-gray-500 dark:text-dark-text">{type} not found!</p>
+                            </div>
                         )}
                     </div>
                 )}
@@ -364,7 +363,7 @@ const FileUploadPanel: React.FC<FileUploadPanelProps> = ({
 };
 
 export const ReusableFileUploader: React.FC<ReusableFileUploaderProps> = (props) => {
-  return <FileUploadPanel {...props} />;
+    return <FileUploadPanel {...props} />;
 };
 
 

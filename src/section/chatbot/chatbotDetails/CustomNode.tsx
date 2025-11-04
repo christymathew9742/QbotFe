@@ -31,7 +31,7 @@ import { toast } from "react-toastify";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import Dialog from '@mui/material/Dialog';
-import { messageIcons, replayIcons, Preference, isFileType, updateTempFilesToPermanent, extractFileKeys } from "@/utils/utils";
+import { messageIcons, replayIcons, Preference, isFileType, updateTempFilesToPermanent, extractFileKeys, mediaTypes } from "@/utils/utils";
 import BookIcon from '@mui/icons-material/Book';
 import { ReusableFileUploader } from "@/components/fileUploader/fileUploader";
 import { CloseFullscreen } from "@mui/icons-material";
@@ -673,7 +673,10 @@ const CustomNode: React.FC<NodeProps<CustomNodeData>> = ({ data, id }) => {
               },
             }),
           ],
-          content: initialContent,
+          content: initialContent.length > 4000
+            ? initialContent.slice(0, 4000)
+            : initialContent,
+
           onFocus: () => {
             setIsFocused(inputId)
             setFocusedEditorId(inputId);
@@ -696,15 +699,30 @@ const CustomNode: React.FC<NodeProps<CustomNodeData>> = ({ data, id }) => {
     editor.chain().focus().insertContent(emoji.native).run();
   };
 
-  const onDropInput = (event: React.DragEvent) => {
+  const onDropInput = (event: React.DragEvent, nodeIndex:number) => {
     event.preventDefault();
     event.stopPropagation();
   
     const inputDataStr = event.dataTransfer.getData("application/reactflow-node");
     if (!inputDataStr) return;
-  
+
     try {
       const { type, field } = JSON.parse(inputDataStr);
+
+      const mediaInputs = (data?.inputs || []).filter((input: any) => {
+        return mediaTypes?.includes(input?.type);
+      });
+      
+      if ( field === "messages" &&  mediaTypes?.includes(type) && nodeIndex === 0 && data?.inputs?.length === 0 ) {
+        toast.error("Media/Location not allowed as first block!");
+        return;
+      }
+
+      if (mediaInputs?.length >= 5 && mediaTypes.includes(type) ) {
+        toast.error("Maximum 5 Media/Location blocks are allowed!");
+        return;
+      }
+
       const newNodeId = `${id}-input-${createNewId}`;
       const hasPreferenceAlready = data.inputs.some(
         (input) => input.field === "preference"
@@ -840,10 +858,11 @@ const CustomNode: React.FC<NodeProps<CustomNodeData>> = ({ data, id }) => {
             } dark:text-dark-text dark:bg-black dark:borde-[1px]`}
             placeholder = {
               opIndex > 0
-                ? `${type.toLowerCase()} option-${opIndex}`
+                ? `${type.charAt(0)}${type.slice(1).toLowerCase()} option-${opIndex}`
                 : "Title"
             }
             value={option?.value}
+            maxLength={opIndex > 0 ? 20 : 1024}
             onChange={(e) => handleInputChange(id, e.target.value, option?.id)}
           />
           {opIndex < 1 ? (
@@ -1133,11 +1152,11 @@ const CustomNode: React.FC<NodeProps<CustomNodeData>> = ({ data, id }) => {
       [chatbotId]
     );
 
-    function renderUploadSctions(fileData: UploadResult[], type: string, accept?: string, id?:string | any) {
+    function renderUploadSctions(fileData: UploadResult[], type: string, accept?: string, id?:string | any, maxFiles?:number) {
       return (
         <ReusableFileUploader
           accept={accept}
-          maxFiles={20}
+          maxFiles={maxFiles}
           value={fileData || []}
           type={type}
           onFileDelete={handleFileDelete}
@@ -1174,7 +1193,7 @@ const CustomNode: React.FC<NodeProps<CustomNodeData>> = ({ data, id }) => {
               className={`absolute !right-[-13px] top-1/2 text-[10px] !w-[8px] !h-[8px] !bg-node-active !border-2 !border-solid ${field === 'replay' ? '!border-[#f069b1]' : '!border-[#0FAB49]'}`}
             />
           )}
-          {isFocused === id && type === "Text" ? (
+          {isFocused === id ? (
             <div className="grid grid-cols-8 gap-x-1 border-b border-divider dark:border-dark-border-tiptap pb-0">
               {renderToolbarSections(editor, field)}
               <button
@@ -1224,17 +1243,18 @@ const CustomNode: React.FC<NodeProps<CustomNodeData>> = ({ data, id }) => {
             {(() => {
               switch (type) {
                 case 'Image':
-                  return renderUploadSctions(fileData, type, 'image/*', id);
+                  return renderUploadSctions(fileData, type, 'image/*', id, 5);
                 case 'Video':
-                  return renderUploadSctions(fileData, type, 'video/*', id);
+                  return renderUploadSctions(fileData, type, 'video/*', id, 4);
                 case 'Audio':
-                  return renderUploadSctions(fileData, type, 'audio/*', id);
+                  return renderUploadSctions(fileData, type, 'audio/*', id, 4);
                 case 'Doc':
                   return renderUploadSctions(
                     fileData,
                     type,
                     'application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document',
-                    id
+                    id,
+                    5
                   );
                 case 'Location':
                   return renderUploadSctions(fileData, type,'', id);
@@ -1315,7 +1335,7 @@ const CustomNode: React.FC<NodeProps<CustomNodeData>> = ({ data, id }) => {
 
   return (
     <>
-      <div className="rounded w-40" onDrop={onDropInput} onDragOver={onDragOver}>
+      <div className="rounded w-40" onDrop={(event) => onDropInput(event, data?.nodeCount)} onDragOver={onDragOver}>
         <div className="nodes">
           <h2 className={`${!data.inputs.length ? "text-center" : "text-left"} font-semibold text-sm font-sans mb-2 text-text-theme dark:text-dark-text`}>
             {!data.inputs.length ? DEFAULT : data.label}

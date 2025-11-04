@@ -13,7 +13,7 @@ import Button from "@/components/ui/button/Button";
 import FormInputProps from "@/components/fieldProp/FormInputProps";
 import { FieldConfig } from "@/components/fieldProp/fieldConfig";
 import { fetchUserRequest, updateUserRequest } from "@/redux/reducers/user/actions";
-import { getUpdateUserPendingSelector, getUserSelector } from "@/redux/reducers/user/selectors";
+import { getErrorSelector, getUpdateUserPendingSelector, getUserSelector } from "@/redux/reducers/user/selectors";
 
 export const metadata: Metadata = {
     title: "List all Qbot",
@@ -39,10 +39,15 @@ const ApiConfig = () => {
 
     const fields = FieldConfig.find((sec) => sec.section === "apiconfig")?.fields || [];
     const currentUser = useSelector(getUserSelector);
+    const currentError = useSelector(getErrorSelector);
+
+    console.log(currentError,'currentErrorcurrentError')
     const pendingStatus:any = useSelector(getUpdateUserPendingSelector);
 
     const userData = currentUser?.data || {};
     const userUpdate = currentUser?.userResponse?.user || {};
+
+    console.log(currentUser,'currentUsercurrentUsercurrentUser')
 
     const initialValues = useMemo<FormData>(
         () => ({
@@ -69,16 +74,6 @@ const ApiConfig = () => {
         };
         loadData();
     }, [dispatch]);
-
-    useEffect(() => {
-        if(isload) return;
-
-        if (userUpdate?.success) {
-            toast.success(userUpdate?.message || "Updated successfully");
-        } else if (userUpdate?.success === false) {
-            toast.error(userUpdate?.message || "Update failed");
-        }
-    }, [userUpdate,isUpdate]);
 
     const handleSubmit = useCallback (
         

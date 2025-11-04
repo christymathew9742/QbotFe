@@ -27,6 +27,7 @@ import {
     webSocketDisconnected,
     webSocketError,
 } from './actions';
+import { toast } from 'react-toastify';
 
 const createChatBot = (body: any) => api.post<any[]>(`/createbots/`, body);
 const fetchChatBot = (params: any) => api.get<any[]>(`/createbots${params}`);
@@ -101,8 +102,13 @@ function* postBotSaga(data: any): any {
         const response: any = yield call(createChatBot, payload);
         yield put(postBotSuccess({ bot: response.data }));
         yield call(fetchReyalTimedataSaga, { payload: response.data });
+        toast.success(response?.data?.message)
     } catch (e: any) {
         yield put(postBotFailure({ error: e.message }));
+        const errorMessage:any =
+            e.response?.data?.error || e.error || 'Something went wrong';
+            yield put(postBotFailure({ error: errorMessage }));
+            toast.error(errorMessage)
     }
 }
 
@@ -113,6 +119,7 @@ function* updateChatBotSaga(data: any): any {
         const response: any = yield call(updateChatBot, payload, id);
         yield put(updateBotSuccess({ bot: response.data }));
         yield call(fetchReyalTimedataSaga, { payload });
+        toast.success(response?.data?.message)
     } catch (e: any) {
         yield put(updateBotFailure({ error: e.message }));
     }

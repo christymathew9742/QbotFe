@@ -39,8 +39,6 @@ const Home = () => {
     const pendingStatus = useSelector(getAllPending);
     const globalData =  useSelector(getWhatsAppGlobaleSelector)
     const isPending = !globalData || Object.keys(globalData).length < 1;
-
-    console.log(globalData,'globalDataglobalDataglobalDataglobalData')
     
     useEffect(() => {
         dispatch(fetchAppointmentRequest());

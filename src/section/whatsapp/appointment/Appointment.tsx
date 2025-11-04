@@ -3,8 +3,6 @@
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import {
   CircularProgress,
-  createTheme,
-  ThemeProvider,
 } from "@mui/material";
 import Link from "next/link";
 import SearchIcon from "@mui/icons-material/Search";
@@ -25,6 +23,7 @@ import {
 } from "@/redux/reducers/appointment/selectors";
 import { fetchAppointmentRequest } from "@/redux/reducers/appointment/actions";
 import { customInputStyles } from "@/components/fieldProp/fieldPropsStyles";
+import { extractDateTime } from "@/utils/utils";
 
 const Appoinment = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -98,14 +97,6 @@ const Appoinment = () => {
     []
   );
 
-  // const darkTheme = useMemo(
-  //   () =>
-  //     createTheme({
-  //       palette: { mode: "dark" },
-  //     }),
-  //   []
-  // );
-
   return (
     <>
       <div>
@@ -134,15 +125,13 @@ const Appoinment = () => {
                 onChange={handleStatusChange}
                 className="dark:bg-white/[0.02] text-gray-800 dark:!text-gray-100"
               />
-              {/* <ThemeProvider theme={darkTheme}> */}
-                <LocalizationProvider dateAdapter={AdapterDayjs}>
-                  <DatePicker
-                    sx={customInputStyles}
-                    value={selectedDate}
-                    onChange={handleDateChange}
-                  />
-                </LocalizationProvider>
-              {/* </ThemeProvider> */}
+              <LocalizationProvider dateAdapter={AdapterDayjs}>
+                <DatePicker
+                  sx={customInputStyles}
+                  value={selectedDate}
+                  onChange={handleDateChange}
+                />
+              </LocalizationProvider>
             </div>
             <div className="p-4 border-t dark:border-gray-800 sm:p-6">
               <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-6">
@@ -152,10 +141,8 @@ const Appoinment = () => {
                   </div>
                 ) : appointmentData?.data?.length ? (
                   appointmentData.data.map((card: any) => {
-                    const date = new Date(card?.createdAt);
-                    const month = date.toLocaleString("default", { month: "short" });
-                    const day = date.getDate();
-                    const time = date.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+                    const preference = card?.data?.preference || [];
+                    const dateData = extractDateTime(preference);
 
                     return (
                       <Link
@@ -165,9 +152,9 @@ const Appoinment = () => {
                       >
                         <div className="flex rounded-xl w-full h-auto bg-white dark:bg-[#1f1f1f] text-black dark:text-white shadow-md transition-all border border-card-bg dark:border-card-bg hover:shadow-lg hover:scale-[1.01] active:scale-[0.99] cursor-pointer">
                           <div className="bg-card-bg text-center flex flex-col justify-between rounded-l-xl w-24">
-                            <div className="text-xl font-bold text-white/70 py-2">{month}</div>
-                            <div className="text-lg font-medium text-white mb-4">{day}</div>
-                            <div className="text-xxs text-white/70 pb-1">🕒 {time}</div>
+                            <div className="text-xl font-bold text-white/70 py-2">{dateData[0]?.month && dateData[0]?.month || "----"}</div>
+                            <div className="text-lg font-medium text-white mb-4">{dateData[0]?.date && dateData[0]?.date || "---"}</div>
+                            <div className="text-xxs text-white/70 pb-1">{dateData?.[0]?.startTime && `🕒${dateData[0].startTime}` || "--"}</div>
                           </div>
                           <div className="flex-1 p-4 flex flex-col justify-between dark:bg-black rounded-tr-xl rounded-br-xl relative">
                             <div>
