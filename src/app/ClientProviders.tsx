@@ -7,27 +7,27 @@ import { GoogleProviders } from "./googleProvider";
 import MuiThemeProviderWrapper from "./MuiThemeProvider";
 
 export default function ClientProviders({
-  children,
-  theme,
+    children,
+    theme,
 }: {
-  children: React.ReactNode;
-  theme: "light" | "dark";
+    children: React.ReactNode;
+    theme: "light" | "dark";
 }) {
-  return (
-    <ThemeProvider>
-      <ToastContainer
-        toastStyle={{
-          background: theme === "dark" ? "#1d2939" : "#fff",
-        }}
-        theme={theme}
-      />
-      <SidebarProvider>
-        <GoogleProviders>
-          <MuiThemeProviderWrapper theme={theme}>
-            {children}
-          </MuiThemeProviderWrapper>
-        </GoogleProviders>
-      </SidebarProvider>
-    </ThemeProvider>
-  );
+    return (
+        <ThemeProvider>
+            <ToastContainer
+                toastStyle={{
+                background: theme === "dark" ? "#1d2939" : "#fff",
+                }}
+                theme={theme}
+            />
+            <SidebarProvider>
+                <GoogleProviders>
+                    <MuiThemeProviderWrapper theme={theme}>
+                        {children}
+                    </MuiThemeProviderWrapper>
+                </GoogleProviders>
+            </SidebarProvider>
+        </ThemeProvider>
+    );
 }
