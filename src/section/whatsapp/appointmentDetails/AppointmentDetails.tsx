@@ -111,7 +111,7 @@ const AppointmentDetails: React.FC = () => {
 
     return (
         <div className="h-auto">
-            <PageBreadcrumb pagePath="appointment-details" />
+            <PageBreadcrumb pagePath="Appointments, Details" />
             <div className="space-y-6">
                 <div className="flex flex-col sm:flex-row gap-4">
                     <div className="rounded-2xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-white/[0.03] w-full sm:w-[40%]">
