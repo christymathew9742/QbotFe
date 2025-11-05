@@ -11,6 +11,7 @@ import WhatsAppMonthlyAppointmentChart from "@/components/whatsApp/WhatsAppMonth
 import WhatsAppStatCard from "@/components/whatsApp/WhatsAppRecentAppointments";
 import { getWhatsAppGlobaleSelector, getAllPending } from "@/redux/reducers/user/selectors";
 import { fetchWhatsRequest } from "@/redux/reducers/user/actions";
+import Alert from "@/components/ui/alert/Alert";
 
 interface Metrix {
     totalUniqueUsers?: number;

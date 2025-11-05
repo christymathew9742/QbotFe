@@ -101,14 +101,14 @@ const UserDetails: React.FC = () => {
 
     return (
         <div className="h-auto">
-            <PageBreadcrumb pagePath="user-details" />
+            <PageBreadcrumb pagePath="Users, Details" />
             <div className="space-y-6">
                 <div className="flex flex-col sm:flex-row gap-4">
                     <div className="rounded-2xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-white/[0.03] w-full sm:w-[40%]">
                         <div className="h-full rounded-xl p-1">
                             <div className="px-4 py-2 w-full">
                                 <h3 className="text-lg font-semibold text-gray-800 dark:text-white">Details</h3>
-                            </div>
+                            </div> 
                             <div className="p-4 border-t dark:border-gray-800 sm:p-6 overflow-y-auto custom-scrollbar h-[350px]">
                                 <div className="border dark:border-gray-700 rounded-[4px]">
                                     {infoItems.map(({ label, value }, idx) => (
