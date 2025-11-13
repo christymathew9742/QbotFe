@@ -2,7 +2,8 @@
 "use client";
 import React, { use, useEffect } from "react";
 import Badge from "../ui/badge/Badge";
-import { ArrowDownIcon, ArrowUpIcon, GroupIcon, AppointmentIcon } from "@/icons";
+import { ArrowDownIcon, ArrowUpIcon, GroupIcon } from "@/icons";
+import MenuBookIcon from '@mui/icons-material/MenuBook';
 import { Skeleton } from "@mui/material";
 
 export const WhatsAppMetrics = ({ metrics }: any) => {
@@ -27,7 +28,7 @@ export const WhatsAppMetrics = ({ metrics }: any) => {
       label: "All Bookings",
       value: metrics?.totalBookings,
       percentage: percentageTotalBookings,
-      icon: <AppointmentIcon className="text-gray-800 dark:text-white/90" />,
+      icon: <MenuBookIcon className="!text-gray-800 dark:!text-white/90" />,
     },
   ];
 

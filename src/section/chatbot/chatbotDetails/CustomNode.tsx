@@ -182,16 +182,22 @@ const HighlightMarker = Extension.create({
               while ((match = regex.exec(content)) !== null) {
                 const start = match.index + 1;
                 const end = start + match[0].length;
+
                 const backgroundColorMark = view.state.schema.marks.backgroundColor.create({
-                  class: 'bg-highlight-clr py-0.2 px-1 text-node-active w-max rounded',
+                  class: 'bg-highlight-clr py-0.5 px-1 text-node-active w-max rounded',
                 });
 
                 transaction.addMark(start, end - 1, backgroundColorMark);
+                const nextChar = content[end] || '';
+                if (nextChar !== '.' && nextChar !== ' ') {
+                  transaction.insertText(".", end);
+                }
               }
 
               if (transaction.docChanged) {
                 view.dispatch(transaction);
               }
+
               return false;
             },
           },
@@ -651,7 +657,7 @@ const CustomNode: React.FC<NodeProps<CustomNodeData>> = ({ data, id }) => {
         deleteElements({ edges: [lastFieldEdge] });
       }
 
-      const fileKey = extractFileKeys(data?.inputs);
+      const fileKey = extractFileKeys(data?.inputs, fieldId);
       if (fileKey?.length) setFileKeys(fileKey);
     } catch (error) {
       console.error("Error in handleDeleteDynamicFields:", error);
@@ -886,9 +892,9 @@ const CustomNode: React.FC<NodeProps<CustomNodeData>> = ({ data, id }) => {
     },
     [handleInputChange, handleAddOptions, handleDeleteOptions]
   );
-  
-  const renderSlotOptions = useCallback (
-    (id: string, savedSlots:any) => {
+
+  const renderSlotOptions = useCallback(
+    (id: string, savedSlots: any) => {
       return (
         <div className="p-2">
           <Handle
@@ -897,38 +903,47 @@ const CustomNode: React.FC<NodeProps<CustomNodeData>> = ({ data, id }) => {
             position={Position.Right}
             className="absolute !right-[-10px] top-1/2 text-[10px] !w-[8px] !h-[8px] !bg-node-active !border-2 !border-solid !border-op-handil"
           />
-          <span
-            className="flex items-center justify-center p-1 border-1 border-[rgb(134,219,231)] rounded-lg transition m-auto w-[50%] !opacity-[50]"
-          >
-            <BookIcon  onClick={handleOpen} className="!text-[30px] !transition-transform !duration-200 !ease-in-out hover:scale-110 hover:text-[#8adfea] text-[rgb(134,219,231)] cursor-pointer" />
+          <span className="flex items-center justify-center p-1 border-1 border-[rgb(134,219,231)] rounded-lg transition m-auto w-[50%] !opacity-[50]">
+            <BookIcon
+              onClick={handleOpen}
+              className="!text-[30px] !transition-transform !duration-200 !ease-in-out hover:scale-110 hover:text-[#8adfea] text-[rgb(134,219,231)] cursor-pointer"
+            />
           </span>
           <Dialog
             open={open}
             onClose={handleClose}
             fullWidth
-            sx={{ '& .MuiDialog-paper': {  width:'100%', height:'1000px', borderRadius:'10px'} }}
+            sx={{
+              "& .MuiDialog-paper": {
+                width: "100%",
+                height: "1000px",
+                borderRadius: "10px",
+              },
+            }}
           >
             <div className="flex py-1 px-4 items-center justify-between w-full">
-              <div className="text-lg font-medium text-gray-800 dark:text-dark-text dark:font-normal">Set your Availability</div>
-              <CloseFullscreen 
+              <div className="text-lg font-medium text-gray-500 dark:text-dark-text dark:font-normal">
+                Set your Availability
+              </div>
+              <CloseFullscreen
                 className="cursor-pointer mt-2 !text-lg text-gray-400 dark:dark:text-dark-text hover:scale-110 transition-transform duration-200 font-light"
                 onClick={handleClose}
               />
             </div>
             <hr className="mb-3 mt-2 border-0.5 border-divider dark:border-custom-border" />
             <div className="flex items-center gap-2  p-4">
-              <div className='text-xs font-medium text-gray-800 dark:text-dark-text dark:font-normal'>
+              <div className="text-xs font-medium text-gray-800 dark:text-dark-text dark:font-normal">
                 <DatePicker
                   selected={selectedDate}
                   onChange={(date) => setSelectedDate(date)}
                   dateFormat="yyyy-MM-dd"
                   placeholderText="Pick a Date"
                   minDate={new Date()}
-                  className='w-[100%] focus:outline-none focus:border-none focus:shadow-none'
+                  className="w-[100%] focus:outline-none focus:border-none focus:shadow-none"
                   popperPlacement="bottom-end"
                 />
               </div>
-              <div className='text-xs font-medium text-gray-800 dark:text-dark-text dark:font-normal'>
+              <div className="text-xs font-medium text-gray-800 dark:text-dark-text dark:font-normal">
                 <DatePicker
                   selected={startTime}
                   onChange={(date) => setStartTime(date)}
@@ -939,10 +954,10 @@ const CustomNode: React.FC<NodeProps<CustomNodeData>> = ({ data, id }) => {
                   placeholderText="Start Time"
                   minTime={getMinStartTime()}
                   maxTime={new Date(0, 0, 0, 23, 59)}
-                  className='w-[100%] focus:outline-none focus:border-none focus:shadow-none'
+                  className="w-[100%] focus:outline-none focus:border-none focus:shadow-none"
                 />
               </div>
-              <div className='text-xs font-medium text-gray-800 dark:text-dark-text dark:font-normal'>
+              <div className="text-xs font-medium text-gray-800 dark:text-dark-text dark:font-normal">
                 <DatePicker
                   selected={endTime}
                   onChange={(date) => setEndTime(date)}
@@ -953,11 +968,11 @@ const CustomNode: React.FC<NodeProps<CustomNodeData>> = ({ data, id }) => {
                   placeholderText="End Time"
                   minTime={getMinEndTime()}
                   maxTime={new Date(0, 0, 0, 23, 59)}
-                  className='w-[100%] focus:outline-none focus:border-none focus:shadow-none'
+                  className="w-[100%] focus:outline-none focus:border-none focus:shadow-none"
                 />
               </div>
               <div>
-                <input 
+                <input
                   value={selectedValue}
                   placeholder="Interval"
                   onChange={(e) => {
@@ -970,7 +985,7 @@ const CustomNode: React.FC<NodeProps<CustomNodeData>> = ({ data, id }) => {
                 />
               </div>
               <div>
-                <input 
+                <input
                   value={selectedBuffer}
                   placeholder="Buffer"
                   onChange={(e) => {
@@ -987,74 +1002,100 @@ const CustomNode: React.FC<NodeProps<CustomNodeData>> = ({ data, id }) => {
                   variant="contained"
                   color="secondary"
                   onClick={addTimeSlot}
-                  disabled={!selectedDate || !startTime || !endTime || !selectedValue}
-                  className='w-[100%] !p-0 !font-normal !text-lg dark:!text-node-pop'
+                  disabled={
+                    !selectedDate || !startTime || !endTime || !selectedValue
+                  }
+                  className="w-[100%] !p-0 !font-normal !text-lg dark:!text-node-pop"
                 >
                   +
                 </Button>
               </div>
             </div>
             <hr className="mb-3 mt-2 border-0.5 dark:border-custom-border border-divider justify-center m-auto w-[95%]" />
-            <div className="overflow-y-auto custom-scrollbar h-[350px]" >
+            <div className="overflow-y-auto custom-scrollbar h-[350px]">
               {savedSlots?.length > 0 ? (
                 <div className="space-y-2 mt-0 px-10">
-                  <p className="text-lg font-medium text-center text-gray-800 dark:text-dark-text dark:font-normal">Common availability</p>
-                  {savedSlots?.map((ds:DateSlot, dateIdx:number) => (
-                    <div key={dateIdx} className="p-2 rounded">
-                      <h3 className="font-medium text-base mb-2 text-gray-500 dark:text-dark-text dark:font-normal">
-                        {new Date(ds.date).toLocaleDateString([], {
-                          day: "2-digit",
-                          month: "short",
-                        })} :
-                      </h3>
-                      <ul className="space-y-2">
-                        {ds.slots.map((slot, slotIdx) => (
-                          <li
-                            key={slotIdx}
-                            className="flex justify-between items-center gap-1 w-full"
-                          >
-                            <span className="flex justify-between items-center w-[80%] px-18 py-[1px] rounded-[4px] bg-gray-50 border border-gray-300 dark:border-white/[0.05] dark:bg-white/[0.03] dark:text-node-pop">
-                              <span className="font-medium text-gray-500 dark:text-dark-text text-sm dark:font-normal">
-                                {new Date(slot.start).toLocaleTimeString([], {
-                                  hour: '2-digit',
-                                  minute: '2-digit',
-                                  hour12: true,
-                                  timeZone: userTimeZone,
-                                })}
-                              </span> - 
-                              <span className="font-medium text-gray-500 dark:text-dark-text text-sm dark:font-normal">
-                                {new Date(slot.end).toLocaleTimeString([], {
-                                  hour: '2-digit',
-                                  minute: '2-digit',
-                                  hour12: true,
-                                  timeZone: userTimeZone,
-                                })}
-                              </span>
-                            </span>
-                            <span className="flex justify-center text-sm text-gray-500 items-center w-[10%] px-8 py-[3px] rounded-[4px] dark:text-dark-text bg-gray-50 border border-gray-300 dark:border-white/[0.05] dark:bg-white/[0.03] dark:font-normal">
-                              {slot?.interval}
-                            </span>
-                            <span className="flex justify-center text-sm text-gray-500 items-center w-[10%] px-8 py-[3px] rounded-[4px] dark:text-dark-text bg-gray-50 border border-gray-300 dark:border-white/[0.05] dark:bg-white/[0.03] dark:font-normal">
-                              {slot?.buffer}
-                            </span>
-                            <button
-                              className="text-white font-medium text-base rounded-[4px] bg-red-500 border border-red-500 shadow-sm p-[1px] w-[10%] dark:border-red-900 dark:bg-red-900 dark:font-normal"
-                              onClick={() => handleRemoveSlot(ds.date, slot.start, slot.end)}
+                  <p className="text-lg font-medium text-center text-gray-500 dark:text-dark-text dark:font-normal">
+                    Common availability
+                  </p>
+                  {savedSlots?.map((ds: DateSlot, dateIdx: number) => {
+                    const totalIndividualSlots = ds?.slots?.reduce((acc, slot) => {
+                      const start:any = new Date(slot.start);
+                      const end:any = new Date(slot.end);
+                      const diffMinutes = (end - start) / (1000 * 60);
+                      const interval = Number(slot?.interval) || 0;
+                      const buffer = Number(slot?.buffer) || 0;
+                      const totalSingle =
+                        interval > 0 ? Math.floor(diffMinutes / (interval + buffer)) : 0;
+                        return acc + totalSingle;
+                    }, 0);
+                    return (
+                      <div key={dateIdx} className="p-2 rounded">
+                        <div className="flex items-center justify-between mb-2">
+                          <h3 className="w-[40%] font-medium text-base text-gray-500 dark:text-dark-text dark:font-normal">
+                            {new Date(ds.date).toLocaleDateString([], {
+                              day: "2-digit",
+                              month: "short",
+                            })} :
+                          </h3>
+                          <p className="w-[60%] text-xxs mt-6 font-medium text-gray-600 dark:text-dark-text dark:font-normal">
+                            Total Slots: {totalIndividualSlots}
+                          </p>
+                        </div>
+                        <ul className="space-y-2">
+                          {ds?.slots?.map((slot, slotIdx) => (
+                            <li
+                              key={slotIdx}
+                              className="flex justify-between items-center gap-1 w-full"
                             >
-                              <span className="inline-block transition-transform duration-200 ease-in-out hover:scale-110">X</span>
-                            </button>
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
-                  ))}
+                              <span className="flex justify-between items-center w-[80%] px-18 py-[1px] rounded-[4px] bg-gray-50 border border-gray-300 dark:border-white/[0.05] dark:bg-white/[0.03] dark:text-node-pop">
+                                <span className="font-medium text-gray-500 dark:text-dark-text text-sm dark:font-normal">
+                                  {new Date(slot.start).toLocaleTimeString([], {
+                                    hour: "2-digit",
+                                    minute: "2-digit",
+                                    hour12: true,
+                                    timeZone: userTimeZone,
+                                  })}
+                                </span>{" "}
+                                -{" "}
+                                <span className="font-medium text-gray-500 dark:text-dark-text text-sm dark:font-normal">
+                                  {new Date(slot.end).toLocaleTimeString([], {
+                                    hour: "2-digit",
+                                    minute: "2-digit",
+                                    hour12: true,
+                                    timeZone: userTimeZone,
+                                  })}
+                                </span>
+                              </span>
+                              <span className="flex justify-center text-sm text-gray-500 items-center w-[10%] px-8 py-[3px] rounded-[4px] dark:text-dark-text bg-gray-50 border border-gray-300 dark:border-white/[0.05] dark:bg-white/[0.03] dark:font-normal">
+                                {slot?.interval}
+                              </span>
+                              <span className="flex justify-center text-sm text-gray-500 items-center w-[10%] px-8 py-[3px] rounded-[4px] dark:text-dark-text bg-gray-50 border border-gray-300 dark:border-white/[0.05] dark:bg-white/[0.03] dark:font-normal">
+                                {slot?.buffer}
+                              </span>
+                              <button
+                                className="text-white font-medium text-base rounded-[4px] bg-red-500 border border-red-500 shadow-sm p-[1px] w-[10%] dark:border-red-900 dark:bg-red-900 dark:font-normal"
+                                onClick={() =>
+                                  handleRemoveSlot(ds.date, slot.start, slot.end)
+                                }
+                              >
+                                <span className="inline-block transition-transform duration-200 ease-in-out hover:scale-110">
+                                  X
+                                </span>
+                              </button>
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    );
+                  })}
                 </div>
-              ) :(
+              ) : (
                 <div className="flex items-center justify-center h-full">
                   <p className="text-2xl font-extralight text-center text-gray-500 dark:text-dark-text">
                     Slot not found!
                   </p>
-               </div>
+                </div>
               )}
             </div>
             <hr className="mb-3 mt-2 border-0.5 dark:border-custom-border border-divider" />
@@ -1062,13 +1103,7 @@ const CustomNode: React.FC<NodeProps<CustomNodeData>> = ({ data, id }) => {
         </div>
       );
     },
-    [
-      open,
-      selectedDate,
-      handleOpen,
-      handleRemoveSlot,
-      userTimeZone,
-    ]
+    [open, selectedDate, handleOpen, handleRemoveSlot, userTimeZone]
   );
   
   const RenderDynamicField = (nodeId:string) => {
@@ -1137,7 +1172,6 @@ const CustomNode: React.FC<NodeProps<CustomNodeData>> = ({ data, id }) => {
           await api.delete(`/createbots/${chatbotId}/files`, {
             data: { fileKey, chatbotId },
           });
-          console.log(`File deleted successfully: ${fileKey}`);
         } catch (error) {
           const err = error as AxiosError<{ message?: string }>;
           if (err.response) {
@@ -1245,9 +1279,9 @@ const CustomNode: React.FC<NodeProps<CustomNodeData>> = ({ data, id }) => {
                 case 'Image':
                   return renderUploadSctions(fileData, type, 'image/*', id, 5);
                 case 'Video':
-                  return renderUploadSctions(fileData, type, 'video/*', id, 4);
+                  return renderUploadSctions(fileData, type, 'video/*', id, 2);
                 case 'Audio':
-                  return renderUploadSctions(fileData, type, 'audio/*', id, 4);
+                  return renderUploadSctions(fileData, type, 'audio/*', id, 2);
                 case 'Doc':
                   return renderUploadSctions(
                     fileData,

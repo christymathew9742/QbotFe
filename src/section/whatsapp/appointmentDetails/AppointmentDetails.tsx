@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useState, useCallback, useMemo } from "react";
-import { formatTime, formatStringDate, formatString } from "@/utils/utils";
+import { formatTime, formatStringDate, formatString, getValidUrlOrValue, getFormattedMessage } from "@/utils/utils";
 import { CircularProgress } from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
 import { useSearchParams } from "next/navigation";
@@ -172,7 +172,7 @@ const AppointmentDetails: React.FC = () => {
                                                 {formatString(key)} :
                                             </p>
                                             <p className="text-base font-semibold text-gray-900 dark:text-white ml-2">
-                                                {String(value)}
+                                                {getValidUrlOrValue(value)}
                                             </p>
                                             </div>
                                         </div>
@@ -210,7 +210,7 @@ const AppointmentDetails: React.FC = () => {
                                     <div
                                         key={item._id}
                                         className={`flex ${
-                                        isAI ? "justify-end" : "justify-start"
+                                            isAI ? "justify-end" : "justify-start"
                                         }`}
                                     >
                                         <div
@@ -223,11 +223,13 @@ const AppointmentDetails: React.FC = () => {
                                             {Array.isArray(item.message) ? (
                                                 <div className="mb-4">
                                                     <div className="font-light">
-                                                        {String(item?.message[0]?.value?.replace(/\b(MFI-|FI-)[\w-]+\b/g, "📄"))}
+                                                        {getFormattedMessage(item.message)}
                                                     </div>
                                                 </div>
                                             ) : (
-                                                <div className="mb-4">{String(item.message?.replace(/\b(MFI-|FI-)[\w-]+\b/g, "📄"))}</div>
+                                                <div className="mb-4">
+                                                    {getFormattedMessage(item.message)}
+                                                </div>
                                             )}
                                             <span className="absolute bottom-1 right-2 text-[10px] text-white opacity-70">
                                                 {formatTime(item?.timestamp)}

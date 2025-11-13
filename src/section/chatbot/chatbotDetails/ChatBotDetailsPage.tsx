@@ -114,6 +114,7 @@ const ChatBotDetails = () => {
   const reactFlowInstance = useRef<ReactFlowInstance | null>(null);
   const [isTitleEmpt, setIsTitleEmpt] = useState(false);
   const [title, setTitle] = useState<string | any>('');
+  const [load, setLoad] = useState<number | any >(0);
   const titleRef = useRef<HTMLInputElement | null>(null);
   const dispatch = useDispatch<AppDispatch>();
   const searchParams = useSearchParams();
@@ -413,6 +414,7 @@ const ChatBotDetails = () => {
     if (botData) {
       initializeNodeData(botData, reactFlowInstance.current);
       setTitle(chatbotId ? botData?.data?.title : `${BOT_TITLE}` || '');
+      setLoad(chatbotId ? botData?.data?.nodes?.length : 1 );
     }
   }, [botData, reactFlowInstance]);
 
@@ -436,7 +438,7 @@ const ChatBotDetails = () => {
     setIsTitleEmpt(value === "")
   }, [title]);
 
-  if (!title) {
+  if (!load) {
     return (
       <div className="w-full h-screen flex items-center justify-center">
          <img

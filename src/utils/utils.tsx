@@ -1,3 +1,6 @@
+
+"use client";
+
 import WysiwygIcon from '@mui/icons-material/Wysiwyg';
 import ImageIcon from '@mui/icons-material/Image';
 import VideoLibraryIcon from '@mui/icons-material/VideoLibrary';
@@ -15,6 +18,9 @@ import BookIcon from '@mui/icons-material/Book';
 import ViewListIcon from '@mui/icons-material/ViewList';
 import AudioFileIcon from '@mui/icons-material/AudioFile';
 import SmartButtonIcon from '@mui/icons-material/SmartButton';
+import CloudDownloadOutlinedIcon from '@mui/icons-material/CloudDownloadOutlined';
+import JSZip from "jszip";
+import { saveAs } from "file-saver";
 
 import {
   isToday,
@@ -25,6 +31,7 @@ import {
   format,
 } from 'date-fns';
 import api from './axios';
+import Image from 'next/image';
 
 const {
   BOT:{
@@ -35,6 +42,7 @@ const {
     }
   }
 } = constantsText;
+const BASE_MEDIA_URL = "https://storage.googleapis.com/qbot-assets/whatsappuser/";
 
 const iconProps = { sx: { fontSize: '14px', marginRight: '4px',  } };
 
@@ -205,19 +213,21 @@ export const updateTempFilesToPermanent = async (inputs: any[], setInputs: any, 
   }
 };
 
-export const extractFileKeys = (inputs: any[] | undefined): string[] => {
+export const extractFileKeys = (inputs: any[] | undefined, fieldId:string = ""): string[] => {
   const fileKeys: string[] = [];
 
   if (!Array.isArray(inputs)) return fileKeys;
 
   inputs.forEach((input) => {
     input = Array.isArray(input) ? input[0] : input;
+
     if (
       input?.field === "messages" &&
+      (!fieldId || input?.id === fieldId) && 
       !["Location", "Text"].includes(input?.type) &&
       Array.isArray(input?.fileData)
     ) {
-      input.fileData.forEach((file:any) => {
+      input.fileData.forEach((file: any) => {
         if (file?.key) fileKeys.push(file.key);
       });
     }
@@ -259,6 +269,114 @@ export const extractDateTime = (preference: any[]) => {
   if (Object.keys(temp).length > 0) result.push(temp);
   return result;
 };
+
+export const getValidUrlOrValue = (
+  value: string | any,
+  onStart?: () => void,
+  onEnd?: () => void
+) => {
+
+  const VALID_MEDIA_EXT = [".jpg", ".jpeg", ".png", ".webp", ".mp4", ".3gp", ".mp3", ".aac", ".m4a", ".amr", ".ogg", ".opus", ".pdf", ".doc", ".docx", ".xls", ".xlsx", ".ppt", ".pptx", ".txt", ".csv", ".rtf", ".zip", ".rar"];
+  const isMediaFile = (name: string) =>
+    VALID_MEDIA_EXT.some((ext) => name.toLowerCase().trim().endsWith(ext));
+  const makeFullUrl = (filename: string) => `${BASE_MEDIA_URL}${filename.trim()}`;
+
+  const handleDownloadSingle = async (url: string) => {
+    try {
+      onStart?.();
+      const res = await fetch(url);
+      if (!res.ok) throw new Error("Failed to fetch file");
+      const blob = await res.blob();
+      const filename = url.split("/").pop()?.split("?")[0] || "file";
+      saveAs(blob, filename);
+    } catch (err) {
+      console.error("Download failed:", err);
+      alert("Download failed. Please try again.");
+    } finally {
+      onEnd?.();
+    }
+  };
+
+  const handleDownloadZip = async (urls: string[]) => {
+    try {
+      onStart?.();
+      const zip = new JSZip();
+
+      await Promise.all(
+        urls.map(async (url, idx) => {
+          try {
+            const res = await fetch(url);
+            if (!res.ok) throw new Error("Failed to fetch");
+            const blob = await res.blob();
+            const filename = url.split("/").pop()?.split("?")[0] || `Qbot_${idx}`;
+            zip.file(filename, blob);
+          } catch (err) {
+            console.error("Failed to add to zip:", err);
+          }
+        })
+      );
+
+      const zipBlob = await zip.generateAsync({ type: "blob" });
+      saveAs(zipBlob, `Qbot_${Date.now()}.zip`);
+    } catch (err) {
+      console.error("ZIP creation failed:", err);
+      alert("Failed to download zip. Try again.");
+    } finally {
+      onEnd?.();
+    }
+  };
+
+  try {
+    if (!value) return null;
+
+    const filenames = value.split(",").map((f:string) => f.trim()).filter(Boolean);
+    const validFiles = filenames.filter(isMediaFile);
+
+    if (validFiles.length === 0) return String(value);
+
+    const urls = validFiles.map(makeFullUrl);
+
+    return (
+      <button
+        onClick={() =>
+          urls.length === 1
+            ? handleDownloadSingle(urls[0])
+            : handleDownloadZip(urls)
+        }
+        title={urls.length === 1 ? "Download File" : `Download ${urls.length} Files`}
+        className="flex items-center gap-2 text-xs font-light text-blue-700 transition-transform duration-300 hover:scale-110"
+      >
+        <CloudDownloadOutlinedIcon fontSize="small" />
+      </button>
+    );
+  } catch (err) {
+    console.error("Error processing media URLs:", err);
+    return String(value);
+  }
+};
+
+export const getFormattedMessage = (message: any) => {
+  const msg = Array.isArray(message) ? message[0]?.value : message;
+  if (!msg) return "";
+
+  let str = String(msg);
+
+  if (/\b[\w-]{6,}\.[a-zA-Z0-9]{1,4}\b/.test(str)) {
+    str = str.replace(/\b[\w-]{6,}\.[a-zA-Z0-9]{1,4}\b/g, "📄");
+  } else if (/\b(MFI-|FI-)[\w-]+\b/.test(str)) {
+    str = str.replace(/\b(MFI-|FI-)[\w-]+\b/g, "📄");
+  }
+  return str;
+};
+
+
+
+
+
+
+
+
+
 
 
 

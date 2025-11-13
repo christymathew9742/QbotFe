@@ -83,12 +83,13 @@ const ChatBot = () => {
   const handleDelete = useCallback(
     async (bot:Bot) => {
       const { _id: id, title, nodes } = bot;
-      const inputs = nodes.map(node => node.data.inputs);
+      const inputs = nodes.flatMap((node) => node.data.inputs || []);
       try {
         let fileKey:any = extractFileKeys(inputs);
-        if (fileKey || fileKey.length > 1){
+
+        if (Array.isArray(fileKey) && fileKey.length > 0) {
           await api.delete(`/createbots/${id}/files`, {
-          data: { fileKey, chatbotId:id },
+            data: { fileKey, chatbotId:id },
           });
         }
         if (window.confirm(`Are you sure you want to delete ${title}?.`)) {
