@@ -8,7 +8,6 @@ import ReduxProvider from './ReduxProvider';
 import { GoogleProviders } from './googleProvider';
 import { headers } from "next/headers";
 import { StatusProvider } from '@/context/StatusContext';
-// import InternetStatusWrapper from './InternetStatusWrapper';
 
 const outfit = Outfit({
   subsets: ["latin"],
@@ -24,22 +23,20 @@ export default   async function RootLayout({
   return (
     <html lang="en"  className={theme}>
       <body className={`${outfit.className} dark:bg-gray-900`}>
-        {/* <InternetStatusWrapper> */}
-          <ReduxProvider>
-            <StatusProvider>
-              <AuthProvider>
-                <ThemeProvider>
-                  <ToastContainer theme={theme}/>
-                    <SidebarProvider>
-                      <GoogleProviders>
-                        {children}
-                      </GoogleProviders>
-                    </SidebarProvider>
-                </ThemeProvider>
-              </AuthProvider>
-            </StatusProvider>
-          </ReduxProvider>
-        {/* </InternetStatusWrapper> */}
+        <ReduxProvider>
+          <StatusProvider>
+            <AuthProvider>
+              <ThemeProvider>
+                <ToastContainer    toastStyle={{background: theme === "dark" ? "#1d2939" : "#fff" }} theme={theme}/>
+                  <SidebarProvider>
+                    <GoogleProviders>
+                      {children}
+                    </GoogleProviders>
+                  </SidebarProvider>
+              </ThemeProvider>
+            </AuthProvider>
+          </StatusProvider>
+        </ReduxProvider>
       </body>
     </html>
   );

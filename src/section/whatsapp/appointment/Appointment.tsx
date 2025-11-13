@@ -165,7 +165,7 @@ const Appoinment = () => {
                                   card?.status?.toLowerCase()?.trim() === "booked"
                                     ? "bg-status-bg-active"
                                     : card?.status?.toLowerCase()?.trim() === "cancelled"
-                                    ? "bg-status-bg-cancel"
+                                    ? "bg-red-500 dark:bg-status-bg-cancel"
                                     : card?.status?.toLowerCase()?.trim() === "rescheduled"
                                     ? "bg-status-bg-reactive"
                                     : card?.status?.toLowerCase()?.trim() === "completed"

@@ -23,31 +23,34 @@ export default function WhatsAppAvgSentiment({
   pendingStatus,
 }: MonthlyTargetProps) {
   const ArcSkeleton = () => (
-    <svg width="260" height="180" viewBox="0 0 260 180">
+    <svg
+      width="260"
+      height="180"
+      viewBox="0 0 260 180"
+      className="text-[#0000001c] dark:text-[#1f2937]"
+    >
       <path
         d="M 40 140 A 90 90 0 0 1 220 140"
         fill="none"
-        stroke="#1f2937"
+        stroke="currentColor"
         strokeWidth="12"
         strokeLinecap="round"
-        className="dark:!bg-gray-800"
       />
       <path
         d="M 40 140 A 90 90 0 0 1 220 140"
         fill="none"
-        stroke="#b69e9e05"
+        stroke="currentColor"
         strokeWidth="12"
         strokeLinecap="round"
         strokeDasharray="283"
         strokeDashoffset="200"
-        className="dark:!bg-gray-800 rounded-full"
+        className="text-[#0000001c] dark:text-[#b69e9e05]"
       >
         <animate
           attributeName="stroke-dashoffset"
           values="200;50;200"
           dur="1.2s"
           repeatCount="indefinite"
-          className="dark:!bg-gray-800 rounded-full"
         />
       </path>
     </svg>

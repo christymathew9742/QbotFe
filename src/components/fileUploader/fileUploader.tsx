@@ -82,9 +82,9 @@ const FileUploadPanel: React.FC<FileUploadPanelProps> = ({
         }
 
         const limits: Record<string, number> = {
-            image: 50,
-            video: 50,
-            audio: 20,
+            image: 25,
+            video: 100,
+            audio: 50,
             application: 100,
         };
 
