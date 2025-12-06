@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev --webpack -p 3001",
-    "build": "next build",
+    "build": "next build --webpack",
     "start": "next start",
     "lint": "next lint"
   },
@@ -37,7 +37,7 @@
     "@tailwindcss/postcss": "^4.0.9",
     "@tanstack/react-query": "^5.85.3",
     "@tiptap/core": "^2.12.0",
-    "@tiptap/extension-emoji": "^3.4.4",
+    "@tiptap/extension-emoji": "^2.12.0",
     "@tiptap/extension-highlight": "^2.12.0",
     "@tiptap/extension-image": "^2.12.0",
     "@tiptap/extension-link": "^3.4.4",
