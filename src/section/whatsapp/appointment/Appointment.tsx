@@ -35,7 +35,6 @@ const Appoinment = () => {
   const [rowsPerPage, setRowsPerPage] = useState(6);
   const [isFetching, setIsFetching] = useState(true);
   const [isload, setIsLoad] = useState(true)
-
   const appointmentData = useSelector(getAppointmentSelector);
   const pendingStatus = useSelector(getAllPending);
 
@@ -141,8 +140,10 @@ const Appoinment = () => {
                   </div>
                 ) : appointmentData?.data?.length ? (
                   appointmentData.data.map((card: any) => {
+
                     const preference = card?.data?.preference || [];
                     const dateData = extractDateTime(preference);
+                    console.log("extractDateTime from string", dateData);
 
                     return (
                       <Link
@@ -152,9 +153,9 @@ const Appoinment = () => {
                       >
                         <div className="flex rounded-xl w-full h-auto bg-white dark:bg-[#1f1f1f] text-black dark:text-white shadow-md transition-all border border-card-bg dark:border-card-bg hover:shadow-lg hover:scale-[1.01] active:scale-[0.99] cursor-pointer">
                           <div className="bg-card-bg text-center flex flex-col justify-between rounded-l-xl w-24">
-                            <div className="text-xl font-bold text-white/70 py-2">{dateData[0]?.month && dateData[0]?.month || "----"}</div>
-                            <div className="text-lg font-medium text-white mb-4">{dateData[0]?.date && dateData[0]?.date || "---"}</div>
-                            <div className="text-xxs text-white/70 pb-1">{dateData?.[0]?.startTime && `🕒${dateData[0].startTime}` || "--"}</div>
+                            <div className="text-xl font-bold text-white/70 py-2">{dateData?.month && dateData?.month || "----"}</div>
+                            <div className="text-lg font-medium text-white mb-4">{dateData?.date && dateData?.date || "---"}</div>
+                            <div className="text-xxs text-white/70 pb-1">{dateData?.startTime && `🕒${dateData?.startTime}` || "--"}</div>
                           </div>
                           <div className="flex-1 p-4 flex flex-col justify-between dark:bg-black rounded-tr-xl rounded-br-xl relative">
                             <div>
@@ -186,6 +187,8 @@ const Appoinment = () => {
                         </div>
                       </Link>
                     );
+
+                    
                   })
                 ) : (
                   <div className="w-full text-center col-span-3 flex justify-center">

@@ -6,7 +6,6 @@ import { Formik, Form } from "formik";
 import * as Yup from "yup";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch } from "@/redux/store";
-import { toast } from "react-toastify";
 import PageBreadcrumb from "@/components/common/PageBreadCrumb";
 import { Metadata } from "next";
 import Button from "@/components/ui/button/Button";
@@ -36,18 +35,11 @@ const ApiConfig = () => {
     const [isFetching, setIsFetching] = useState(true);
     const [isUpdate, setIsUpdate] = useState(false);
     const [isload, setIsLoad] = useState(true);
-
     const fields = FieldConfig.find((sec) => sec.section === "apiconfig")?.fields || [];
     const currentUser = useSelector(getUserSelector);
-    const currentError = useSelector(getErrorSelector);
-
-    console.log(currentError,'currentErrorcurrentError')
     const pendingStatus:any = useSelector(getUpdateUserPendingSelector);
-
     const userData = currentUser?.data || {};
     const userUpdate = currentUser?.userResponse?.user || {};
-
-    console.log(currentUser,'currentUsercurrentUsercurrentUser')
 
     const initialValues = useMemo<FormData>(
         () => ({
@@ -82,7 +74,6 @@ const ApiConfig = () => {
             setIsLoad(false);
             setTimeout(async () => {
                 await dispatch(updateUserRequest(values)); 
-                // toast.info(userUpdate?.message);
                 setIsUpdate(false);
                 setIsLoad(true);
             }, 1500);

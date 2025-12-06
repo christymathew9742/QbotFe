@@ -17,15 +17,12 @@ const UserDetails: React.FC = () => {
     const dispatch = useDispatch<AppDispatch>();
     const searchParams = useSearchParams();
     const { renderAlert } = useAlert();
-
     const userId = useMemo(() => searchParams.get("userId"), [searchParams]);
     const pendingStatus = useSelector(getAllPending);
     const userData = useSelector(getWhatsAppUserSelector);
-
     const [isFetching, setIsFetching] = useState(true);
     const [error, setError] = useState<string | null>(null);
     const [userDetails, setUserDetails] = useState<any>(null);
-
     const fetchUserDetails = useCallback(() => {
         if (!userId) {
             setError("Invalid user ID.");
@@ -68,7 +65,6 @@ const UserDetails: React.FC = () => {
             { label: "User Type :", value: userDetails?.userType },
             { label: "Behaviour Score :", value: `${userDetails?.avgSentimentScores?.behaviourScore}/10` },
             { label: "User Number :", value: userDetails?.whatsAppNumber },
-            { label: "Last Appointment Status :", value: formatString(userDetails?.status) },
             { label: "User Created :", value: formatUpdatedDate(userDetails?.createdAt) },
             { label: "Last Visited :", value: formatUpdatedDate(userDetails?.lastActiveAt) },
         ],

@@ -530,6 +530,7 @@ const ChatBotDetails = () => {
       <div className="fixed top-2 left-1 w-[90%] sm:w-[30%] h-auto bg-node-active p-1 rounded-lg shadow-lg z-50 flex flex-col sm:flex-row gap-2 dark:bg-black dark:border-[1px] dark:border-dark-border-node">
         <input
           type="text"
+          maxLength={22}
           ref={titleRef}
           value={title || ""}
           onChange={handleInputTitleChange}

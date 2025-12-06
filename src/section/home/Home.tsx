@@ -10,8 +10,7 @@ import WhatsAppAvgSentiment from "@/components/whatsApp/WhatsAppAvgSentiment";
 import WhatsAppMonthlyAppointmentChart from "@/components/whatsApp/WhatsAppMonthlyAppointmentChart";
 import WhatsAppStatCard from "@/components/whatsApp/WhatsAppRecentAppointments";
 import { getWhatsAppGlobaleSelector, getAllPending } from "@/redux/reducers/user/selectors";
-import { fetchWhatsRequest } from "@/redux/reducers/user/actions";
-import Alert from "@/components/ui/alert/Alert";
+import { fetchUserRequest, fetchWhatsRequest } from "@/redux/reducers/user/actions";
 
 interface Metrix {
     totalUniqueUsers?: number;
@@ -41,9 +40,11 @@ const Home = () => {
     const globalData =  useSelector(getWhatsAppGlobaleSelector)
     const isPending = !globalData || Object.keys(globalData).length < 1;
     
+    console.log("Global Data:", globalData);
     useEffect(() => {
         dispatch(fetchAppointmentRequest());
         dispatch(fetchWhatsRequest());
+        dispatch(fetchUserRequest());
     }, [dispatch]);
 
     const metricsData:Metrix = {
@@ -58,8 +59,8 @@ const Home = () => {
         todaysAppointments: globalData?.todaysAppointments || 0,
         totalCancelledAppointments: globalData?.cancelledCount || 0,
         totalStatusCounts: globalData?.totalStatusCounts || {},
-        totalBookings: globalData?.totalBookings || 0,
-        appointmentComplited: globalData?.appointmentComplited || 0,
+        totalBookings: globalData?.totalBooking || 0,
+        appointmentComplited: globalData?.completedCount || 0,
         todaysCancelledAppointments: globalData?.todaysCancelledAppointments || 0,
         todaysCompletedAppointments: globalData?.todaysCompletedAppointments || 0,
         totalAppointments: globalData?.totalAppointments || 0,

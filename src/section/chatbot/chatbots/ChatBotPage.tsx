@@ -41,7 +41,6 @@ const ChatBot = () => {
   const dispatch = useDispatch<AppDispatch>();
   const botData = useSelector(getBotSelector);
   const pendingStatus = useSelector(getAllPending);
-
   const [page, setPage] = useState(1);
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [search, setSearch] = useState("");

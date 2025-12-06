@@ -3,6 +3,7 @@ import React, { useState } from "react";
 interface Option {
   value: string;
   label: string;
+  disabled?: boolean;
 }
 
 interface SelectProps {
@@ -10,6 +11,7 @@ interface SelectProps {
   placeholder?: string;
   onChange: (value: string) => void;
   className?: string;
+  disabled?: boolean;
   defaultValue?: string;
 }
 
@@ -26,7 +28,7 @@ const Select: React.FC<SelectProps> = ({
   const handleChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const value = e.target.value;
     setSelectedValue(value);
-    onChange(value); // Trigger parent handler
+    onChange(value); 
   };
 
   return (
@@ -39,7 +41,6 @@ const Select: React.FC<SelectProps> = ({
       value={selectedValue}
       onChange={handleChange}
     >
-      {/* Placeholder option */}
       <option
         value="empty"
         disabled
@@ -47,14 +48,21 @@ const Select: React.FC<SelectProps> = ({
       >
         {placeholder}
       </option>
-      {/* Map over options */}
-      {options.map((option) => (
+
+      {options?.map((option) => (
         <option
-          key={option.value}
-          value={option.value}
-          className="text-gray-700 dark:bg-gray-900 dark:text-gray-400"
+          key={option?.value}
+          value={option?.value}
+          disabled={option?.disabled}
+          className={`
+            dark:bg-gray-900 
+            ${option?.disabled 
+                ? "bg-gray-200 text-gray-400 dark:bg-gray-800 dark:text-gray-600 cursor-not-allowed" // Disabled styles
+                : "text-gray-700 dark:text-gray-400"
+            }
+          `}
         >
-          {option.label}
+          {option?.label}
         </option>
       ))}
     </select>

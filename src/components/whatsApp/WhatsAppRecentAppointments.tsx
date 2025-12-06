@@ -7,7 +7,7 @@ interface StatCardProps {
   appointmentStatus?: {
     todaysAppointments?: number;
     totalStatusCounts?: Record<string, number>;
-    totalBookings?: number;
+    appointmentComplited?: number;
     todaysCancelledAppointments?: number;
     todaysCompletedAppointments?: number;
     totalAppointments?: number;
@@ -40,7 +40,7 @@ const WhatsAppStatCard: React.FC<StatCardProps> = ({
     {
       title: "Completed Appointments",
       subtitle: "Today's Completed",
-      total: appointmentStatus?.totalStatusCounts?.completed ?? 0,
+      total: appointmentStatus?.appointmentComplited ?? 0,
       today: appointmentStatus?.todaysCompletedAppointments ?? 0,
       theme: "bg-blue-500/[0.08] text-blue-light-500",
     },
