@@ -46,8 +46,10 @@ function createWebSocketChannel(socketUrl: string) {
 }
 
 function* watchWebSocket() {
-    //const socketUrl: string = `${baseURL}`;
-    const socketUrl: string = baseURL.replace(/^http/, "ws");
+    // const socketUrl: string = baseURL.replace(/^http/, "ws");
+    const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+    const hostname = window.location.host; 
+    const socketUrl = `${protocol}//${hostname}/`;
     const channel:EventChannel<any>  = yield call(createWebSocketChannel, socketUrl);
     while (true) {
         const message:WebSocketMessage   = yield take(channel);

@@ -84,9 +84,6 @@ export default (state = initialState, action: appointmentActions) => {
                 ...state,
                 pending: { ...state.pending, update: false },
                 appointmentResponse: action.payload,
-                appointment: state.appointment.map((appointmentItem) =>
-                    appointmentItem.id === action.payload.id ? { ...appointmentItem, ...action.payload } : appointmentItem
-                ),
                 error: null,
             };
         case UPDATE_APPOINTMENT_FAILURE:

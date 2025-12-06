@@ -59,10 +59,6 @@ export const customInputStyles: SxProps = {
      '& .MuiPickersLayout-root' :{
         marginTop: '20px',
     },
-    // '& .MuiPickerPopper-paper' : {
-    //     backgroundColor:'black',
-    //     color:'white',
-    // },
     '& .MuiOutlinedInput-root': {
         minHeight: '2.75rem',
         width: '100%',

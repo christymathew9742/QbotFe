@@ -77,7 +77,6 @@ export default function UserMetaCard() {
           setIsUpdate(true);
           setTimeout(async () => {
               await dispatch(updateUserRequest(values));
-              toast.success('Updated');
               setIsUpdate(false)
               closeModal();
           }, 1500);

@@ -243,31 +243,64 @@ export const allowedExtensions = {
   doc: ["pdf", "doc", "docx", "xls", "xlsx", "ppt", "pptx", "txt", "csv", "rtf", "zip", "rar"],
 };
 
-export const extractDateTime = (preference: any[]) => {
-  const result: any[] = [];
-  const temp: any = {};
+// export const extractDateTime = (preference: any[]) => {
+//   const result: any[] = [];
+//   const temp: any = {};
 
+//   preference.forEach((item: any) => {
+//     const value = Object.values(item)[0];
+//     if (typeof value !== "string") return;
+
+//     const dateMatch = value.trim().match(/(\d{1,2})\s*([A-Za-z]{3,})/);
+//     if (dateMatch) {
+//       temp.date = dateMatch[1];
+//       temp.month = dateMatch[2];
+//     }
+
+//     const timeMatch = value
+//       .trim()
+//       .match(/(\d{1,2}:\d{2}\s*[APMapm]{2})\s*-\s*(\d{1,2}:\d{2}\s*[APMapm]{2})/);
+//     if (timeMatch) {
+//       temp.startTime = timeMatch[1];
+//       temp.endTime = timeMatch[2];
+//     }
+//   });
+
+//   if (Object.keys(temp).length > 0) result.push(temp);
+//   return result;
+// };
+
+export const extractDateTime = (preference: any[]) => {
+  const temp: any = {};
   preference.forEach((item: any) => {
     const value = Object.values(item)[0];
     if (typeof value !== "string") return;
+    
+    console.log("Extracting from preference value:", value);
 
-    const dateMatch = value.trim().match(/(\d{1,2})\s*([A-Za-z]{3,})/);
-    if (dateMatch) {
-      temp.date = dateMatch[1];
-      temp.month = dateMatch[2];
+    const cleanStr = value.trim();
+    const timeRegex = /(\d{1,2}:\d{2}(?:\s*[APap][Mm])?)\s*-\s*(\d{1,2}:\d{2}(?:\s*[APap][Mm])?)/;
+    const timeMatch = cleanStr.match(timeRegex);
+    if (timeMatch) {
+      temp.startTime = timeMatch[1].trim();
+      temp.endTime = timeMatch[2].trim();
     }
 
-    const timeMatch = value
-      .trim()
-      .match(/(\d{1,2}:\d{2}\s*[APMapm]{2})\s*-\s*(\d{1,2}:\d{2}\s*[APMapm]{2})/);
-    if (timeMatch) {
-      temp.startTime = timeMatch[1];
-      temp.endTime = timeMatch[2];
+    const dateRegex = /(\d{1,2})\s+([A-Za-z]{3,})|([A-Za-z]{3,})[,.]?\s+(\d{1,2})/;
+    const dateMatch = cleanStr.match(dateRegex);
+
+    if (dateMatch) {
+      if (dateMatch[1]) {
+        temp.date = dateMatch[1];
+        temp.month = dateMatch[2];
+      } else if (dateMatch[3]) {
+        temp.month = dateMatch[3];
+        temp.date = dateMatch[4];
+      }
     }
   });
 
-  if (Object.keys(temp).length > 0) result.push(temp);
-  return result;
+  return temp;
 };
 
 export const getValidUrlOrValue = (

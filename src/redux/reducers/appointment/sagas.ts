@@ -1,6 +1,7 @@
 import api from '../../../utils/axios';
 import { isQueryParamString } from '@/utils/utils';
 import { all, call, put, takeLatest } from 'redux-saga/effects';
+import { toast } from 'react-toastify';
 
 import {
     FETCH_APPOINTMENT_REQUEST,
@@ -18,14 +19,13 @@ import {
 } from './actions';
 
 const fetchAppointment = (params: any) => api.get<any[]>(`/appointments${params}`);
-const updateAppointment = (body: any, id: any) => api.put<any[]>(`/appointments/${id}`, body);
-const deleteAppointment = (id: any) => api.delete<any[]>(`/appointments/${id}`);
+const updateAppointment = (status: any, id: string) => api.put<any[]>(`/appointments/${id}`, {status});
+const deleteAppointment = (id: string) => api.delete<any[]>(`/appointments/${id}`);
 
 //Fetch appointment
 function* fetchAppointmentSaga(data:any): any {
     const {payload} = data;
     const params = isQueryParamString(payload)?`?${payload}`:`/${payload}`;
-    console.log(data,'params')
     try {
         const response: any = yield call(fetchAppointment,params);
         yield put (fetchAppointmentSuccess({appointment: response.data }));
@@ -36,12 +36,16 @@ function* fetchAppointmentSaga(data:any): any {
 
 // Update appointment
 function* updateAppointmentSaga(data: any): any {
-    const { id, payload } = data.payload;
-    try {
-        const response: any = yield call(updateAppointment, payload, id);
-        yield put(updateAppointmentSuccess({ appointment: response.data }));
-    } catch (e: any) {
-        yield put(updateAppointmentFailure({ error: e.message }));
+    const { id, status } = data.payload;
+    if(status) {
+        try {
+            const response: any = yield call(updateAppointment, status, id);
+            toast.success(response?.data?.message);
+            yield put(updateAppointmentSuccess({ appointment: response.data }));
+        } catch (e: any) {
+            toast.error(e?.message);
+            yield put(updateAppointmentFailure({ error: e.message }));
+        }
     }
 }
 
