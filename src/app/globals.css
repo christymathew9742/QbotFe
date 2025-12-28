@@ -343,6 +343,10 @@
   background-color: #344054;
 }
 
+.card-chart.custom-scrollbar::-webkit-scrollbar-thumb {
+  background-color: #34405400!important;
+}
+
 @layer utilities {
   /* For Remove Date Icon */
   input[type="date"]::-webkit-inner-spin-button,

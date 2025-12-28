@@ -78,14 +78,14 @@ const WhatsAppStatCard: React.FC<StatCardProps> = ({
             <div>
               {renderOrSkeleton(
                 pendingStatus,
-                "!w-10 !h-4",
+                "!w-28 !h-4",
                 <h4 className="mb-1 text-sm font-medium text-color-primary dark:text-white/90">
                   {item.title}
                 </h4>
               )}
               {renderOrSkeleton(
                 pendingStatus,
-                "!w-10 !h-4",
+                "!w-28 !h-4",
                 <span className="block text-sm text-color-primary-light dark:text-color-primary-light">
                   {item.subtitle}
                 </span>

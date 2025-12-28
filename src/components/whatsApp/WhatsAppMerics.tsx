@@ -245,14 +245,16 @@ export const WhatsAppMetrics = ({ metrics }: any) => {
                 {renderOrSkeleton(
                   Pending,
                   "!w-20 !h-2 !mt-20",
-                  <div className="w-full">
-                    <ReactApexChart
-                      options={getChartOptions(chartColor)}
-                      series={[{ name: "Count", data: item.chartData }]}
-                      type="area"
-                      height={100}
-                      width="100%"
-                    />
+                  <div className="w-full overflow-x-auto overflow-y-hidden card-chart custom-scrollbar">
+                    <div className="min-w-[600px]"> 
+                      <ReactApexChart
+                        options={getChartOptions(chartColor)}
+                        series={[{ name: "Count", data: item.chartData }]}
+                        type="area"
+                        height={100}
+                        width="100%" 
+                      />
+                    </div>
                   </div>
                 )}
               </div>
