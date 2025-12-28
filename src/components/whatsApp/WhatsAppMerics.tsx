@@ -202,8 +202,8 @@ export const WhatsAppMetrics = ({ metrics }: any) => {
             key={idx}
             className="rounded-md bg-white p-5 shadow-xl backdrop-blur-sm dark:bg-white/[0.03] md:p-6 border border-transparent dark:border-gray-700"
           >
-            <div className="flex items-center justify-between gap-6">
-              <div className="flex flex-col justify-between h-full w-[30%]">
+            <div className="flex items-center justify-between gap-4">
+              <div className="flex flex-none flex-col justify-between h-full">
                 {renderOrSkeleton(
                   Pending,
                   "!w-24 !h-4 !mb-6",
@@ -215,8 +215,8 @@ export const WhatsAppMetrics = ({ metrics }: any) => {
                 <div className="flex items-center">
                   {renderOrSkeleton(
                     Pending,
-                    "!w-18 !h-8 ",
-                    <h2 className="text-3xl font-bold text-color-primary dark:text-white mb-0">
+                    "!w-6 !h-8 ",
+                    <h2 className="text-3xl font-bold text-color-primary dark:text-white mb-0 whitespace-nowrap">
                       {item.value}
                     </h2>
                   )}
@@ -224,16 +224,16 @@ export const WhatsAppMetrics = ({ metrics }: any) => {
                   <div className="ms-4 flex items-center pl-3">
                     {renderOrSkeleton(
                       Pending,
-                      "!w-2 !h-6",
-                      <div className={`flex items-center font-bold text-sm ${statusColor}`}>
+                      "!w-2 !h-6", 
+                      <div className={`flex items-center font-bold text-xxm ${statusColor} whitespace-nowrap`}>
                         {isPositive ? (
-                            <svg width="16" height="11" viewBox="0 0 21 11" fill="none" className="mr-1">
-                                <path d="M1.49217 11C0.590508 11 0.149368 9.9006 0.800944 9.27736L9.80878 0.66117C10.1954 0.29136 10.8046 0.291359 11.1912 0.661169L20.1991 9.27736C20.8506 9.9006 20.4095 11 19.5078 11H1.49217Z" fill="currentColor"></path>
-                            </svg>
+                          <svg width="10" height="8" viewBox="0 0 21 11" fill="none" className="mr-1">
+                            <path d="M1.49217 11C0.590508 11 0.149368 9.9006 0.800944 9.27736L9.80878 0.66117C10.1954 0.29136 10.8046 0.291359 11.1912 0.661169L20.1991 9.27736C20.8506 9.9006 20.4095 11 19.5078 11H1.49217Z" fill="currentColor"></path>
+                          </svg>
                         ) : (
-                            <svg width="16" height="11" viewBox="0 0 21 11" fill="none" className="mr-1 rotate-180">
-                                <path d="M1.49217 11C0.590508 11 0.149368 9.9006 0.800944 9.27736L9.80878 0.66117C10.1954 0.29136 10.8046 0.291359 11.1912 0.661169L20.1991 9.27736C20.8506 9.9006 20.4095 11 19.5078 11H1.49217Z" fill="currentColor"></path>
-                            </svg>
+                          <svg width="10" height="8" viewBox="0 0 21 11" fill="none" className="mr-1 rotate-180">
+                            <path d="M1.49217 11C0.590508 11 0.149368 9.9006 0.800944 9.27736L9.80878 0.66117C10.1954 0.29136 10.8046 0.291359 11.1912 0.661169L20.1991 9.27736C20.8506 9.9006 20.4095 11 19.5078 11H1.49217Z" fill="currentColor"></path>
+                          </svg>
                         )}
                         <span>{isPositive ? "+" : ""}{item.percentage}%</span>
                       </div>
@@ -241,10 +241,11 @@ export const WhatsAppMetrics = ({ metrics }: any) => {
                   </div>
                 </div>
               </div>
-              <div className="relative h-full w-[70%] px-4">
-                 {renderOrSkeleton(
-                    Pending,
-                    "!w-20 !h-2 !mt-20",
+              <div className="relative h-full flex-1 min-w-0">
+                {renderOrSkeleton(
+                  Pending,
+                  "!w-20 !h-2 !mt-20",
+                  <div className="w-full">
                     <ReactApexChart
                       options={getChartOptions(chartColor)}
                       series={[{ name: "Count", data: item.chartData }]}
@@ -252,7 +253,8 @@ export const WhatsAppMetrics = ({ metrics }: any) => {
                       height={100}
                       width="100%"
                     />
-                 )}
+                  </div>
+                )}
               </div>
             </div>
           </div>
