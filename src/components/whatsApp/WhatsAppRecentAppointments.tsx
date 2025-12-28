@@ -35,27 +35,27 @@ const WhatsAppStatCard: React.FC<StatCardProps> = ({
       subtitle: "Today's Bookings",
       total: appointmentStatus?.totalAppointments ?? 0,
       today: appointmentStatus?.todaysAppointments ?? 0,
-      theme: "bg-success-500/[0.08] text-success-500",
+      theme: "bg-success-500/[0.08] text-color-primary",
     },
     {
       title: "Completed Appointments",
       subtitle: "Today's Completed",
       total: appointmentStatus?.appointmentComplited ?? 0,
       today: appointmentStatus?.todaysCompletedAppointments ?? 0,
-      theme: "bg-blue-500/[0.08] text-blue-light-500",
+      theme: "bg-blue-500/[0.08] text-blue-color-primary",
     },
     {
       title: "Cancelled Appointments",
       subtitle: "Today's Cancelled",
       total: appointmentStatus?.totalCancelledAppointments ?? 0,
       today: appointmentStatus?.todaysCancelledAppointments ?? 0,
-      theme: "bg-red-500/[0.08] text-red-500",
+      theme: "bg-red-500/[0.08] text-color-primary",
     },
   ];
 
   const renderOrSkeleton = (showSkeleton: boolean, className: string, content: React.ReactNode) =>
     showSkeleton ? (
-      <Skeleton animation="wave" className={`${className} dark:!bg-gray-800`} />
+      <Skeleton animation="wave" className={`${className} dark:!bg-color-primary`} />
     ) : (
       content
     );
@@ -65,7 +65,7 @@ const WhatsAppStatCard: React.FC<StatCardProps> = ({
       {stats.map((item, idx) => (
         <div
           key={idx}
-          className={`flex items-center justify-between rounded-2xl border border-gray-100 bg-white ${pendingStatus ? 'px-3' : 'p-4'} dark:border-gray-800 dark:bg-white/[0.03]`}
+          className={`flex items-center justify-between rounded-md bg-white p-5 shadow-xl backdrop-blur-sm border border-gray-100 ${pendingStatus ? 'px-3' : 'p-4'} dark:border-color-primary dark:bg-white/[0.03]`}
         >
           <div className="flex items-center gap-4">
             {renderOrSkeleton(
@@ -79,14 +79,14 @@ const WhatsAppStatCard: React.FC<StatCardProps> = ({
               {renderOrSkeleton(
                 pendingStatus,
                 "!w-10 !h-4",
-                <h4 className="mb-1 text-sm font-medium text-gray-800 dark:text-white/90">
+                <h4 className="mb-1 text-sm font-medium text-color-primary dark:text-white/90">
                   {item.title}
                 </h4>
               )}
               {renderOrSkeleton(
                 pendingStatus,
                 "!w-10 !h-4",
-                <span className="block text-sm text-gray-500 dark:text-gray-400">
+                <span className="block text-sm text-color-primary-light dark:text-color-primary-light">
                   {item.subtitle}
                 </span>
               )}
@@ -96,14 +96,14 @@ const WhatsAppStatCard: React.FC<StatCardProps> = ({
             {renderOrSkeleton(
               pendingStatus,
               "!w-10 !h-4",
-              <span className="mb-1 block text-sm text-gray-500 dark:text-gray-400">
+              <span className="mb-1 block text-sm text-color-primary-light dark:text-color-primary-light">
                 {item.total}
               </span>
             )}
             {renderOrSkeleton(
               pendingStatus,
               "!w-10 !h-4",
-              <span className="block text-sm text-gray-500 dark:text-gray-400">
+              <span className="block text-sm text-color-primary-light dark:text-color-primary-light">
                 {item.today}
               </span>
             )}

@@ -124,7 +124,7 @@ const WhatsappUser = () => {
     if (!whatsAppUser?.data?.length) {
       return (
         <TableRow className="w-full">
-          <TableCell colSpan={12} className="text-center py-10 text-gray-500">
+          <TableCell colSpan={12} className="text-center py-10 text-color-primary-light">
             No User Found!
           </TableCell>
         </TableRow>
@@ -133,39 +133,39 @@ const WhatsappUser = () => {
 
     return whatsAppUser.data.map((user: User) => (
       <TableRow key={user._id}>
-        <TableCell colSpan={2} className="px-5 py-2 font-light dark:text-white/90 text-theme-sm text-center">
+        <TableCell colSpan={2} className="px-5 py-2 font-light  text-color-primary dark:text-white/90 text-center">
           {user?.profileName}
         </TableCell>
-        <TableCell colSpan={2} className="px-5 py-2 font-light dark:text-white/90 text-theme-sm text-center">
+        <TableCell colSpan={2} className="px-5 py-2 font-light dark:text-white/90 text-color-primary-light text-center">
           <span className={`text-xxxs px-2 py-1 rounded-full font-medium text-center ${sentimentScoreClass(user?.avgSentimentScores?.speedScore)}`}>
             {user?.avgSentimentScores?.speedScore}
           </span>
         </TableCell>
-        <TableCell colSpan={2} className="px-5 py-2 text-center font-light dark:text-white/90 text-theme-sm">
+        <TableCell colSpan={2} className="px-5 py-2 text-center font-light dark:text-white/90 text-color-primary-light">
           <span className={`text-xxxs px-2 py-1 rounded-full font-medium text-center ${sentimentScoreClass(user?.avgSentimentScores?.sentimentScore)}`}>
             {user?.avgSentimentScores?.sentimentScore}
           </span>
         </TableCell>
-        <TableCell colSpan={2} className="px-5 py-2 text-center text-gray-500 text-theme-sm">
+        <TableCell colSpan={2} className="px-5 py-2 text-center text-color-primary-light text-color-primary-ligh">
           <span className="text-xxxs px-2 py-1 rounded-full font-medium text-center bg-[#cccccc] dark:bg-[#f2f4f75c] text-white">
             {user?.totalAppointments}
           </span>
         </TableCell>
-        <TableCell colSpan={2} className="px-5 py-2 text-center text-gray-500 text-theme-sm dark:text-gray-400">
+        <TableCell colSpan={2} className="px-5 py-2 text-center  text-color-primary-light dark:text-color-primary-light">
           {formatUpdatedDate(user?.createdAt)}
         </TableCell>
-        <TableCell colSpan={2} className="px-3 py-2 text-gray-500 text-theme-sm dark:text-gray-400">
+        <TableCell colSpan={2} className="px-3 py-2  text-color-primary-light dark:text-color-primary-light">
           <div className="flex justify-center items-center">
             <span className={`text-xxxs px-1 py-0 rounded-full font-medium block w-[50px] text-center ${userTypeClass(user?.userType)}`}>
               {user?.userType}
             </span>
           </div>
         </TableCell>
-        <TableCell colSpan={2} className="px-3 py-2 text-gray-500 text-theme-sm text-center">
+        <TableCell colSpan={2} className="px-3 py-2  text-color-primary-light text-center">
           <div className="flex justify-center items-center">
             <IconButton className="w-[35px]">
               <Link href={`/user-details?userId=${user._id}`}>
-                <View className="!text-gray-500 hover:!text-gray-600 dark:hover:!text-gray-400 text-xxs" />
+                <View className="!text-color-primary-light hover:!text-gray-600 dark:hover:!text-color-primary-light text-xxs" />
               </Link>
             </IconButton>
           </div>
@@ -178,12 +178,12 @@ const WhatsappUser = () => {
     <div>
       <PageBreadcrumb pagePath="Users" />
       <div className="space-y-6">
-        <div className="rounded-2xl border border-gray-200 bg-white dark:border-gray-800 dark:bg-white/[0.03]">
+        <div className="rounded-2xl border border-gray-200 bg-white dark:border-color-primary dark:bg-white/[0.03]">
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-12 items-center px-6 py-5">
-            <h3 className="text-base font-medium text-gray-800 dark:text-white/90">Users</h3>
+            <h3 className="text-base font-medium text-color-primary dark:text-white/90">Users</h3>
             <div className="relative">
               <span className="absolute -translate-y-1/2 left-4 top-1/2 pointer-events-none">
-                <SearchIcon className="!text-gray-500 dark:!text-amber-50" />
+                <SearchIcon className="!text-color-primary-light dark:!text-amber-50" />
               </span>
               <Input
                 type="text"
@@ -194,7 +194,7 @@ const WhatsappUser = () => {
               />
             </div>
           </div>
-          <div className="p-4 border-t border-gray-100 dark:border-gray-800 sm:p-6">
+          <div className="p-4 border-t border-gray-100 dark:border-color-primary sm:p-6">
             <div className="mx-auto overflow-hidden rounded-xl border border-gray-200 bg-white dark:border-white/[0.05] dark:bg-white/[0.03]">
               <div className="max-w-full overflow-x-auto">
                 <Table>
@@ -205,14 +205,14 @@ const WhatsappUser = () => {
                           key={i}
                           colSpan={2}
                           isHeader
-                          className="px-5 py-3 text-theme-xs text-gray-500 dark:text-gray-400 font-medium text-center"
+                          className="px-5 py-3 text-color-primary-light text-theme-xs dark:text-color-primary-light text-center"
                         >
                           {head}
                         </TableCell>
                       ))}
                     </TableRow>
                   </TableHeader>
-                  <TableBody className="divide-y divide-gray-100 dark:divide-white/[0.05] w-full">
+                  <TableBody className="divide-y divide-gray-100 text-theme-sm dark:divide-white/[0.05] w-full">
                     {tableRows}
                   </TableBody>
                 </Table>

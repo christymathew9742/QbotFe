@@ -54,11 +54,7 @@ import BellIcon from "./bell.svg";
 import EditIcon from "./edit.svg";
 import DeleteIcon from "./delete.svg"
 import SearchIcon from "./search.svg";
-import Settings from "./settings.svg";
 import WhatsApp from "./whatsapp.svg";
-import Home from "./home.svg";
-import WebHook from "./webhook.svg";
-import ChatBot from "./chatBot.svg";
 import NoProfileIcon from "./no-profile.svg";
 import Expried from "./expired.svg";
 import View from "./view.svg";
@@ -121,11 +117,7 @@ export {
   EditIcon,
   DeleteIcon,
   SearchIcon,
-  Settings,
   WhatsApp,
-  Home,
-  WebHook,
-  ChatBot,
   NoProfileIcon,
   Expried,
   View,

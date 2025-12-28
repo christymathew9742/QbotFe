@@ -98,6 +98,12 @@ export default function SentimentChartOne({ appointments = [] }: LineChartOnePro
             axisTicks: { show: false },
             tooltip: { enabled: false },
             title: { text: "Booking >" },
+              labels: {
+                style: {
+                fontSize: "12px",
+                colors: ["#493e81"],
+                },
+            },
         },
         yaxis: {
             min: 0,
@@ -106,7 +112,7 @@ export default function SentimentChartOne({ appointments = [] }: LineChartOnePro
             labels: {
                 style: {
                 fontSize: "12px",
-                colors: ["#6B7280"],
+                colors: ["#493e81"],
                 },
             },
             title: {

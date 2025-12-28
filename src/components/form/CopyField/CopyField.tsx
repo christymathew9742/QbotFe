@@ -29,7 +29,7 @@ const CopyField = ({ id, label, value, title, disabled=false, onClick, update, t
 
   return (
     <div className="mb-6 relative">
-      <label htmlFor={id} className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
+      <label htmlFor={id} className="block mb-2 text-sm font-medium color-primary dark:text-white">
         {label}
         <span
           className="ml-2 inline-block bg-black text-white rounded-full w-3 h-3 text-xs text-center leading-3 cursor-pointer text-[10px] dark:border dark:border-gray-600"
@@ -48,14 +48,14 @@ const CopyField = ({ id, label, value, title, disabled=false, onClick, update, t
               readOnly
               type={type}
               disabled={disabled}
-              className="w-full p-2.5 pr-10 text-sm text-gray-500 bg-gray-50 border border-gray-300 rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-gray-400 cursor-text"
+              className="w-full p-2.5 pr-10 text-sm text-color-primary-light bg-gray-50 border border-gray-300 rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-color-primary-light cursor-text"
             />
             <button
               type="button"
               onClick={handleCopy}
               title={copied ? 'Copied!' : 'Copy'}
               aria-label={copied ? 'Copied!' : 'Copy'}
-              className="btn absolute top-1/2 right-2 -translate-y-1/2 p-2 rounded-lg text-gray-500 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-800"
+              className="btn absolute top-1/2 right-2 -translate-y-1/2 p-2 rounded-lg text-color-primary-light hover:bg-gray-100 dark:text-color-primary-light dark:hover:bg-color-primary"
             >
               {copied ? (
                 <svg className="w-4 h-4 text-blue-700 dark:text-blue-500" fill="none" viewBox="0 0 16 12">

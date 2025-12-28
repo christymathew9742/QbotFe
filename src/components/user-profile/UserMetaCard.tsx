@@ -136,33 +136,33 @@ export default function UserMetaCard() {
 
   return (
     <>
-      <div className="p-5 border border-gray-200 rounded-2xl dark:border-gray-800 lg:p-6">
+      <div className="p-5 border border-gray-200 rounded-2xl dark:border-color-primary lg:p-6">
         <div className="flex flex-col gap-5 sm:flex-row sm:justify-between items-center">
           {pendingFetch || Object.keys(userData).length <1  ? (
             <>
               <div className="overflow-hidde w-20">
-                <Skeleton animation="wave" variant="circular" width={80} height={80} className="dark:!border-gray-700 dark:!bg-gray-800"/>
+                <Skeleton animation="wave" variant="circular" width={80} height={80} className="dark:!border-gray-700 dark:!bg-color-primary"/>
               </div>
               <div className="sm:w-full order-3 sm:order-2">
-                <Skeleton animation="wave" className="w-[100px] sm:w-[25%] dark:!border-gray-700 dark:!bg-gray-800"/>
-                <Skeleton animation="wave" className="dark:!border-gray-700 dark:!bg-gray-800"/>
+                <Skeleton animation="wave" className="w-[100px] sm:w-[25%] dark:!border-gray-700 dark:!bg-color-primary"/>
+                <Skeleton animation="wave" className="dark:!border-gray-700 dark:!bg-color-primary"/>
               </div>
               <div className="flex items-center order-2 gap-2 grow sm:order-3 sm:justify-end">
                 <div className="overflow-hidde w-14">
-                  <Skeleton animation="wave" variant="circular" width={50} height={50} className="dark:!border-gray-700 dark:!bg-gray-800"/>
+                  <Skeleton animation="wave" variant="circular" width={50} height={50} className="dark:!border-gray-700 dark:!bg-color-primary"/>
                 </div>
                 <div className="overflow-hidde w-14">
-                  <Skeleton animation="wave" variant="circular" width={50} height={50} className="dark:!border-gray-700 dark:!bg-gray-800"/>
+                  <Skeleton animation="wave" variant="circular" width={50} height={50} className="dark:!border-gray-700 dark:!bg-color-primary"/>
                 </div>
                 <div className="overflow-hidde w-14">
-                  <Skeleton animation="wave" variant="circular" width={50} height={50} className="dark:!border-gray-700 dark:!bg-gray-800"/>
+                  <Skeleton animation="wave" variant="circular" width={50} height={50} className="dark:!border-gray-700 dark:!bg-color-primary"/>
                 </div>
                 <div className="overflow-hidde w-14">
-                  <Skeleton animation="wave" variant="circular" width={50} height={50} className="dark:!border-gray-700 dark:!bg-gray-800"/>
+                  <Skeleton animation="wave" variant="circular" width={50} height={50} className="dark:!border-gray-700 dark:!bg-color-primary"/>
                 </div>
               </div>
               <div className="overflow-hidde sm:!w-20 order-4 w-full">
-                <Skeleton variant="rectangular" animation="wave" className="dark:!border-gray-700 !rounded-[40px] dark:!bg-gray-800 w-full sm:!w-[80px] !h-[45px]"/>
+                <Skeleton variant="rectangular" animation="wave" className="dark:!border-gray-700 !rounded-[40px] dark:!bg-color-primary w-full sm:!w-[80px] !h-[45px]"/>
               </div>
             </>
           ):(
@@ -171,7 +171,7 @@ export default function UserMetaCard() {
               <div className="relative group" {...getRootProps()}>
                 <input {...getInputProps()} />
                 { userProfileImage ? (
-                  <div className="w-20 h-20 overflow-hidden border border-gray-200 rounded-full dark:border-gray-800">
+                  <div className="w-20 h-20 overflow-hidden border border-gray-200 rounded-full dark:border-color-primary">
                     <img
                       src={userProfileImage}
                       alt="user"
@@ -191,15 +191,15 @@ export default function UserMetaCard() {
                 </button>
               </div>     
               <div className="order-3 sm:order-2">
-                <h4 className="mb-2 text-lg font-semibold text-center text-gray-800 dark:text-white/90 sm:text-left">
+                <h4 className="mb-2 text-lg font-semibold text-center text-color-primary dark:text-white/90 sm:text-left">
                   {userData?.displayname || '----'}
                 </h4>
                 <div className="flex flex-col items-center gap-1 text-center sm:flex-row sm:gap-3 sm:text-left">
-                  <p className="text-sm text-gray-500 dark:text-gray-400">
+                  <p className="text-sm text-color-primary-light dark:text-color-primary-light">
                     {userData.bio || '----'}
                   </p>
                   <div className="hidden h-3.5 w-px bg-gray-300 dark:bg-gray-700 sm:block"></div>
-                  <p className="text-sm text-gray-500 dark:text-gray-400">
+                  <p className="text-sm text-color-primary-light dark:text-color-primary-light">
                     {userData.state || '----'}, {userData.country || '----'}
                   </p>
                 </div>
@@ -207,9 +207,9 @@ export default function UserMetaCard() {
               <div className="flex items-center order-2 gap-2 grow sm:order-3 sm:justify-end">
                 <a        
                   target="_blank"
-                  rel="noreferrer" href={`${userData?.facebook  || '#'}`} className="flex h-11 w-11 items-center justify-center gap-2 rounded-full border border-gray-300 bg-white text-sm font-medium text-gray-700 shadow-theme-xs hover:bg-gray-50 hover:text-gray-800 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-white/[0.03] dark:hover:text-gray-200">
+                  rel="noreferrer" href={`${userData?.facebook  || '#'}`} className="flex h-11 w-11 items-center justify-center gap-2 rounded-full border border-gray-300 bg-white text-sm font-medium text-gray-700 shadow-color-primary-light hover:bg-gray-50 hover:text-color-primary dark:border-gray-700 dark:bg-color-primary dark:text-color-primary-light dark:hover:bg-white/[0.03] dark:hover:text-gray-200">
                   <svg
-                    className="fill-current"
+                    className="fill-current text-app-theme"
                     width="20"
                     height="20"
                     viewBox="0 0 20 20"
@@ -224,9 +224,9 @@ export default function UserMetaCard() {
                 </a>
                 <a 
                   href={`${userData?.twitter  || '#'}`} target="_blank"
-                  rel="noreferrer"  className="flex h-11 w-11 items-center justify-center gap-2 rounded-full border border-gray-300 bg-white text-sm font-medium text-gray-700 shadow-theme-xs hover:bg-gray-50 hover:text-gray-800 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-white/[0.03] dark:hover:text-gray-200">
+                  rel="noreferrer"  className="flex h-11 w-11 items-center justify-center gap-2 rounded-full border border-gray-300 bg-white text-sm font-medium text-gray-700 shadow-color-primary-light hover:bg-gray-50 hover:text-color-primary dark:border-gray-700 dark:bg-color-primary dark:text-color-primary-light dark:hover:bg-white/[0.03] dark:hover:text-gray-200">
                   <svg
-                    className="fill-current"
+                    className="fill-current text-app-theme"
                     width="20"
                     height="20"
                     viewBox="0 0 20 20"
@@ -241,9 +241,9 @@ export default function UserMetaCard() {
                 </a>
                 <a 
                   href={`${userData?.linkedin  || '#'}`} target="_blank"
-                  rel="noreferrer" className="flex h-11 w-11 items-center justify-center gap-2 rounded-full border border-gray-300 bg-white text-sm font-medium text-gray-700 shadow-theme-xs hover:bg-gray-50 hover:text-gray-800 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-white/[0.03] dark:hover:text-gray-200">
+                  rel="noreferrer" className="flex h-11 w-11 items-center justify-center gap-2 rounded-full border border-gray-300 bg-white text-sm font-medium text-gray-700 shadow-color-primary-light hover:bg-gray-50 hover:text-color-primary dark:border-gray-700 dark:bg-color-primary dark:text-color-primary-light dark:hover:bg-white/[0.03] dark:hover:text-gray-200">
                   <svg
-                    className="fill-current"
+                    className="fill-current text-app-theme"
                     width="20"
                     height="20"
                     viewBox="0 0 20 20"
@@ -258,9 +258,9 @@ export default function UserMetaCard() {
                 </a>
                 <a 
                   href={`${userData?.instagram  || '#'}`} target="_blank"
-                  rel="noreferrer" className="flex h-11 w-11 items-center justify-center gap-2 rounded-full border border-gray-300 bg-white text-sm font-medium text-gray-700 shadow-theme-xs hover:bg-gray-50 hover:text-gray-800 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-white/[0.03] dark:hover:text-gray-200">
+                  rel="noreferrer" className="flex h-11 w-11 items-center justify-center gap-2 rounded-full border border-gray-300 bg-white text-sm font-medium text-gray-700 shadow-color-primary-light hover:bg-gray-50 hover:text-color-primary dark:border-gray-700 dark:bg-color-primary dark:text-color-primary-light dark:hover:bg-white/[0.03] dark:hover:text-gray-200">
                   <svg
-                    className="fill-current"
+                    className="fill-current text-app-theme"
                     width="20"
                     height="20"
                     viewBox="0 0 20 20"
@@ -277,10 +277,10 @@ export default function UserMetaCard() {
             </div>
             <button
               onClick={openModal}
-              className="flex w-full items-center justify-center gap-2 rounded-full border border-gray-300 bg-white px-4 py-3 text-sm font-medium text-gray-700 shadow-theme-xs hover:bg-gray-50 hover:text-gray-800 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-white/[0.03] dark:hover:text-gray-200 lg:inline-flex lg:w-auto"
+              className="flex w-full items-center justify-center gap-2 rounded-full border border-gray-300 bg-white px-4 py-3 text-sm font-medium text-app-theme shadow-color-primary-light hover:bg-gray-50 hover:text-color-primary dark:border-gray-700 dark:bg-color-primary dark:text-color-primary-light dark:hover:bg-white/[0.03] dark:hover:text-gray-200 lg:inline-flex lg:w-auto"
             >
               <svg
-                className="fill-current"
+                className="fill-current text-app-theme"
                 width="18"
                 height="18"
                 viewBox="0 0 18 18"
@@ -303,10 +303,10 @@ export default function UserMetaCard() {
       <Modal isOpen={isOpen} onClose={closeModal} className="max-w-[700px] m-4">
         <div className="no-scrollbar relative w-full max-w-[700px] overflow-y-auto rounded-3xl bg-white p-4 dark:bg-gray-900 lg:p-11">
           <div className="px-2 pr-14">
-            <h4 className="mb-2 text-2xl font-semibold text-gray-800 dark:text-white/90">
+            <h4 className="mb-2 text-2xl font-semibold text-color-primary dark:text-white/90">
               Edit Profile
             </h4>
-            <p className="mb-6 text-sm text-gray-500 dark:text-gray-400 lg:mb-7">
+            <p className="mb-6 text-sm text-color-primary-light dark:text-color-primary-light lg:mb-7">
               Update your details to keep your profile up-to-date.
             </p>
           </div>
@@ -315,7 +315,7 @@ export default function UserMetaCard() {
               <Form className="flex flex-col sm:mt-2" >
                 <div className="custom-scrollbar h-[260px] overflow-y-auto px-2 pb-3">
                   <div>
-                    <h5 className="mb-5 text-lg font-medium text-gray-800 dark:text-white/90 lg:mb-6">
+                    <h5 className="mb-5 text-lg font-medium text-color-primary dark:text-white/90 lg:mb-6">
                       Social Links
                     </h5>
                     <div className="grid grid-cols-1 gap-x-6 gap-y-5 lg:grid-cols-2">
@@ -325,7 +325,7 @@ export default function UserMetaCard() {
                     </div>
                   </div>
                   <div className="mt-7">
-                    <h5 className="mb-5 text-lg font-medium text-gray-800 dark:text-white/90 lg:mb-6">
+                    <h5 className="mb-5 text-lg font-medium text-color-primary dark:text-white/90 lg:mb-6">
                       Personal Information
                     </h5>
                     <div className="grid grid-cols-1 gap-x-6 gap-y-5 lg:grid-cols-2">
@@ -334,7 +334,7 @@ export default function UserMetaCard() {
                       ))}
                     </div>
                     <div className="mt-7">
-                      <h5 className="mb-5 text-lg font-medium text-gray-800 dark:text-white/90 lg:mb-6">
+                      <h5 className="mb-5 text-lg font-medium text-color-primary dark:text-white/90 lg:mb-6">
                         Address
                       </h5>
                       <div className="grid grid-cols-1 gap-x-6 gap-y-5 lg:grid-cols-2">

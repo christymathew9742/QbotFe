@@ -198,7 +198,7 @@ export const FieldConfig: SectionConfig[] = [
             },
             {
                 name: "taxId",
-                label: "TAX ID",
+                label: "House No",
                 type: "text",
                 style: customInputStyles,
                 ...defaultFieldConfig,

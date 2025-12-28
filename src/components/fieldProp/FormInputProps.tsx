@@ -92,7 +92,7 @@ const FormInputProps: React.FC<FieldPropComponentProps> = ({ Config }) => {
                 return (
                     <div className="mb-4">
                         {labelTop && (
-                        <label htmlFor={'id'} className="block mb-2 pt-0 text-sm font-medium text-gray-900 dark:text-white">
+                        <label htmlFor={'id'} className="block mb-2 pt-0 text-sm font-medium color-primary dark:text-white">
                             {labelTop}
                             {toolTip && (
                             <span
@@ -112,7 +112,7 @@ const FormInputProps: React.FC<FieldPropComponentProps> = ({ Config }) => {
                 return (
                     <div className="mb-4">
                         {labelTop && (
-                        <label htmlFor={'id'} className="block mb-2 pt-0 text-sm font-medium text-gray-900 dark:text-white">
+                        <label htmlFor={'id'} className="block mb-2 pt-0 text-sm font-medium color-primary dark:text-white">
                             {labelTop}
                             {toolTip && (
                             <span
@@ -157,7 +157,7 @@ const FormInputProps: React.FC<FieldPropComponentProps> = ({ Config }) => {
                 return (
                     <div>
                         {labelTop && (
-                        <label htmlFor={'id'} className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
+                        <label htmlFor={'id'} className="block mb-2 text-sm font-medium color-primary dark:text-white">
                             {labelTop}
                             {toolTip && (
                             <span

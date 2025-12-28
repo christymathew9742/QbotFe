@@ -283,9 +283,9 @@ const FileUploadPanel: React.FC<FileUploadPanelProps> = ({
                 sx={{ "& .MuiDialog-paper": { width: "100%", height: "1000px", borderRadius: "10px" } }}
             >
                 <div className="flex py-1 px-4 items-center justify-between w-full">
-                    <div className="text-lg font-medium text-gray-800 dark:text-dark-text">Upload {type}</div>
+                    <div className="text-lg font-medium text-color-primary dark:text-dark-text">Upload {type}</div>
                     <CloseFullscreenIcon
-                        className="cursor-pointer mt-2 !text-lg text-gray-400 dark:text-dark-text hover:scale-110 transition-transform duration-200 font-light"
+                        className="cursor-pointer mt-2 !text-lg text-color-primary-light dark:text-dark-text hover:scale-110 transition-transform duration-200 font-light"
                         onClick={() => setOpen(false)}
                     />
                 </div>
@@ -350,7 +350,7 @@ const FileUploadPanel: React.FC<FileUploadPanelProps> = ({
                             </div>
                         ) : (
                             <div className="flex items-center justify-center h-[300px]">
-                                <p className="text-2xl font-extralight text-center text-gray-500 dark:text-dark-text">{type} not found!</p>
+                                <p className="text-2xl font-extralight text-center text-color-primary-light dark:text-dark-text">{type} not found!</p>
                             </div>
                         )}
                     </div>

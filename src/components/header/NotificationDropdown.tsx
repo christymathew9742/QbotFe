@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useCallback, useEffect, useMemo, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { Dropdown } from "../ui/dropdown/Dropdown";
 import { DropdownItem } from "../ui/dropdown/DropdownItem";
 import { CircularProgress, Skeleton } from "@mui/material";
@@ -8,16 +8,18 @@ import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch } from "@/redux/store";
 import { baseURL } from "@/utils/url";
 import { useRouter } from "next/navigation";
-import { 
-  getNotificationsSelector 
+import NotificationsActiveIcon from '@mui/icons-material/NotificationsActive';
+import NotificationsOffIcon from '@mui/icons-material/NotificationsOff';
+import {
+  getNotificationsSelector
 } from "@/redux/reducers/notification/selectors";
-import { 
-  fetchNotificationsRequest, 
-  webSocketConnected, 
-  updateNotificationsRequest 
+import {
+  fetchNotificationsRequest,
+  webSocketConnected,
+  updateNotificationsRequest
 } from "@/redux/reducers/notification/actions";
 import { getUserSelector } from "@/redux/reducers/user/selectors";
-import {formatStringDate}   from "@/utils/utils";
+import { formatStringDate } from "@/utils/utils";
 
 export default function NotificationDropdown() {
   const [isOpen, setIsOpen] = useState(false);
@@ -37,7 +39,7 @@ export default function NotificationDropdown() {
     socket.onerror = (event: any) => event.message && console.error("WebSocket Error:", event.message);
     socket.onmessage = (event) => {
       const data = JSON.parse(event?.data);
-      if(userData?._id === data?.userId) {
+      if (userData?._id === data?.userId) {
         dispatch(fetchNotificationsRequest({ showAll }));
       }
     };
@@ -45,13 +47,13 @@ export default function NotificationDropdown() {
     return () => socket.close();
   }, [dispatch, showAll, userData, isOpen]);
 
-  const handleNotificationClick = (id: string, appointmentId:string) => {
+  const handleNotificationClick = (id: string, appointmentId: string) => {
     dispatch(updateNotificationsRequest({ id, isRead: true }));
     router.push(`/appointment-details?appointmentId=${appointmentId}`);
-    setTimeout(async() => {
-        setIsOpen(false);
-        await dispatch(fetchNotificationsRequest({ showAll }));
-        setShowAll(false);
+    setTimeout(async () => {
+      setIsOpen(false);
+      await dispatch(fetchNotificationsRequest({ showAll }));
+      setShowAll(false);
     }, 1000);
   };
 
@@ -74,94 +76,110 @@ export default function NotificationDropdown() {
   }, [dispatch, isOpen, showAll]);
 
   return (
-    <div className="relative">
-      {!userData  ? (
+    <div className="relative z-50">
+      {!userData ? (
         <Skeleton
           animation="wave"
           variant="circular"
-          width={45}
-          height={45}
-          className="dark:!border-gray-700 dark:!bg-gray-800"
+          width={30}
+          height={30}
+          className="dark:!border-gray-700 dark:!bg-color-primary"
         />
       ) : (
         <button
           onClick={handleClose}
-          className="relative dropdown-toggle flex items-center justify-center text-gray-500 transition-colors bg-white border border-gray-200 rounded-full hover:text-gray-700 h-11 w-11 hover:bg-gray-100 dark:border-gray-800 dark:bg-gray-900 dark:text-gray-400 dark:hover:bg-gray-800 dark:hover:text-white"
+          className={`relative flex items-center justify-center text-color-primary  border-2 border-color-primary-light transition-all duration-200 rounded-full h-8 w-8
+            ${isOpen ?  'dark:bg-color-primary dark:text-white' : 'bg-white text-color-primary-light dark:border-color-primary dark:bg-gray-900 dark:text-color-primary-light dark:hover:bg-color-primary dark:hover:text-white'}
+          `}
         >
           {unreadCount > 0 && (
-            <span className={`absolute text-xxs !min-w-[18px] px-1 py-0 -top-1  -right-2 rounded-full font-medium text-center bg-orange-500 text-white`}>
+            <span className="absolute flex items-center justify-center min-w-[18px] h-[18px] px-1 -top-1 -right-1 rounded-full text-[10px] font-bold bg-red-500 text-white shadow-sm ring-2 ring-white dark:ring-gray-900">
               {unreadCount > 99 ? "99+" : unreadCount}
             </span>
           )}
-          <svg className="fill-current" width="20" height="20" viewBox="0 0 20 20">
+          <svg className="fill-current" width="20" height="20" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
             <path
               fillRule="evenodd"
-              clipRule="evenodd"
-              d="M10.75 2.29248C10.75 1.87827 10.4143 1.54248 10 1.54248C9.58583 1.54248 9.25004 1.87827 9.25004 2.29248V2.83613C6.08266 3.20733 3.62504 5.9004 3.62504 9.16748V14.4591H3.33337C2.91916 14.4591 2.58337 14.7949 2.58337 15.2091C2.58337 15.6234 2.91916 15.9591 3.33337 15.9591H16.6667C17.0809 15.9591 17.4167 15.6234 17.4167 15.2091C17.4167 14.7949 17.0809 14.4591 16.6667 14.4591H16.375V9.16748C16.375 5.9004 13.9174 3.20733 10.75 2.83613V2.29248ZM14.875 14.4591V9.16748C14.875 6.47509 12.6924 4.29248 10 4.29248C7.30765 4.29248 5.12504 6.47509 5.12504 9.16748V14.4591H14.875ZM8.00004 17.7085C8.00004 18.1228 8.33583 18.4585 8.75004 18.4585H11.25C11.6643 18.4585 12 18.1228 12 17.7085C12 17.2943 11.6643 16.9585 11.25 16.9585H8.75004C8.33583 16.9585 8.00004 17.2943 8.00004 17.7085Z"
+              clipRule="evenodd" 
+              d="M10 2C10.75 2 11.5 2.5 11.5 3.2V3.5C14.3 4.1 16.5 6.5 16.5 9.5V14H17.5C17.9 14 18.2 14.3 18.2 14.7C18.2 15.1 17.9 15.4 17.5 15.4H2.5C2.1 15.4 1.8 15.1 1.8 14.7C1.8 14.3 2.1 14 2.5 14H3.5V9.5C3.5 6.5 5.7 4.1 8.5 3.5V3.2C8.5 2.5 9.25 2 10 2ZM8 17C8 18.1 8.9 19 10 19C11.1 19 12 18.1 12 17H8Z"
               fill="currentColor"
             />
           </svg>
         </button>
       )}
+
       <Dropdown
         isOpen={isOpen}
         onClose={handleClose}
-        className={`absolute -right-[240px] mt-[4px] flex flex-col rounded-2xl border border-gray-200 bg-white p-3 shadow-theme-lg dark:border-gray-800 dark:bg-gray-dark sm:w-[361px] lg:right-0 ${
-          notifications.length ? "h-[480px] w-[300px]" : "h-[200px] w-[300px]"
-        }`}
+        className={`absolute sm:right-0 mt-3 p-1 flex flex-col rounded-2xl bg-white dark:bg-gray-dark shadow-[0_10px_40px_-10px_rgba(0,0,0,0.15)] ring-1 ring-black/5 dark:ring-white/10 sm:w-[380px] transition-all transform origin-top-right z-50
+        ${notifications.length ? "h-auto max-h-[85vh]" : "h-auto"}`}
       >
-        <div className="flex items-center justify-between pb-3 mb-3 border-b border-gray-100 dark:border-gray-700">
-          <h5 className="text-lg font-semibold text-gray-800 dark:text-gray-200">Notifications</h5>
+        <div className="flex items-center justify-between px-4 py-3 border-b border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-dark sticky top-0 z-10">
+          <h5 className="text-[17px] font-bold text-color-primary-light dark:text-gray-100">Notifications</h5>
         </div>
-        {!notifications.length ? (
-          <div className="w-full text-center col-span-3 flex justify-center">
-            <span className="text-center py-10 text-gray-500">
-              No Notifications Found!
-            </span>
-          </div>
-        ) : (
-          <>
-            <ul className="flex flex-col h-auto overflow-y-auto custom-scrollbar">
+        <div className="flex-1 overflow-y-auto custom-scrollbar">
+          {!notifications.length ? (
+            <div className="flex flex-col items-center justify-center py-12">
+               <div className="bg-gray-50 dark:bg-white/5 rounded-full p-4 mb-3">
+                  <NotificationsOffIcon className="text-color-primary-light!" />
+               </div>
+              <span className="text-sm font-medium text-color-primary-light dark:text-gray-400">
+                No notifications yet
+              </span>
+            </div>
+          ) : (
+            <ul className="flex flex-col">
               {notifications.map((notif: any) => (
-                <li key={notif._id} className={!notif?.isRead ? "bg-notify" : ""}>
+                <li key={notif._id} className="relative group">
                   <DropdownItem
                     onItemClick={() =>
                       handleNotificationClick(notif?._id, notif?.appointmentId)
                     }
-                    className="flex border-b border-gray-100 hover:bg-gray-100 dark:border-gray-800 dark:hover:bg-white/5"
+                    className={`flex items-start w-full px-4 py-3 transition-colors duration-200 border-b border-gray-50 dark:border-gray-800 
+                      ${!notif?.isRead ? "bg-notify dark:bg-blue-900/10" : "hover:bg-gray-50 dark:hover:bg-white/5"}`}
                   >
-                    <div className="w-1/10 flex items-start justify-center text-xs">📅</div>
-                    <div className="w-9/10 flex flex-col ml-1">
-                      <div className="text-gray-500 dark:text-white text-[12px] font-extralight">
-                        <span className="text-[13px] font-medium">
+                    <div className="flex-shrink-0 mr-3 mt-1">
+                      <div className="w-10 h-10 rounded-full bg-gray-100 group-hover:bg-gray-300 dark:bg-gray-700 flex items-center justify-center text-lg">
+                        {!notif?.isRead ? (
+                          <NotificationsActiveIcon className="text-color-primary-light!" />
+                        ) : (
+                          <NotificationsOffIcon className="text-color-primary-light!" />
+                        )}
+                      </div>
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <p className="text-xxm leading-snug text-color-primary dark:text-gray-200">
+                        <span className="font-semibold text-color-primary dark:text-white">
                           {notif?.profileName || "WhatsApp"}
                         </span>{" "}
                         has {notif?.type} an appointment for{" "}
-                        <span className="font-light">{notif?.chatBotTitle}</span>.
-                      </div>
-                      <div className="text-[11px] font-bold mt-2 text-gray-500 dark:text-white ">
+                        <span className="font-semibold text-color-primary dark:text-blue-300">{notif?.chatBotTitle}</span>
+                      </p>
+                      <p className="text-xxs font-medium text-color-primary-light mt-1">
                         {formatStringDate(notif?.createdAt)}
-                      </div>
+                      </p>
                     </div>
+                    {!notif?.isRead && (
+                       <span className="w-2.5 h-2.5 bg-color-primary rounded-full mt-2 ml-2 flex-shrink-0"></span>
+                    )}
                   </DropdownItem>
                 </li>
               ))}
             </ul>
-            {notifications.length >= 5 && (
-              <button
-                onClick={handleShowAllNotifi}
-                className="block px-4 py-2 mt-3 text-sm font-medium text-center text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-100 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-gray-700"
-              >
-                {load ? (
-                  <CircularProgress className="!w-4 !h-auto" />
-                ) : showAll ? (
-                  "Show Less"
-                ) : (
-                  "View All Notifications"
-                )}
-              </button>
-            )}
-          </>
+          )}
+        </div>
+        {notifications.length >= 5 && (
+          <div className="p-2 border-t border-gray-300 dark:border-gray-700 bg-gray-50 dark:bg-gray-800/50 rounded-b-2xl">
+            <button
+              onClick={handleShowAllNotifi}
+              className="flex items-center justify-center w-full px-4 py-2 text-sm font-semibold text-color-primary transition-colors rounded-lg dark:text-white dark:hover:bg-white/10"
+            >
+              {load ? (
+                <CircularProgress className="!w-4 !h-auto mr-2 text-color-primary" />
+              ) : null}
+              {showAll ? "Show Less" : "See all notifications"}
+            </button>
+          </div>
         )}
       </Dropdown>
     </div>

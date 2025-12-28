@@ -75,7 +75,7 @@ const SignUp: React.FC = () => {
       {({ isSubmitting }) => (
         <Form className="sm:mt-20" onClick={(e) => e.stopPropagation()}>
           <Grid container spacing={2} mb={2} className="w-full">
-            <h1 className="w-full text-center mb-4 text-[clamp(2.2rem,10vw,2.3rem)] font-semibold text-[#51A1FF]">
+            <h1 className="w-full text-center mb-4 text-[clamp(2.2rem,10vw,2.3rem)] font-semibold text-app-theme ">
               Sign Up
             </h1>
 
@@ -86,7 +86,7 @@ const SignUp: React.FC = () => {
               />
             </div>
 
-            <Divider textAlign="center" sx={{ color: 'primary.main', width: '100%', fontSize: '12px', my: 2 }}>
+            <Divider className="text-app-theme!" textAlign="center" sx={{ width: '100%', fontSize: '12px', my: 2 }}>
               Or
             </Divider>
 
@@ -99,7 +99,7 @@ const SignUp: React.FC = () => {
             <div className="mt-5 w-full">
               <button
                 type="submit"
-                className="flex items-center justify-center w-full bg-[#51A1FF] text-white py-2 px-6 rounded-md hover:opacity-90 transition-all"
+                className="flex items-center justify-center w-full bg-app-theme  text-white py-2 px-6 rounded-md hover:opacity-90 transition-all"
               >
                 {isSubmitting ? (
                   <>
@@ -111,9 +111,9 @@ const SignUp: React.FC = () => {
               </button>
             </div>
             <div className="mt-4 w-full">
-              <p className="text-center mb-4 text-[#51A1FF] font-medium text-[14px]">
+              <p className="text-center mb-4 text-app-theme font-medium text-[14px]">
                 Do you have an account?{" "}
-                <Link href="/signin" className="text-[#51A1FF] hover:opacity-90 dark:text-brand-400">
+                <Link href="/signin" className="text-app-theme  hover:opacity-90 dark:text-brand-400">
                   Sign In
                 </Link>
               </p>

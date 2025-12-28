@@ -3,6 +3,7 @@
 import { ApexOptions } from "apexcharts";
 import dynamic from "next/dynamic";
 import { Skeleton, Box } from "@mui/material";
+import { useTheme } from "@mui/material/styles";
 
 const ReactApexChart = dynamic(() => import("react-apexcharts"), {
   ssr: false,
@@ -27,13 +28,15 @@ export default function WhatsAppMonthlyAppointmentChart({
   monthlyAppointments,
   pendingStatus = true,
 }: WhatsAppMonthlySalesChartProps) {
+  const theme = useTheme();
+  const chartColor = theme.palette.mode === 'dark' ? "#465fff" : "#493e81d6";
   const seriesData = monthlyAppointments.map(item => item.count);
   const categories = monthlyAppointments.map(item => monthNames[item.month - 1]);
   const maxValue = Math.max(...seriesData, 10);
   const seriesPercent = seriesData.map(val => (val / maxValue) * 100);
 
   const options: ApexOptions = {
-    colors: ["#465fff"],
+    colors: [chartColor], 
     chart: {
       fontFamily: "Outfit, sans-serif",
       type: "bar",
@@ -82,11 +85,10 @@ export default function WhatsAppMonthlyAppointmentChart({
 
   const series = [{ name: "", data: seriesPercent }];
 
-  // Fixed skeleton bar heights
   const fixedSkeletonHeights = [60, 90, 120, 80, 150, 100, 130, 70, 110, 95, 140, 85];
 
   return (
-    <div className="overflow-hidden rounded-2xl border border-gray-200 bg-white px-5 pt-5 dark:border-gray-800 dark:bg-white/[0.03] sm:px-6 sm:pt-6 !min-h-[200px]">
+    <div className="overflow-hidden rounded-2xl border border-gray-200 bg-white px-5 pt-5 dark:border-color-primary dark:bg-white/[0.03] sm:px-6 sm:pt-6 !min-h-[200px]">
       <div className="flex items-center justify-between">
         {pendingStatus ? (
           <Skeleton
@@ -94,10 +96,10 @@ export default function WhatsAppMonthlyAppointmentChart({
             variant="text"
             width={180}
             height={28}
-            className="dark:!border-gray-700 dark:!bg-gray-800"
+            className="dark:!border-gray-700 dark:!bg-color-primary"
           />
         ) : (
-          <h3 className="text-lg font-semibold text-gray-800 dark:text-white/90">
+          <h3 className="text-lg font-semibold text-color-primary dark:text-white/90">
             Monthly Appointments
           </h3>
         )}
@@ -123,12 +125,10 @@ export default function WhatsAppMonthlyAppointmentChart({
                   width={25}
                   height={15}
                   sx={{ display: "block" }}
-                  className="dark:!border-gray-700 dark:!bg-gray-800"
+                  className="dark:!border-gray-700 dark:!bg-color-primary"
                 />
               ))}
             </Box>
-
-            {/* Bars skeleton */}
             <Box
               sx={{
                 display: "flex",
@@ -149,13 +149,11 @@ export default function WhatsAppMonthlyAppointmentChart({
                     display: "block",
                     boxSizing: "border-box",
                   }}
-                  className="dark:!border-gray-700 dark:!bg-gray-800"
+                  className="dark:!border-gray-700 dark:!bg-color-primary"
                 />
               ))}
             </Box>
           </Box>
-
-          {/* X-axis month labels skeleton */}
           <Box
             sx={{
               display: "flex",
@@ -172,7 +170,7 @@ export default function WhatsAppMonthlyAppointmentChart({
                 width={20}
                 height={15}
                 sx={{ display: "block" }}
-                className="dark:!border-gray-700 dark:!bg-gray-800"
+                className="dark:!border-gray-700 dark:!bg-color-primary"
               />
             ))}
           </Box>
@@ -190,5 +188,4 @@ export default function WhatsAppMonthlyAppointmentChart({
     </div>
   );
 }
-
 

@@ -15,7 +15,7 @@ const DefaultIcon = L.icon({
 
 interface Location {
     lat?: number; 
-    lng?: number;
+    lng?: number; 
     name?: string 
 }
 

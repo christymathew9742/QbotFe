@@ -70,7 +70,7 @@ const SignIn: React.FC = () => {
       {({ isSubmitting }) => (
         <Form className="sm:mt-20">
           <Grid container spacing={2} mb={2} className="w-full">
-              <h1 className="w-full text-center mb-4 text-[clamp(2.2rem,10vw,2.3rem)] font-semibold text-[#51A1FF]">
+              <h1 className="w-full text-center mb-4 text-[clamp(2.2rem,10vw,2.3rem)] font-semibold text-app-theme ">
                   Sign In
               </h1>
               {FieldConfig?.find(sec => sec.section === 'signin')?.fields.map((field) => (
@@ -81,7 +81,7 @@ const SignIn: React.FC = () => {
             <div className="float-left w-full">
               <Link
                 href="/reset-password"
-                className="text-[14px] text-[#51A1FF] hover:text-brand-600 dark:text-brand-400"
+                className="text-[14px] text-app-theme  hover:text-brand-600 dark:text-brand-400"
               >
                 Forgot password?
               </Link>
@@ -89,17 +89,17 @@ const SignIn: React.FC = () => {
             <div className="mt-5 w-full">
               <button 
                   type="submit" 
-                  className="flex items-center justify-center w-full  bg-[#51A1FF]  from-custom-blue-left to-custom-blue-right text-white py-2 px-6 rounded-md hover:opacity-90 transition-all"
+                  className="flex items-center justify-center w-full  bg-app-theme   from-custom-blue-left to-custom-blue-right text-white py-2 px-6 rounded-md hover:opacity-90 transition-all"
               >
                   {isSubmitting ? <>Sign In...  <CircularProgress size={20} className="mr-2 text-white"/></> : <>Sign In </>}
               </button>
             </div>
             <div className="mt-4 w-full">
-              <p className="text-center mb-4 text-[#51A1FF] font-medium text-[14px]">
+              <p className="text-center mb-4 text-app-theme  font-medium text-[14px]">
                 Don&apos;t have an account? {""}
                 <Link
                   href="/signup"
-                  className="text-[#51A1FF] hover:opacity-90 dark:text-brand-400"
+                  className="text-app-theme  hover:opacity-90 dark:text-brand-400"
                 >
                   Sign Up
                 </Link>

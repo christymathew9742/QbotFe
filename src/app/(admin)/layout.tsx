@@ -28,7 +28,9 @@ export default function AdminLayout({
         className={`flex-1 transition-all  duration-300 ease-in-out ${mainContentMargin}`}
       >
         <AppHeader />
-        <div className="p-4 mx-auto max-w-(--breakpoint-2xl) md:p-6">{children}</div>
+        <div className="p-4 mx-auto max-w-(--breakpoint-2xl) md:p-6 bg-app-bg-theme"> 
+          {children}
+        </div>
       </div>
     </div>
   );

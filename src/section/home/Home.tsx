@@ -11,6 +11,7 @@ import WhatsAppMonthlyAppointmentChart from "@/components/whatsApp/WhatsAppMonth
 import WhatsAppStatCard from "@/components/whatsApp/WhatsAppRecentAppointments";
 import { getWhatsAppGlobaleSelector, getAllPending } from "@/redux/reducers/user/selectors";
 import { fetchUserRequest, fetchWhatsRequest } from "@/redux/reducers/user/actions";
+import PromoCard from "@/components/whatsApp/PromoCard";
 
 interface Metrix {
     totalUniqueUsers?: number;
@@ -68,15 +69,17 @@ const Home = () => {
 
     return (
         <div className="grid grid-cols-12 gap-4 md:gap-6">
-            <div className="col-span-12 space-y-6 sm:col-span-7">
-                <WhatsAppMetrics metrics = {metricsData} />
-                <WhatsAppMonthlyAppointmentChart  monthlyAppointments={globalData?.monthlyAppointments || []}  pendingStatus={pendingStatus?.fetch || isPending} />
-            </div>
-            <div className="col-span-12 sm:col-span-5">
-                <WhatsAppAvgSentiment  globalAverageSentimentScores={globalData?.globalAverageSentimentScores || []} pendingStatus={pendingStatus?.fetch || isPending} />
-            </div>
-             <div className="col-span-12  w-full mt-4">
+            <div className="col-span-12  w-full mt-4">
                 <WhatsAppStatCard  appointmentStatus={appointmentStatus || {}} pendingStatus={pendingStatus?.fetch || isPending}/>
+            </div>
+            <div className="col-span-12 space-y-6 sm:col-span-6">
+                <PromoCard/>
+                {/* <WhatsAppMetrics metrics = {metricsData} /> */}
+                {/* <WhatsAppMonthlyAppointmentChart  monthlyAppointments={globalData?.monthlyAppointments || []}  pendingStatus={pendingStatus?.fetch || isPending} /> */}
+            </div>
+            <div className="col-span-12 sm:col-span-6">
+                <WhatsAppMetrics metrics = {metricsData} />
+                {/* <WhatsAppAvgSentiment  globalAverageSentimentScores={globalData?.globalAverageSentimentScores || []} pendingStatus={pendingStatus?.fetch || isPending} /> */}
             </div>
         </div>
     );
