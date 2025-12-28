@@ -3,6 +3,7 @@
 import { ApexOptions } from "apexcharts";
 import dynamic from "next/dynamic";
 import { Skeleton } from "@mui/material";
+import { useTheme } from "@mui/material/styles";
 
 const ReactApexChart = dynamic(() => import("react-apexcharts"), { ssr: false });
 
@@ -22,6 +23,11 @@ export default function WhatsAppAvgSentiment({
   globalAverageSentimentScores,
   pendingStatus,
 }: MonthlyTargetProps) {
+  const theme = useTheme();
+  const isDarkMode = theme.palette.mode === "dark";
+  const chartColor = isDarkMode ? "#465FFF" : "#493e81";
+  const chartTextColor = isDarkMode ? "#FFFFFF" : "#493e81";
+
   const ArcSkeleton = () => (
     <svg
       width="260"
@@ -58,14 +64,14 @@ export default function WhatsAppAvgSentiment({
 
   if (pendingStatus) {
     return (
-      <div className="rounded-2xl border border-gray-200 bg-gray-100 dark:border-gray-800 dark:bg-white/[0.03]">
+      <div className="rounded-2xl border border-gray-200 bg-gray-100 dark:border-color-primary dark:bg-white/[0.03]">
         <div className="px-5 pt-5 bg-white shadow-default rounded-2xl pb-11 dark:bg-gray-900 sm:px-6 sm:pt-6">
           <div className="flex justify-between">
             <Skeleton
               variant="text"
               width={180}
               height={28}
-              className={`dark:!border-gray-700 dark:!bg-gray-800`}
+              className={`dark:!border-gray-700 dark:!bg-color-primary`}
               animation="wave"
             />
           </div>
@@ -76,7 +82,7 @@ export default function WhatsAppAvgSentiment({
               variant="text"
               width={40}
               height={30}
-              className={`dark:!border-gray-700 dark:!bg-gray-800 !absolute !top-[98px]`}
+              className={`dark:!border-gray-700 dark:!bg-color-primary !absolute !top-[98px]`}
               animation="wave"
             />
           </div>
@@ -86,7 +92,7 @@ export default function WhatsAppAvgSentiment({
             width={"80%"}
             height={20}
             style={{ margin: "20px auto" }}
-            className={`dark:!border-gray-700 dark:!bg-gray-800 `}
+            className={`dark:!border-gray-700 dark:!bg-color-primary `}
             animation="wave"
           />
         </div>
@@ -98,14 +104,14 @@ export default function WhatsAppAvgSentiment({
                 variant="text"
                 width={60}
                 height={18}
-                className={`dark:!border-gray-700 dark:!bg-gray-800`}
+                className={`dark:!border-gray-700 dark:!bg-color-primary`}
                 animation="wave"
               />
               <Skeleton
                 variant="text"
                 width={40}
                 height={20}
-                className={`dark:!border-gray-700 dark:!bg-gray-800`}
+                className={`dark:!border-gray-700 dark:!bg-color-primary`}
                 animation="wave"
               />
             </div>
@@ -125,12 +131,12 @@ export default function WhatsAppAvgSentiment({
   const series = [finalScorePercentage || 0.0];
 
   const options: ApexOptions = {
-    colors: ["#465FFF"],
+    colors: [chartColor],
     chart: {
       fontFamily: "Outfit, sans-serif",
       type: "radialBar",
       sparkline: { enabled: true },
-      height: 300, // ✅ fixed height for all browsers
+      height: 300,
     },
     plotOptions: {
       radialBar: {
@@ -144,22 +150,22 @@ export default function WhatsAppAvgSentiment({
             fontSize: "36px",
             fontWeight: "600",
             offsetY: -40,
-            color: "#1D2939",
+            color: chartTextColor, 
             formatter: (val) => val + "%",
           },
         },
       },
     },
-    fill: { type: "solid", colors: ["#465FFF"] },
+    fill: { type: "solid", colors: [chartColor] }, 
     stroke: { lineCap: "round" },
     labels: ["Progress"],
   };
 
   return (
-    <div className="rounded-2xl border border-gray-200 bg-gray-100 dark:border-gray-800 dark:bg-white/[0.03]">
+    <div className="rounded-2xl border border-gray-200 bg-gray-100 dark:border-color-primary dark:bg-white/[0.03]">
       <div className="px-5 pt-5 bg-white shadow-default rounded-2xl pb-11 dark:bg-gray-900 sm:px-6 sm:pt-6">
         <div className="flex justify-between">
-          <h3 className="text-lg font-semibold text-gray-800 dark:text-white/90">
+          <h3 className="text-lg font-semibold text-color-primary dark:text-white/90">
             Engagement Overview
           </h3>
         </div>
@@ -169,44 +175,45 @@ export default function WhatsAppAvgSentiment({
             series={series}
             type="radialBar"
             height={300}
+            color={'#493e81'}
           />
         </div>
 
-        <p className="mx-auto mt-10 w-full max-w-[380px] text-center text-sm text-gray-500 sm:text-base">
+        <p className="mx-auto mt-10 w-full max-w-[380px] text-center text-sm text-color-primary-light sm:text-base">
           Today's Engagement Overview score of your WhatsApp users is{" "}
-          <span className="text-gray-900 dark:text-white">{avgFinalScore.toFixed(1)}</span>. Keep
+          <span className="color-primary dark:text-white">{avgFinalScore.toFixed(1)}</span>. Keep
           up the great engagement!
         </p>
       </div>
 
       <div className="flex items-center justify-center gap-5 px-6 py-3.5 sm:gap-8 sm:py-5">
         <div>
-          <p className="mb-1 text-center text-gray-500 text-theme-xs dark:text-gray-400 sm:text-sm">
+          <p className="mb-1 text-center  text-color-primary-light dark:text-color-primary-light sm:text-sm">
             Behaviour
           </p>
-          <p className="flex items-center justify-center gap-1 text-base font-semibold text-gray-800 dark:text-white/90 sm:text-lg">
+          <p className="flex items-center justify-center gap-1 text-base font-semibold text-app-theme dark:text-white/90 sm:text-lg">
             {behaviourScore || 0.0}
           </p>
         </div>
 
-        <div className="w-px bg-gray-200 h-7 dark:bg-gray-800"></div>
+        <div className="w-px bg-gray-200 h-7 dark:bg-color-primary"></div>
 
         <div>
-          <p className="mb-1 text-center text-gray-500 text-theme-xs dark:text-gray-400 sm:text-sm">
+          <p className="mb-1 text-center  text-color-primary-light dark:text-color-primary-light sm:text-sm">
             Sentiment
           </p>
-          <p className="flex items-center justify-center gap-1 text-base font-semibold text-gray-800 dark:text-white/90 sm:text-lg">
+          <p className="flex items-center justify-center gap-1 text-base font-semibold text-app-theme dark:text-white/90 sm:text-lg">
             {sentimentScore || 0.0}
           </p>
         </div>
 
-        <div className="w-px bg-gray-200 h-7 dark:bg-gray-800"></div>
+        <div className="w-px bg-gray-200 h-7 dark:bg-color-primary"></div>
 
         <div>
-          <p className="mb-1 text-center text-gray-500 text-theme-xs dark:text-gray-400 sm:text-sm">
+          <p className="mb-1 text-center  text-color-primary-light dark:text-color-primary-light sm:text-sm">
             Interaction
           </p>
-          <p className="flex items-center justify-center gap-1 text-base font-semibold text-gray-800 dark:text-white/90 sm:text-lg">
+          <p className="flex items-center justify-center gap-1 text-base font-semibold text-app-theme dark:text-white/90 sm:text-lg">
             {speedScore || 0.0}
           </p>
         </div>

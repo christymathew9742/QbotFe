@@ -20,7 +20,7 @@ export default function UserDropdown() {
   const dispatch = useDispatch<AppDispatch>();
   const currentUser = useSelector(getUserSelector);
   const userData = currentUser?.data;
-  const userProfileImage = userData?.profilepic?.fileUrl ? userData?.profilepic?.fileUrl :userData?.googleProfilePic;
+  const userProfileImage = userData?.profilepic?.fileUrl ? userData?.profilepic?.fileUrl : userData?.googleProfilePic;
 
   function toggleDropdown(e: React.MouseEvent<HTMLButtonElement, MouseEvent>) {
     e.stopPropagation();
@@ -30,7 +30,7 @@ export default function UserDropdown() {
   function closeDropdown() {
     setIsOpen(false);
   }
-  
+
   const authSignOut = useCallback(() => {
     setIsOpen(true);
     setTimeout(async () => {
@@ -41,58 +41,60 @@ export default function UserDropdown() {
 
   useEffect(() => {
     if (accessToken) dispatch(fetchUserRequest());
-  },[dispatch, accessToken]);
+  }, [dispatch, accessToken]);
 
   return (
-    <div className="relative">
-      {!userData ? 
-      (
+    <div className="relative z-50">
+      {!userData ? (
         <div className="flex items-start justify-between w-full">
-          <Skeleton animation="wave" variant="circular" width={45} height={45} className="dark:!border-gray-700 dark:!bg-gray-800" />
+          <Skeleton animation="wave" variant="circular" width={30} height={30} className="dark:!border-gray-700 dark:!bg-color-primary" />
         </div>
-      ):(
+      ) : (
         <button
-          onClick={toggleDropdown} 
-          className="flex relative group items-center text-gray-700 dark:text-gray-400 dropdown-toggle"
+          onClick={toggleDropdown}
+          className={`flex items-center justify-center transition-all duration-200 rounded-full border-2 border-color-primary-light
+            ${isOpen ? 'ring-2 ring-gray-200 dark:ring-gray-700' : 'dark:hover:border-gray-700'}
+          `}
         >
-          { userProfileImage ? (
+          {userProfileImage ? (
             <img
               src={userProfileImage}
               alt="user"
-              width={40}
-              height={40}
-              className="w-[40px] h-[40px] overflow-hidden rounded-full border border-gray-300"
+              width={28}
+              height={28}
+              className="w-7 h-7 overflow-hidden rounded-full object-cover shadow-sm"
             />
           ) : (
-            <NoProfileIcon width={44} height={44} />
+            <div className="p-0">
+               <NoProfileIcon width={30} height={30} />
+            </div>
           )}
         </button>
       )}
+      
       <Dropdown
         isOpen={isOpen}
         onClose={closeDropdown}
-        className="absolute right-0 mt-[17px] flex w-[260px] flex-col rounded-2xl border border-gray-200 bg-white p-3 shadow-theme-lg dark:border-gray-800 dark:bg-gray-dark"
+        className="absolute right-0 mt-3 flex w-[280px] flex-col rounded-2xl bg-white shadow-[0_10px_40px_-10px_rgba(0,0,0,0.15)] ring-1 ring-black/5 dark:ring-white/10 dark:bg-gray-dark overflow-hidden origin-top-right transition-all transform"
       >
-        <div>
-          <span className="block font-medium text-gray-700 text-theme-sm dark:text-gray-400">
+        <div className="px-5 py-4 border-b border-gray-100 dark:border-gray-700 bg-gray-50/50 dark:bg-white/5">
+          <span className="block text-sm font-bold text-color-primary dark:text-white truncate">
             {userData?.username}
           </span>
-          <span className="mt-0.5 block text-theme-xs text-gray-500 dark:text-gray-400">
+          <span className="block text-xs font-medium text-color-primary-light dark:text-gray-400 truncate mt-0.5">
             {userData?.email}
           </span>
         </div>
-        <ul className="flex flex-col gap-1 pt-4 pb-3 border-b border-gray-200 dark:border-gray-800">
+        <ul className="flex flex-col py-2">
           <li>
             <DropdownItem
               onItemClick={closeDropdown}
               tag="a"
               href="/profile"
-              className="flex items-center gap-3 px-3 py-2 font-medium text-gray-700 rounded-lg group text-theme-sm hover:bg-gray-100 hover:text-gray-700 dark:text-gray-400 dark:hover:bg-white/5 dark:hover:text-gray-300"
+              className="flex items-center gap-3.5 px-5 py-2.5 text-sm font-medium text-color-primary-light! transition-colors hover:bg-gray-50 dark:text-gray-200 dark:hover:bg-white/10 group"
             >
               <svg
-                className="fill-gray-500 group-hover:fill-gray-700 dark:fill-gray-400 dark:group-hover:fill-gray-300"
-                width="24"
-                height="24"
+                className="w-5 h-5 fill-app-theme transition-colors group-hover:fill-gray-700 dark:fill-gray-500 dark:group-hover:fill-gray-200"
                 viewBox="0 0 24 24"
                 fill="none"
                 xmlns="http://www.w3.org/2000/svg"
@@ -112,12 +114,10 @@ export default function UserDropdown() {
               onItemClick={closeDropdown}
               tag="a"
               href="/profile"
-              className="flex items-center gap-3 px-3 py-2 font-medium text-gray-700 rounded-lg group text-theme-sm hover:bg-gray-100 hover:text-gray-700 dark:text-gray-400 dark:hover:bg-white/5 dark:hover:text-gray-300"
+              className="flex items-center gap-3.5 px-5 py-2.5 text-sm font-medium text-color-primary-light! transition-colors hover:bg-gray-50 dark:text-gray-200 dark:hover:bg-white/10 group"
             >
               <svg
-                className="fill-gray-500 group-hover:fill-gray-700 dark:fill-gray-400 dark:group-hover:fill-gray-300"
-                width="24"
-                height="24"
+                className="w-5 h-5 fill-app-theme transition-colors group-hover:fill-gray-700 dark:fill-gray-500 dark:group-hover:fill-gray-200"
                 viewBox="0 0 24 24"
                 fill="none"
                 xmlns="http://www.w3.org/2000/svg"
@@ -133,27 +133,27 @@ export default function UserDropdown() {
             </DropdownItem>
           </li>
         </ul>
-        <button
-          onClick={authSignOut}
-          className="flex items-center gap-3 px-3 py-2 mt-3 font-medium text-gray-700 rounded-lg group text-theme-sm hover:bg-gray-100 hover:text-gray-700 dark:text-gray-400 dark:hover:bg-white/5 dark:hover:text-gray-300"
-        >
-          <svg
-            className="fill-gray-500 group-hover:fill-gray-700 dark:group-hover:fill-gray-300"
-            width="24"
-            height="24"
-            viewBox="0 0 24 24"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
+        <div className="p-2 border-t border-gray-100 dark:border-gray-700">
+          <button
+            onClick={authSignOut}
+            className="flex items-center w-full gap-3.5 px-4 py-2.5 text-sm font-medium text-color-primary-light rounded-lg transition-colors hover:bg-red-50 hover:text-red-600 dark:text-gray-200 dark:hover:bg-red-900/10 dark:hover:text-red-400 group"
           >
-            <path
-              fillRule="evenodd"
-              clipRule="evenodd"
-              d="M15.1007 19.247C14.6865 19.247 14.3507 18.9112 14.3507 18.497L14.3507 14.245H12.8507V18.497C12.8507 19.7396 13.8581 20.747 15.1007 20.747H18.5007C19.7434 20.747 20.7507 19.7396 20.7507 18.497L20.7507 5.49609C20.7507 4.25345 19.7433 3.24609 18.5007 3.24609H15.1007C13.8581 3.24609 12.8507 4.25345 12.8507 5.49609V9.74501L14.3507 9.74501V5.49609C14.3507 5.08188 14.6865 4.74609 15.1007 4.74609L18.5007 4.74609C18.9149 4.74609 19.2507 5.08188 19.2507 5.49609L19.2507 18.497C19.2507 18.9112 18.9149 19.247 18.5007 19.247H15.1007ZM3.25073 11.9984C3.25073 12.2144 3.34204 12.4091 3.48817 12.546L8.09483 17.1556C8.38763 17.4485 8.86251 17.4487 9.15549 17.1559C9.44848 16.8631 9.44863 16.3882 9.15583 16.0952L5.81116 12.7484L16.0007 12.7484C16.4149 12.7484 16.7507 12.4127 16.7507 11.9984C16.7507 11.5842 16.4149 11.2484 16.0007 11.2484L5.81528 11.2484L9.15585 7.90554C9.44864 7.61255 9.44847 7.13767 9.15547 6.84488C8.86248 6.55209 8.3876 6.55226 8.09481 6.84525L3.52309 11.4202C3.35673 11.5577 3.25073 11.7657 3.25073 11.9984Z"
-              fill=""
-            />
-          </svg>
-          Sign out
-        </button>
+            <svg
+              className="w-5 h-5 fill-app-theme transition-colors group-hover:fill-red-500 dark:fill-gray-500 dark:group-hover:fill-red-400"
+              viewBox="0 0 24 24"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                fillRule="evenodd"
+                clipRule="evenodd"
+                d="M15.1007 19.247C14.6865 19.247 14.3507 18.9112 14.3507 18.497L14.3507 14.245H12.8507V18.497C12.8507 19.7396 13.8581 20.747 15.1007 20.747H18.5007C19.7434 20.747 20.7507 19.7396 20.7507 18.497L20.7507 5.49609C20.7507 4.25345 19.7433 3.24609 18.5007 3.24609H15.1007C13.8581 3.24609 12.8507 4.25345 12.8507 5.49609V9.74501L14.3507 9.74501V5.49609C14.3507 5.08188 14.6865 4.74609 15.1007 4.74609L18.5007 4.74609C18.9149 4.74609 19.2507 5.08188 19.2507 5.49609L19.2507 18.497C19.2507 18.9112 18.9149 19.247 18.5007 19.247H15.1007ZM3.25073 11.9984C3.25073 12.2144 3.34204 12.4091 3.48817 12.546L8.09483 17.1556C8.38763 17.4485 8.86251 17.4487 9.15549 17.1559C9.44848 16.8631 9.44863 16.3882 9.15583 16.0952L5.81116 12.7484L16.0007 12.7484C16.4149 12.7484 16.7507 12.4127 16.7507 11.9984C16.7507 11.5842 16.4149 11.2484 16.0007 11.2484L5.81116 11.2484L9.15585 7.90554C9.44864 7.61255 9.44847 7.13767 9.15547 6.84488C8.86248 6.55209 8.3876 6.55226 8.09481 6.84525L3.52309 11.4202C3.35673 11.5577 3.25073 11.7657 3.25073 11.9984Z"
+                fill=""
+              />
+            </svg>
+            Sign out
+          </button>
+        </div>
       </Dropdown>
     </div>
   );

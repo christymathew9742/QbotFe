@@ -159,12 +159,12 @@ const ChatBot = () => {
     <div>
       <PageBreadcrumb pagePath="Chatbot" />
       <div className="space-y-6">
-        <div className="rounded-2xl border border-gray-200 bg-white dark:border-gray-800 dark:bg-white/[0.03]">
+        <div className="rounded-2xl border border-gray-200 bg-white dark:border-color-primary dark:bg-white/[0.03]">
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 items-center px-6 py-5">
-            <h3 className="text-base font-medium text-gray-800 dark:text-white/90">Manage Bot</h3>
+            <h3 className="text-base font-medium text-color-primary dark:text-white/90">Manage Bot</h3>
             <div className="relative">
               <span className="absolute -translate-y-1/2 left-4 top-1/2 pointer-events-none">
-                <SearchIcon className="!text-gray-500 dark:!text-amber-50" />
+                <SearchIcon className="!text-color-primary-light dark:!text-amber-50" />
               </span>
               <Input
                 type="text"
@@ -178,20 +178,19 @@ const ChatBot = () => {
               options={options}
               defaultValue={status || ""}
               onChange={handleStatusChange}
-              className="dark:bg-white/[0.02] text-gray-800 dark:!text-gray-100"
+              className="dark:bg-white/[0.02] dark:!text-gray-100"
             />
           </div>
-
-          <div className="p-4 border-t border-gray-100 dark:border-gray-800 sm:p-6">
+          <div className="p-4 border-t border-gray-100 dark:border-color-primary sm:p-6">
             <div className="mx-auto overflow-hidden rounded-xl border border-gray-200 bg-white dark:border-white/[0.05] dark:bg-white/[0.03]">
               <div className="max-w-full overflow-x-auto">
                 <Table>
                   <TableHeader className="border-b border-gray-100 dark:border-white/[0.05]">
                     <TableRow>
-                      <TableCell colSpan={2} isHeader className="px-5 py-3 text-start text-theme-xs text-gray-500 dark:text-gray-400 font-medium">Bot Name</TableCell>
-                      <TableCell colSpan={2} isHeader className="px-5 py-3 text-start text-theme-xs text-gray-500 dark:text-gray-400 font-medium">Updated Date</TableCell>
-                      <TableCell colSpan={2} isHeader className="px-5 py-3 text-start text-theme-xs text-gray-500 dark:text-gray-400 font-medium">Active</TableCell>
-                      <TableCell colSpan={2} isHeader className="px-5 py-3 text-start text-theme-xs text-gray-500 dark:text-gray-400 font-medium">Action</TableCell>
+                      <TableCell colSpan={2} isHeader className="px-5 py-3 text-start text-theme-xs text-color-primary-light dark:text-gray-400">Bot Name</TableCell>
+                      <TableCell colSpan={2} isHeader className="px-5 py-3 text-start text-theme-xs text-color-primary-light dark:text-gray-400">Updated Date</TableCell>
+                      <TableCell colSpan={2} isHeader className="px-5 py-3 text-start text-theme-xs text-color-primary-light dark:text-gray-400">Active</TableCell>
+                      <TableCell colSpan={2} isHeader className="px-5 py-3 text-start text-theme-xs text-color-primary-light dark:text-gray-400">Action</TableCell>
                     </TableRow>
                   </TableHeader>
                   <TableBody className="divide-y divide-gray-100 dark:divide-white/[0.05] w-full">
@@ -204,19 +203,19 @@ const ChatBot = () => {
                     ) : botData?.data?.length ? (
                       botData?.data?.map((bot: Bot) => (
                         <TableRow key={bot._id}>
-                          <TableCell colSpan={2} className="px-5 py-2 text-start font-light divide-gray-100 dark:text-white/90 text-theme-sm">{bot.title}</TableCell>
-                          <TableCell colSpan={2} className="px-5 py-2 text-start font-light divide-gray-100 dark:text-white/90 text-theme-sm">
+                          <TableCell colSpan={2} className="px-5 py-2 text-start font-light divide-gray-100 text-theme-sm dark:text-white/90 text-color-primary">{bot.title}</TableCell>
+                          <TableCell colSpan={2} className="px-5 py-2 text-start font-light divide-gray-100 text-theme-sm dark:text-white/90 text-color-primary">
                             {formatUpdatedDate(bot?.updatedAt)}
                           </TableCell>
-                          <TableCell colSpan={2} className="px-5 py-2 text-start font-light divide-gray-100 dark:text-white/90 text-theme-sm">
+                          <TableCell colSpan={2} className="px-5 py-2 text-start font-light divide-gray-100 dark:text-white/90 text-color-primary-light">
                             <Switch
                               label=""
-                              color="blue"
+                              color="theme"
                               checked={activeBots[bot._id]}
                               onChange={(checked: boolean) => handleSwitchChange(bot, checked)}
                             />
                           </TableCell>
-                          <TableCell colSpan={2} className="flex px-3 py-2 text-gray-500 text-theme-sm">
+                          <TableCell colSpan={2} className="flex px-3 py-2 text-color-primary-light text-color-primary-light">
                             <IconButton 
                               disabled={!activeBots[bot._id]}
                               className="w-[35px]"
@@ -226,8 +225,8 @@ const ChatBot = () => {
                                 className="-mr-2"
                               >
                                 <EditIcon
-                                  className={`text-gray-500 hover:text-gray-600 dark:hover:text-gray-400 text-xxs ${
-                                    !activeBots[bot._id] && "!text-gray-400 dark:!text-disable-dark"
+                                  className={`text-color-primary-light hover:text-gray-600 dark:hover:text-color-primary-light text-xxs ${
+                                    !activeBots[bot._id] && "!text-color-primary-light dark:!text-disable-dark"
                                   }`}
                                 />
                               </Link>
@@ -236,14 +235,14 @@ const ChatBot = () => {
                               onClick={() => handleDelete(bot)}
                               className="w-[35px]"
                             >
-                              <DeleteIcon className="text-gray-500 hover:text-gray-600 dark:hover:text-gray-400 text-xxs" />
+                              <DeleteIcon className="text-color-primary-light hover:text-gray-600 dark:hover:text-color-primary-light text-xxs" />
                             </IconButton>
                           </TableCell>
                         </TableRow>
                       ))
                     ) : (
                       <TableRow className="w-full">
-                        <TableCell colSpan={12} className="text-center py-10 text-gray-500">
+                        <TableCell colSpan={12} className="text-center py-10 text-color-primary-light">
                           No Bots Found!
                         </TableCell>
                       </TableRow>

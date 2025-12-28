@@ -28,7 +28,7 @@ const PageBreadcrumb: React.FC<BreadcrumbProps> = ({ pagePath = "" }) => {
           <li>
             <Link
               href="/"
-              className="inline-flex items-center gap-1.1 text-gray-500 hover:text-gray-800 dark:hover:text-gray-200"
+              className="inline-flex items-center gap-1.1 text-color-primary-light hover:text-gray-800 dark:hover:text-gray-200"
             >
               Home
               <svg
@@ -59,7 +59,7 @@ const PageBreadcrumb: React.FC<BreadcrumbProps> = ({ pagePath = "" }) => {
                 {!isLast ? (
                   <Link
                     href={href}
-                    className={`inline-flex items-center gap-1.1 text-gray-500 hover:text-gray-800 dark:hover:text-gray-200`}
+                    className={`inline-flex items-center gap-1.1 text-color-primary-light hover:text-gray-800 dark:hover:text-gray-200`}
                   >
                     {label}
                     <svg
@@ -83,8 +83,8 @@ const PageBreadcrumb: React.FC<BreadcrumbProps> = ({ pagePath = "" }) => {
                   <span
                     className={`font-semibold ${
                       isActive
-                        ? "text-gray-500"
-                        : "text-gray-500"
+                        ? "text-color-primary-light"
+                        : "text-color-primary-light"
                     }`}
                   >
                     {label}

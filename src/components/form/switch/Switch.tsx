@@ -6,7 +6,7 @@ interface SwitchProps {
   disabled?: boolean;
   checked?: boolean;
   onChange?: (checked: boolean) => void;
-  color?: "blue" | "gray"; // Added prop to toggle color theme
+  color?: "theme" | "gray"; // Added prop to toggle color theme
 }
 
 const Switch: React.FC<SwitchProps> = ({
@@ -24,11 +24,11 @@ const Switch: React.FC<SwitchProps> = ({
   };
 
   const switchColors =
-    color === "blue"
+    color === "theme"
       ? {
           background: checked
-          ? "bg-custom-them-clr dark:custom-them-clr"
-          : "bg-gray-200 dark:bg-gray-400",
+          ? "bg-color-primary dark:bg-color-primary"
+          : "bg-gray-200 dark:bg-color-primary-light",
           knob: checked ? "translate-x-full bg-white" : "translate-x-0 bg-white",
           
         }
@@ -42,7 +42,7 @@ const Switch: React.FC<SwitchProps> = ({
   return (
     <label
       className={`flex cursor-pointer select-none items-center gap-3 text-sm font-medium w-[44px] ${
-        disabled ? "text-gray-400" : "text-gray-600 dark:text-gray-400"
+        disabled ? "text-color-primary-light" : "text-gray-600 dark:text-color-primary-light"
       }`}
       onClick={handleToggle}
     >
@@ -55,7 +55,7 @@ const Switch: React.FC<SwitchProps> = ({
           }`}
         ></div>
         <div
-          className={`absolute left-0.5 top-0.5 h-5 w-5 rounded-full shadow-theme-sm duration-150 ease-linear transform ${switchColors.knob}`}
+          className={`absolute left-0.5 top-0.5 h-5 w-5 rounded-full shadow-color-primary-light duration-150 ease-linear transform ${switchColors.knob}`}
         ></div>
       </div>
       {label}

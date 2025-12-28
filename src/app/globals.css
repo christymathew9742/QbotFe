@@ -194,12 +194,19 @@
   --color-dark-field:#20262a;
   --color-disable-dark:#343b45;
   --color-switch-dark:#808493;
-  --color-card-bg: #465fff70;
+  --color-app-theme-dark: #465fff70;
+  --color-app-theme: #493e81d6;
+  --color-app-bg-theme:#493e8105;
+  --color-color-primary:#493e81;
+  --color-sidebar-theme:#493e81;
+  --color-color-primary-light:#493e81b8;
+  /* --color-logo-bg:#e9e2f8; */
+  --color-theme-border:#493e811f;
   --color-status-bg-active:#0080006b;
   --color-status-bg-cancel:#ff00006b;
   --color-status-bg-reactive:#ff8c00c4;
   --color-status-bg-completed:#2ac3b9;
-  --color-notify: #14acff17;
+  --color-notify: #493e8138;
   --color-custom-border: #6f6f6f24;
   --color-node-pop: #e4e7ec87;
   /* --color-dark-border-node: #29909fab; */
@@ -218,6 +225,7 @@
   --text-xl: 1.25rem;
   --text-2xl: 1.5rem;
   --text-3xl: 1.875rem;
+  --text-1xl:2rem;
   --text-4xl: 2.25rem;
   --text-5xl: 3rem;
   --text-6xl: 4rem;
@@ -636,7 +644,9 @@ html.dark .react-datepicker__time-list::-webkit-scrollbar-track {
 .MuiTablePagination-actions button.Mui-disabled svg {
   @apply dark:!text-disable-dark;
 }
-
+.apexcharts-datalabel-value {
+  @apply text-app-theme!;
+}
 /* Global input styles for MUI TextFields */
 .custom-input .MuiOutlinedInput-root {
   font-size: 12px;
@@ -704,7 +714,7 @@ html.dark .react-datepicker__time-list::-webkit-scrollbar-track {
 }
 
 .apexcharts-text {
-  @apply fill-gray-700! dark:fill-gray-400!;
+  @apply dark:fill-gray-400!;
 }
 
 .apexcharts-tooltip.apexcharts-theme-light {

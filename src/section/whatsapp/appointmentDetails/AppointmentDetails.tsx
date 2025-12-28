@@ -138,14 +138,14 @@
 //             <PageBreadcrumb pagePath="Appointments, Details" />
 //             <div className="space-y-6">
 //                 <div className="flex flex-col sm:flex-row gap-4">
-//                     <div className="rounded-2xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-white/[0.03] w-full sm:w-[40%]">
+//                     <div className="rounded-2xl border border-gray-200 dark:border-color-primary bg-white dark:bg-white/[0.03] w-full sm:w-[40%]">
 //                         <div className="h-full rounded-xl p-1">
 //                             <div className="px-4 py-2 w-full">
-//                                 <h3 className="text-lg font-semibold text-gray-800 dark:text-white w-full">
+//                                 <h3 className="text-lg font-semibold text-color-primary dark:text-white w-full">
 //                                     Details
 //                                 </h3>
 //                             </div>
-//                             <div className="p-4 border-t dark:border-gray-800 sm:p-6 overflow-y-auto custom-scrollbar h-[350px]">
+//                             <div className="p-4 border-t dark:border-color-primary sm:p-6 overflow-y-auto custom-scrollbar h-[350px]">
 //                                 <div className="w-full flex justify-between items-center mb-4">
 //                                     <span className="text-sm font-light dark:text-white">
 //                                         📅 {appointment?.flowTitle || "-"}
@@ -173,10 +173,10 @@
 //                                                             key={`${i}-${j}`}
 //                                                         >
 //                                                             <div className="p-2">
-//                                                                 <p className="text-sm text-gray-400 dark:text-gray-400 mb-2 ml-2">
+//                                                                 <p className="text-sm text-color-primary-light dark:text-color-primary-light mb-2 ml-2">
 //                                                                     {formatString(pKey)} :
 //                                                                 </p>
-//                                                                 <p className="text-base font-semibold text-gray-900 dark:text-white ml-2">
+//                                                                 <p className="text-base font-semibold color-primary dark:text-white ml-2">
 //                                                                     {String(pVal)}
 //                                                                 </p>
 //                                                             </div>
@@ -192,10 +192,10 @@
 //                                                 className={`${index > 0 ? "border-t" : ""} dark:border-gray-700 cursor-text`}
 //                                             >
 //                                                 <div className="p-2">
-//                                                 <p className="text-sm text-gray-400 dark:text-gray-400 mb-2 ml-2">
+//                                                 <p className="text-sm text-color-primary-light dark:text-color-primary-light mb-2 ml-2">
 //                                                     {formatString(key)} :
 //                                                 </p>
-//                                                 <p className="text-base font-semibold text-gray-900 dark:text-white ml-2">
+//                                                 <p className="text-base font-semibold color-primary dark:text-white ml-2">
 //                                                     {getValidUrlOrValue(value)}
 //                                                 </p>
 //                                                 </div>
@@ -204,27 +204,27 @@
 //                                     })}
 //                                 </div>
 //                                 <div className="w-full mt-4">
-//                                     <Label className="text-sm text-gray-400 dark:text-gray-400 mb-2" htmlFor="status-select">Update Status :</Label>
+//                                     <Label className="text-sm text-color-primary-light dark:text-color-primary-light mb-2" htmlFor="status-select">Update Status :</Label>
 //                                     <Select
 //                                         options={options}
 //                                         defaultValue={value || appointment?.status || ""}
 //                                         placeholder="Update Status"
 //                                         onChange={handleStatusChange}
-//                                         className="dark:bg-white/[0.02] text-gray-800 dark:!text-gray-100"
+//                                         className="dark:bg-white/[0.02] text-color-primary dark:!text-gray-100"
 //                                     />
 //                                 </div>
 //                             </div>
-//                             <div className="grid grid-cols-1 gap-2  px-4 py-2 border-t dark:border-gray-800 "></div>
+//                             <div className="grid grid-cols-1 gap-2  px-4 py-2 border-t dark:border-color-primary "></div>
 //                         </div>
 //                     </div>
-//                     <div className="rounded-2xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-white/[0.03] w-full sm:w-[60%]">
+//                     <div className="rounded-2xl border border-gray-200 dark:border-color-primary bg-white dark:bg-white/[0.03] w-full sm:w-[60%]">
 //                         <div className="h-full rounded-xl p-1">
 //                             <div className="grid grid-cols-1 sm:grid-cols-4 gap-2 items-center px-4 py-2">
-//                                 <h3 className="text-lg font-semibold text-gray-800 dark:text-white">
+//                                 <h3 className="text-lg font-semibold text-color-primary dark:text-white">
 //                                 Recent chats
 //                                 </h3>
 //                             </div>
-//                             <div className="p-4 border-t dark:border-gray-800 sm:p-6 overflow-y-auto custom-scrollbar h-[350px] space-y-4">
+//                             <div className="p-4 border-t dark:border-color-primary sm:p-6 overflow-y-auto custom-scrollbar h-[350px] space-y-4">
 //                                 <div className="w-full flex justify-center">
 //                                     <span className="text-xxs mb-2 rounded-[6px] font-light block w-auto text-center bg-[#8c97b8] text-white dark:bg-white/30 px-2 py-1">
 //                                         {formatString(value || appointment?.status || "")}{" "}
@@ -273,7 +273,7 @@
 //                                     );
 //                                 })}
 //                             </div>
-//                             <div className="grid grid-cols-1 gap-2  px-4 py-2 border-t dark:border-gray-800 "></div>
+//                             <div className="grid grid-cols-1 gap-2  px-4 py-2 border-t dark:border-color-primary "></div>
 //                         </div>
 //                     </div>
 //                 </div>
@@ -398,12 +398,12 @@ const AppointmentDetails: React.FC = () => {
             <PageBreadcrumb pagePath="Appointments, Details" />
             <div className="space-y-6">
                 <div className="flex flex-col sm:flex-row gap-4">
-                    <div className="rounded-2xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-white/[0.03] w-full sm:w-[40%]">
+                    <div className="rounded-2xl border border-gray-200 dark:border-color-primary bg-white dark:bg-white/[0.03] w-full sm:w-[40%]">
                         <div className="h-full rounded-xl p-1">
                             <div className="px-4 py-2 w-full">
-                                <h3 className="text-lg font-semibold text-gray-800 dark:text-white w-full">Details</h3>
+                                <h3 className="text-lg font-semibold text-color-primary dark:text-white w-full">Details</h3>
                             </div>
-                            <div className="p-4 border-t dark:border-gray-800 sm:p-6 overflow-y-auto custom-scrollbar h-[350px]">
+                            <div className="p-4 border-t dark:border-color-primary sm:p-6 overflow-y-auto custom-scrollbar h-[350px]">
                                 <div className="w-full flex justify-between items-center mb-4">
                                     <span className="text-sm font-light dark:text-white">📅 {appointment?.flowTitle || "-"}</span>
                                     <div className="flex items-center gap-2">
@@ -435,10 +435,10 @@ const AppointmentDetails: React.FC = () => {
                                                             return (
                                                                 <div className={`${index > 0 ? "border-t" : ""} dark:border-gray-700 cursor-text`} key={`${i}-${j}`}>
                                                                     <div className="p-2">
-                                                                        <p className="text-sm text-gray-400 dark:text-gray-400 mb-2 ml-2">
+                                                                        <p className="text-sm text-color-primary-light dark:text-color-primary-light mb-2 ml-2">
                                                                             {formatString(pKey)} :
                                                                         </p>
-                                                                        <p className="text-base font-semibold text-gray-900 dark:text-white ml-2">
+                                                                        <p className="text-base font-semibold text-color-primary dark:text-white ml-2">
                                                                             {displayValue}
                                                                         </p>
                                                                     </div>
@@ -452,10 +452,10 @@ const AppointmentDetails: React.FC = () => {
                                         return typeof value !== "object" ? (
                                             <div key={index} className={`${index > 0 ? "border-t" : ""} dark:border-gray-700 cursor-text`}>
                                                 <div className="p-2">
-                                                    <p className="text-sm text-gray-400 dark:text-gray-400 mb-2 ml-2">
+                                                    <p className="text-sm text-color-primary-light dark:text-color-primary-light mb-2 ml-2">
                                                         {formatString(key)} :
                                                     </p>
-                                                    <p className="text-base font-semibold text-gray-900 dark:text-white ml-2">
+                                                    <p className="text-base font-semibold text-color-primary dark:text-white ml-2">
                                                         {getValidUrlOrValue(value)}
                                                     </p>
                                                 </div>
@@ -464,24 +464,24 @@ const AppointmentDetails: React.FC = () => {
                                     })}
                                 </div>
                                 <div className="w-full mt-4">
-                                    <Label className="text-sm text-gray-400 dark:text-gray-400 mb-2" htmlFor="status-select">Update Status :</Label>
+                                    <Label className="text-sm text-color-primary-light dark:text-color-primary-light mb-2" htmlFor="status-select">Update Status :</Label>
                                     <Select
                                         options={options}
                                         defaultValue={value || appointment?.status || ""}
                                         placeholder="Update Status"
                                         onChange={handleStatusChange}
-                                        className="dark:bg-white/[0.02] text-gray-800 dark:!text-gray-100"
+                                        className=" bg-white dark:bg-white/[0.02] text-color-primary dark:!text-gray-100"
                                     />
                                 </div>
                             </div>
                         </div>
                     </div>
-                    <div className="rounded-2xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-white/[0.03] w-full sm:w-[60%]">
+                    <div className="rounded-2xl border border-gray-200 dark:border-color-primary bg-white dark:bg-white/[0.03] w-full sm:w-[60%]">
                         <div className="h-full rounded-xl p-1">
                             <div className="grid grid-cols-1 sm:grid-cols-4 gap-2 items-center px-4 py-2">
-                                <h3 className="text-lg font-semibold text-gray-800 dark:text-white">Recent chats</h3>
+                                <h3 className="text-lg font-semibold text-color-primary dark:text-white">Recent chats</h3>
                             </div>
-                            <div className="p-4 border-t dark:border-gray-800 sm:p-6 overflow-y-auto custom-scrollbar h-[350px] space-y-4">
+                            <div className="p-4 border-t dark:border-color-primary sm:p-6 overflow-y-auto custom-scrollbar h-[350px] space-y-4">
                                 <div className="w-full flex justify-center">
                                     <span className="text-xxs mb-2 rounded-[6px] font-light block w-auto text-center bg-[#8c97b8] text-white dark:bg-white/30 px-2 py-1">
                                         {formatString(value || appointment?.status || "")}{" "}
@@ -495,7 +495,7 @@ const AppointmentDetails: React.FC = () => {
                                     const isAI = item.sender === "AI";
                                     return (
                                         <div key={item._id} className={`flex ${isAI ? "justify-end" : "justify-start"}`}>
-                                            <div className={`relative min-w-[20%] max-w-[50%] px-4 py-2 rounded-[12px] text-sm font-light ${isAI ? "bg-[#822cc7b0] dark:bg-[#465fff54] text-white !rounded-br-none" : "bg-[#465fffcf] dark:bg-[#822cc76e] text-white !rounded-bl-none"}`}>
+                                            <div className={`relative min-w-[20%] max-w-[50%] px-4 py-2 rounded-[12px] text-sm font-light ${isAI ? "bg-app-theme dark:bg-[#465fff54] text-white !rounded-br-none" : "bg-[#465fffcf] dark:bg-[#822cc76e] text-white !rounded-bl-none"}`}>
                                                 <div className="mb-4">
                                                     {getFormattedMessage(item.message)}
                                                 </div>

@@ -45,24 +45,24 @@ const WebHooks = () => {
         <div>
             <PageBreadcrumb pagePath="API Setup" />
             <div className="space-y-6">
-                <div className="rounded-2xl border border-gray-200 bg-white dark:border-gray-800 dark:bg-white/[0.03]">
+                <div className="rounded-2xl border border-gray-200 bg-white dark:border-color-primary dark:bg-white/[0.03]">
                     <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 items-center px-6 py-5">
-                        <h3 className="text-base font-medium text-gray-800 dark:text-white/90">
+                        <h3 className="text-base font-medium text-color-primary dark:text-white/90">
                         API Setup
                         </h3>
                     </div>
-                    <div className="p-4 border-t border-gray-100 dark:border-gray-800 sm:p-6">
+                    <div className="p-4 border-t border-gray-100 dark:border-color-primary sm:p-6">
                         <div className="p-4 mx-auto overflow-hidden rounded-xl border border-gray-200 bg-white dark:border-white/[0.05] dark:bg-white/[0.03] sm:p-6">
-                        <h3 className="mb-2 text-base font-medium text-gray-800 dark:text-white/90">
+                        <h3 className="mb-2 text-base font-medium text-color-primary dark:text-white/90">
                             Webhook
                         </h3>
-                        <p className="text-gray-500 dark:text-gray-400 font-light mb-8">
+                        <p className="text-color-primary-light dark:text-color-primary-light font-light mb-8">
                             To connect your chatbot app with WhatsApp, set up your Webhook Callback URL and generate an API key. This enables message delivery and status updates through the Meta Developer Platform.
                             <a
                             target="_blank"
                             rel="noreferrer"
                             href="https://developers.facebook.com/docs/whatsapp/cloud-api/get-started#configure-webhooks"
-                            className="text-custom-them-clr underline hover:no-underline font-medium"
+                            className="text-color-primary underline hover:no-underline font-medium"
                             >
                             Learn more
                             </a>

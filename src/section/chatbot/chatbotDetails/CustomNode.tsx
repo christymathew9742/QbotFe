@@ -922,11 +922,11 @@ const CustomNode: React.FC<NodeProps<CustomNodeData>> = ({ data, id }) => {
             }}
           >
             <div className="flex py-1 px-4 items-center justify-between w-full">
-              <div className="text-lg font-medium text-gray-500 dark:text-dark-text dark:font-normal">
+              <div className="text-lg font-medium text-color-primary-light dark:text-dark-text dark:font-normal">
                 Set your Availability
               </div>
               <CloseFullscreen
-                className="cursor-pointer mt-2 !text-lg text-gray-400 dark:dark:text-dark-text hover:scale-110 transition-transform duration-200 font-light"
+                className="cursor-pointer mt-2 !text-lg text-color-primary-light dark:dark:text-dark-text hover:scale-110 transition-transform duration-200 font-light"
                 onClick={handleClose}
               />
             </div>
@@ -1015,7 +1015,7 @@ const CustomNode: React.FC<NodeProps<CustomNodeData>> = ({ data, id }) => {
             <div className="overflow-y-auto custom-scrollbar h-[350px]">
               {savedSlots?.length > 0 ? (
                 <div className="space-y-2 mt-0 px-10">
-                  <p className="text-lg font-medium text-center text-gray-500 dark:text-dark-text dark:font-normal">
+                  <p className="text-lg font-medium text-center text-color-primary-light dark:text-dark-text dark:font-normal">
                     Common availability
                   </p>
                   {savedSlots?.map((ds: DateSlot, dateIdx: number) => {
@@ -1032,7 +1032,7 @@ const CustomNode: React.FC<NodeProps<CustomNodeData>> = ({ data, id }) => {
                     return (
                       <div key={dateIdx} className="p-2 rounded">
                         <div className="flex items-center justify-between mb-2">
-                          <h3 className="w-[40%] font-medium text-base text-gray-500 dark:text-dark-text dark:font-normal">
+                          <h3 className="w-[40%] font-medium text-base text-color-primary-light dark:text-dark-text dark:font-normal">
                             {new Date(ds.date).toLocaleDateString([], {
                               day: "2-digit",
                               month: "short",
@@ -1049,7 +1049,7 @@ const CustomNode: React.FC<NodeProps<CustomNodeData>> = ({ data, id }) => {
                               className="flex justify-between items-center gap-1 w-full"
                             >
                               <span className="flex justify-between items-center w-[80%] px-18 py-[1px] rounded-[4px] bg-gray-50 border border-gray-300 dark:border-white/[0.05] dark:bg-white/[0.03] dark:text-node-pop">
-                                <span className="font-medium text-gray-500 dark:text-dark-text text-sm dark:font-normal">
+                                <span className="font-medium text-color-primary-light dark:text-dark-text text-sm dark:font-normal">
                                   {new Date(slot.start).toLocaleTimeString([], {
                                     hour: "2-digit",
                                     minute: "2-digit",
@@ -1058,7 +1058,7 @@ const CustomNode: React.FC<NodeProps<CustomNodeData>> = ({ data, id }) => {
                                   })}
                                 </span>{" "}
                                 -{" "}
-                                <span className="font-medium text-gray-500 dark:text-dark-text text-sm dark:font-normal">
+                                <span className="font-medium text-color-primary-light dark:text-dark-text text-sm dark:font-normal">
                                   {new Date(slot.end).toLocaleTimeString([], {
                                     hour: "2-digit",
                                     minute: "2-digit",
@@ -1067,10 +1067,10 @@ const CustomNode: React.FC<NodeProps<CustomNodeData>> = ({ data, id }) => {
                                   })}
                                 </span>
                               </span>
-                              <span className="flex justify-center text-sm text-gray-500 items-center w-[10%] px-8 py-[3px] rounded-[4px] dark:text-dark-text bg-gray-50 border border-gray-300 dark:border-white/[0.05] dark:bg-white/[0.03] dark:font-normal">
+                              <span className="flex justify-center text-sm text-color-primary-light items-center w-[10%] px-8 py-[3px] rounded-[4px] dark:text-dark-text bg-gray-50 border border-gray-300 dark:border-white/[0.05] dark:bg-white/[0.03] dark:font-normal">
                                 {slot?.interval}
                               </span>
-                              <span className="flex justify-center text-sm text-gray-500 items-center w-[10%] px-8 py-[3px] rounded-[4px] dark:text-dark-text bg-gray-50 border border-gray-300 dark:border-white/[0.05] dark:bg-white/[0.03] dark:font-normal">
+                              <span className="flex justify-center text-sm text-color-primary-light items-center w-[10%] px-8 py-[3px] rounded-[4px] dark:text-dark-text bg-gray-50 border border-gray-300 dark:border-white/[0.05] dark:bg-white/[0.03] dark:font-normal">
                                 {slot?.buffer}
                               </span>
                               <button
@@ -1092,7 +1092,7 @@ const CustomNode: React.FC<NodeProps<CustomNodeData>> = ({ data, id }) => {
                 </div>
               ) : (
                 <div className="flex items-center justify-center h-full">
-                  <p className="text-2xl font-extralight text-center text-gray-500 dark:text-dark-text">
+                  <p className="text-2xl font-extralight text-center text-color-primary-light dark:text-dark-text">
                     Slot not found!
                   </p>
                 </div>
@@ -1371,7 +1371,7 @@ const CustomNode: React.FC<NodeProps<CustomNodeData>> = ({ data, id }) => {
     <>
       <div className="rounded w-40" onDrop={(event) => onDropInput(event, data?.nodeCount)} onDragOver={onDragOver}>
         <div className="nodes">
-          <h2 className={`${!data.inputs.length ? "text-center" : "text-left"} font-semibold text-sm font-sans mb-2 text-text-theme dark:text-dark-text`}>
+          <h2 className={`${!data.inputs.length ? "text-center" : "text-left"} font-semibold text-sm font-sans mb-2 text-color-primary dark:text-dark-text`}>
             {!data.inputs.length ? DEFAULT : data.label}
           </h2>
           <Handle id={`target-${data.inputs.length}`} type="target" position={Position.Left} className="absolute -!right-3 !top-4 !h-7 opacity-0" />

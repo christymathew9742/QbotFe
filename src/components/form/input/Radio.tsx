@@ -27,7 +27,7 @@ const Radio: React.FC<RadioProps> = ({
       className={`relative flex cursor-pointer  select-none items-center gap-3 text-sm font-medium ${
         disabled
           ? "text-gray-300 dark:text-gray-600 cursor-not-allowed"
-          : "text-gray-700 dark:text-gray-400"
+          : "text-gray-700 dark:text-color-primary-light"
       } ${className}`}
     >
       <input

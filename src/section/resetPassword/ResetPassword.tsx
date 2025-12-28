@@ -93,16 +93,16 @@ const ResetPassword = () => {
       value={value}
       onChange={onChange}
       required
-      className="w-full rounded-md border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 px-4 py-2 text-sm text-gray-900 dark:text-white focus:ring-2 focus:ring-indigo-500"
+      className="w-full rounded-md border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 px-4 py-2 text-sm color-primary dark:text-white focus:ring-2 focus:ring-indigo-500"
     />
   );
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-gray-100 dark:bg-gray-900 px-4">
-      <div className="w-full max-w-md rounded-2xl bg-white dark:bg-gray-800 p-8 shadow-xl space-y-4">
+      <div className="w-full max-w-md rounded-2xl bg-white dark:bg-color-primary p-8 shadow-xl space-y-4">
         {step === 'email' && (
           <>
-            <h2 className="text-center text-xl font-bold text-gray-800 dark:text-white">Reset Password</h2>
+            <h2 className="text-center text-xl font-bold text-color-primary dark:text-white">Reset Password</h2>
             {renderInputField('text', 'Enter your email or phone', emailOrPhone, (e) => setEmailOrPhone(e.target.value))}
             {error && <p className="text-sm text-red-600">{error}</p>}
             <button
@@ -116,7 +116,7 @@ const ResetPassword = () => {
 
         {step === 'otp' && (
           <>
-            <h2 className="text-center text-xl font-bold text-gray-800 dark:text-white">Enter OTP</h2>
+            <h2 className="text-center text-xl font-bold text-color-primary dark:text-white">Enter OTP</h2>
             <div className="flex justify-center gap-2 mb-2">
               {otp.map((value, index) => (
                 <input
@@ -125,7 +125,7 @@ const ResetPassword = () => {
                   maxLength={1}
                   value={value}
                   onChange={(e) => handleOtpChange(e.target.value, index)}
-                  className="w-10 h-10 text-center rounded-md border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-lg text-gray-900 dark:text-white focus:ring-2 focus:ring-indigo-500"
+                  className="w-10 h-10 text-center rounded-md border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-lg color-primary dark:text-white focus:ring-2 focus:ring-indigo-500"
                 />
               ))}
             </div>
@@ -141,7 +141,7 @@ const ResetPassword = () => {
 
         {step === 'password' && verified && (
           <>
-            <h2 className="text-center text-xl font-bold text-gray-800 dark:text-white">Set New Password</h2>
+            <h2 className="text-center text-xl font-bold text-color-primary dark:text-white">Set New Password</h2>
             <form onSubmit={handleResetPassword} className="space-y-3">
               {renderInputField('password', 'New Password', password, (e) => setPassword(e.target.value))}
               {renderInputField('password', 'Confirm Password', confirmPassword, (e) => setConfirmPassword(e.target.value))}
