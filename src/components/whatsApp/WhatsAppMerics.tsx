@@ -175,18 +175,17 @@ export const WhatsAppMetrics = ({ metrics }: any) => {
       enabled: true,
       theme: 'light',
       style: {
-        fontSize: '12px',
+        fontSize: '4px', // Keep font small (2px is unreadable)
       },
-      x: { show: false },
+      x: { show: false }, // Hides the X-axis title
+      marker: { show: false }, // Hides the colored dot to save space
       y: {
-        formatter: function (val) {
-          return val.toString();
-        },
+     
+        // 2. THIS IS KEY: Return empty string to hide the Series Name (Label)
         title: {
-          formatter: () => "Count: "
-        }
+          formatter: () => '', 
+        },
       },
-      marker: { show: true },
     },
   });
 
@@ -246,10 +245,10 @@ export const WhatsAppMetrics = ({ metrics }: any) => {
                   Pending,
                   "!w-20 !h-2 !mt-20",
                   <div className="w-full overflow-x-auto overflow-y-hidden card-chart custom-scrollbar">
-                    <div className="min-w-[600px]"> 
+                    <div className="min-w-[300px]"> 
                       <ReactApexChart
                         options={getChartOptions(chartColor)}
-                        series={[{ name: "Count", data: item.chartData }]}
+                        series={[{data: item.chartData }]}
                         type="area"
                         height={100}
                         width="100%" 
