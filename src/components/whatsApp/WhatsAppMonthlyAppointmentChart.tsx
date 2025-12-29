@@ -40,7 +40,7 @@ export default function WhatsAppMonthlyAppointmentChart({
     chart: {
       fontFamily: "Outfit, sans-serif",
       type: "bar",
-      height: 200,
+      height: 250,
       toolbar: { show: false },
     },
     plotOptions: {
@@ -88,7 +88,7 @@ export default function WhatsAppMonthlyAppointmentChart({
   const fixedSkeletonHeights = [60, 90, 120, 80, 150, 100, 130, 70, 110, 95, 140, 85];
 
   return (
-    <div className="overflow-hidden rounded-2xl border border-gray-200 bg-white px-5 pt-5 dark:border-color-primary dark:bg-white/[0.03] sm:px-6 sm:pt-6 !min-h-[200px]">
+    <div className="overflow-hidden rounded-md bg-white px-5 pt-5 dark:border-color-primary dark:bg-white/[0.03] sm:px-6 sm:pt-6 !min-h-[200px] shadow-xl backdrop-blur-sm">
       <div className="flex items-center justify-between">
         {pendingStatus ? (
           <Skeleton
@@ -106,7 +106,7 @@ export default function WhatsAppMonthlyAppointmentChart({
       </div>
 
       {pendingStatus ? (
-        <Box sx={{ display: "flex", flexDirection: "column", height: 180, mt: 2 }}>
+        <Box sx={{ display: "flex", flexDirection: "column", height: 200, mt: 2 }}>
           <Box sx={{ display: "flex", flex: 1 }}>
             <Box
               sx={{
@@ -168,7 +168,7 @@ export default function WhatsAppMonthlyAppointmentChart({
                 animation="wave"
                 variant="text"
                 width={20}
-                height={15}
+                height={20}
                 sx={{ display: "block" }}
                 className="dark:!border-gray-700 dark:!bg-color-primary"
               />
@@ -178,10 +178,10 @@ export default function WhatsAppMonthlyAppointmentChart({
       ) : (
         <div
           className="max-w-full overflow-x-auto custom-scrollbar"
-          style={{ height: 200, minHeight: 200, overflowY: "hidden" }}
+          style={{ height: 260, minHeight: 200, overflowY: "hidden" }}
         >
           <div className="-ml-5 min-w-[650px] sx:min-w-full pl-2">
-            <ReactApexChart options={options} series={series} type="bar" height={200} />
+            <ReactApexChart className="text-color-primary!" options={options} series={series} type="bar" height={250} />
           </div>
         </div>
       )}
