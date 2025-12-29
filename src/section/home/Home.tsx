@@ -74,12 +74,12 @@ const Home = () => {
             </div>
             <div className="col-span-12 space-y-6 sm:col-span-6">
                 <PromoCard/>
+                <WhatsAppMonthlyAppointmentChart  monthlyAppointments={globalData?.monthlyAppointments || []}  pendingStatus={pendingStatus?.fetch || isPending} />
                 {/* <WhatsAppMetrics metrics = {metricsData} /> */}
-                {/* <WhatsAppMonthlyAppointmentChart  monthlyAppointments={globalData?.monthlyAppointments || []}  pendingStatus={pendingStatus?.fetch || isPending} /> */}
             </div>
             <div className="col-span-12 sm:col-span-6">
                 <WhatsAppMetrics metrics = {metricsData} />
-                {/* <WhatsAppAvgSentiment  globalAverageSentimentScores={globalData?.globalAverageSentimentScores || []} pendingStatus={pendingStatus?.fetch || isPending} /> */}
+                <WhatsAppAvgSentiment  globalAverageSentimentScores={globalData?.globalAverageSentimentScores || []} pendingStatus={pendingStatus?.fetch || isPending} />
             </div>
         </div>
     );
