@@ -111,7 +111,7 @@ export default function NotificationDropdown() {
       <Dropdown
         isOpen={isOpen}
         onClose={handleClose}
-        className={`absolute sm:right-0 mt-3 p-1 flex flex-col rounded-2xl bg-white dark:bg-gray-dark shadow-[0_10px_40px_-10px_rgba(0,0,0,0.15)] ring-1 ring-black/5 dark:ring-white/10 sm:w-[380px] transition-all transform origin-top-right z-50
+        className={`absolute sm:right-0 mt-3 p-1 flex flex-col bg-white dark:bg-gray-dark ring-1 ring-black/5 dark:ring-white/10 sm:w-[380px] transition-all transform origin-top-right z-50
         ${notifications.length ? "h-auto max-h-[85vh]" : "h-auto"}`}
       >
         <div className="flex items-center justify-between px-4 py-3 border-b border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-dark sticky top-0 z-10">

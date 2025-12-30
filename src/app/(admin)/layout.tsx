@@ -21,14 +21,14 @@ export default function AdminLayout({
     : "lg:ml-[90px]";
 
   return (
-    <div className="min-h-screen xl:flex">
+    <div className="min-h-screen xl:flex bg-app-bg-theme!">
       <AppSidebar />
       <Backdrop />
       <div
         className={`flex-1 transition-all  duration-300 ease-in-out ${mainContentMargin}`}
       >
         <AppHeader />
-        <div className="p-4 mx-auto max-w-(--breakpoint-2xl) md:p-6 bg-app-bg-theme"> 
+        <div className="p-4 mx-auto max-w-(--breakpoint-2xl) md:p-6"> 
           {children}
         </div>
       </div>

@@ -178,8 +178,8 @@ const WhatsappUser = () => {
     <div>
       <PageBreadcrumb pagePath="Users" />
       <div className="space-y-6">
-        <div className="rounded-2xl border border-gray-200 bg-white dark:border-color-primary dark:bg-white/[0.03]">
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-12 items-center px-6 py-5">
+        <div className="rounded-md p-1 shadow-xl backdrop-blur-sm bg-white dark:border-color-primary dark:bg-white/[0.03]">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-12 items-center px-6 py-5 mb-1">
             <h3 className="text-base font-medium text-color-primary dark:text-white/90">Users</h3>
             <div className="relative">
               <span className="absolute -translate-y-1/2 left-4 top-1/2 pointer-events-none">
@@ -194,11 +194,11 @@ const WhatsappUser = () => {
               />
             </div>
           </div>
-          <div className="p-4 border-t border-gray-100 dark:border-color-primary sm:p-6">
-            <div className="mx-auto overflow-hidden rounded-xl border border-gray-200 bg-white dark:border-white/[0.05] dark:bg-white/[0.03]">
+          <div className="border-t border-gray-300 dark:border-color-primary pt-4">
+            <div className="mx-auto overflow-hidden bg-white dark:border-white/[0.05] dark:bg-white/[0.03]">
               <div className="max-w-full overflow-x-auto">
                 <Table>
-                  <TableHeader className="border-b border-gray-100 dark:border-white/[0.05]">
+                  <TableHeader className="border-b border-gray-200 dark:border-white/[0.05]">
                     <TableRow>
                       {tableHeadings.map((head, i) => (
                         <TableCell
@@ -212,7 +212,7 @@ const WhatsappUser = () => {
                       ))}
                     </TableRow>
                   </TableHeader>
-                  <TableBody className="divide-y divide-gray-100 text-theme-sm dark:divide-white/[0.05] w-full">
+                  <TableBody className="divide-y divide-gray-200 text-theme-sm dark:divide-white/[0.05] w-full">
                     {tableRows}
                   </TableBody>
                 </Table>

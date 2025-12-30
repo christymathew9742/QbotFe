@@ -48,7 +48,7 @@ export default function DatePicker({
         <input
           id={id}
           placeholder={placeholder}
-          className="h-11 w-full rounded-lg border appearance-none px-4 py-2.5 text-sm shadow-color-primary-light placeholder:text-color-primary-light focus:outline-hidden focus:ring-3  dark:bg-gray-900 dark:text-white/90 dark:placeholder:text-white/30  bg-transparent text-color-primary border-gray-300 focus:border-brand-300 focus:ring-brand-500/20 dark:border-gray-700  dark:focus:border-brand-800"
+          className="h-11 w-full rounded-md border appearance-none px-4 py-2.5 text-sm shadow-color-primary-light placeholder:text-color-primary-light focus:outline-hidden focus:ring-3  dark:bg-gray-900 dark:text-white/90 dark:placeholder:text-white/30  bg-transparent text-color-primary border-gray-300 focus:border-brand-300 focus:ring-brand-500/20 dark:border-gray-700  dark:focus:border-brand-800"
         />
 
         <span className="absolute text-color-primary-light -translate-y-1/2 pointer-events-none right-3 top-1/2 dark:text-color-primary-light">

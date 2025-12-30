@@ -48,7 +48,7 @@ const CopyField = ({ id, label, value, title, disabled=false, onClick, update, t
               readOnly
               type={type}
               disabled={disabled}
-              className="w-full p-2.5 pr-10 text-sm text-color-primary-light bg-gray-50 border border-gray-300 rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-color-primary-light cursor-text"
+              className="w-full p-2.5 pr-10 text-sm text-color-primary-light bg-gray-50 border border-gray-300 rounded-md dark:bg-gray-700 dark:border-gray-600 dark:text-color-primary-light cursor-text"
             />
             <button
               type="button"
