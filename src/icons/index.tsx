@@ -59,6 +59,7 @@ import NoProfileIcon from "./no-profile.svg";
 import Expried from "./expired.svg";
 import View from "./view.svg";
 import AppointmentIcon from "./appointmrnt.svg";
+import Robot from "./robot.svg";
 
 export {
   DownloadIcon,
@@ -122,4 +123,5 @@ export {
   Expried,
   View,
   AppointmentIcon,
+  Robot,
 };

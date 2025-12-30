@@ -75,7 +75,7 @@ export default function UserDropdown() {
       <Dropdown
         isOpen={isOpen}
         onClose={closeDropdown}
-        className="absolute right-0 mt-3 flex w-[280px] flex-col rounded-2xl bg-white shadow-[0_10px_40px_-10px_rgba(0,0,0,0.15)] ring-1 ring-black/5 dark:ring-white/10 dark:bg-gray-dark overflow-hidden origin-top-right transition-all transform"
+        className="absolute right-0 mt-3 flex w-[280px] flex-col bg-white ring-1 ring-black/5 dark:ring-white/10 dark:bg-gray-dark overflow-hidden origin-top-right transition-all transform"
       >
         <div className="px-5 py-4 border-b border-gray-100 dark:border-gray-700 bg-gray-50/50 dark:bg-white/5">
           <span className="block text-sm font-bold text-color-primary dark:text-white truncate">

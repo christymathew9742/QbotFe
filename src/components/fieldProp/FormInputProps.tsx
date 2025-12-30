@@ -139,8 +139,8 @@ const FormInputProps: React.FC<FieldPropComponentProps> = ({ Config }) => {
                                                 padding: 0,
                                                 marginRight: '2px',
                                                 '&:hover': {
-                                                background: '#fff',
-                                                padding: 0,
+                                                    background: '#fff',
+                                                    padding: 0,
                                                 },
                                             }}
                                             >

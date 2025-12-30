@@ -35,7 +35,7 @@ export const customInputStylesLoginBord:SxProps = {
 
 export const customInputStyles: SxProps = {
     '& .MuiPickersInputBase-root' :{
-        borderRadius: '.5rem',
+        borderRadius: '.2rem',
         backgroundColor: 'transparent',
         height: '45px',
         '.dark & .MuiPickersSectionList-root': {

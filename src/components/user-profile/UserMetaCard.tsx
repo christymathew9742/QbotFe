@@ -136,7 +136,7 @@ export default function UserMetaCard() {
 
   return (
     <>
-      <div className="p-5 border border-gray-200 rounded-2xl dark:border-color-primary lg:p-6">
+      <div className="p-5 border rounded-md border-gray-300 dark:border-color-primary lg:p-6">
         <div className="flex flex-col gap-5 sm:flex-row sm:justify-between items-center">
           {pendingFetch || Object.keys(userData).length <1  ? (
             <>
@@ -301,7 +301,7 @@ export default function UserMetaCard() {
         </div>
       </div>
       <Modal isOpen={isOpen} onClose={closeModal} className="max-w-[700px] m-4">
-        <div className="no-scrollbar relative w-full max-w-[700px] overflow-y-auto rounded-3xl bg-white p-4 dark:bg-gray-900 lg:p-11">
+        <div className="no-scrollbar relative w-full max-w-[700px] overflow-y-auto rounded-md shadow-xl backdrop-blur-sm bg-white p-4 dark:bg-gray-900 lg:p-11">
           <div className="px-2 pr-14">
             <h4 className="mb-2 text-2xl font-semibold text-color-primary dark:text-white/90">
               Edit Profile

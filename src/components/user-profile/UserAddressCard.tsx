@@ -30,7 +30,7 @@ export default function UserAddressCard() {
 
   return (
     <>
-      <div className="p-5 border border-gray-200 rounded-2xl dark:border-color-primary lg:p-6">
+      <div className="p-5 border rounded-md border-gray-300  dark:border-color-primary lg:p-6">
         <div className="gap-6 lg:flex-row lg:items-start lg:justify-between">
         {pendingFetch || Object.keys(userData).length <1  ? (
           <Box sx={{ width: '100%' }}>

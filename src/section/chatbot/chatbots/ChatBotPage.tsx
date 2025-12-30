@@ -19,7 +19,7 @@ import { toast } from "react-toastify";
 import PageBreadcrumb from "@/components/common/PageBreadCrumb";
 import { Metadata } from "next";
 import { Table, TableBody, TableCell, TableHeader, TableRow } from "@/components/ui/table";
-import { EditIcon, DeleteIcon } from "@/icons";
+import { EditIcon, DeleteIcon, Robot } from "@/icons";
 import { extractFileKeys, formatUpdatedDate } from "@/utils/utils";
 import api from "@/utils/axios";
 
@@ -157,35 +157,35 @@ const ChatBot = () => {
 
   return (
     <div>
-      <PageBreadcrumb pagePath="Chatbot" />
+      <PageBreadcrumb  pagePath="Chatbot"/>
       <div className="space-y-6">
-        <div className="rounded-2xl border border-gray-200 bg-white dark:border-color-primary dark:bg-white/[0.03]">
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 items-center px-6 py-5">
+        <div className="rounded-md p-1 bg-white dark:border-color-primary dark:bg-white/[0.03] shadow-xl backdrop-blur-sm">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 items-center px-6 py-5 mb-1">
             <h3 className="text-base font-medium text-color-primary dark:text-white/90">Manage Bot</h3>
             <div className="relative">
               <span className="absolute -translate-y-1/2 left-4 top-1/2 pointer-events-none">
-                <SearchIcon className="!text-color-primary-light dark:!text-amber-50" />
+                <SearchIcon className="!text-color-primary-light dark:!text-amber-50 rounded-md!" />
               </span>
               <Input
                 type="text"
                 value={search}
                 onChange={handleSearch}
                 placeholder="Search bot..."
-                className="py-2.5 pl-12 pr-14 text-sm dark:bg-dark-900 bg-transparent dark:bg-white/[0.02]"
+                className="py-2.5 pl-12 pr-14 text-sm dark:bg-dark-900 bg-transparent dark:bg-white/[0.02] rounded-md!"
               />
             </div>
             <Select
               options={options}
               defaultValue={status || ""}
               onChange={handleStatusChange}
-              className="dark:bg-white/[0.02] dark:!text-gray-100"
+              className="dark:bg-white/[0.02] dark:!text-gray-100 rounded-md!"
             />
           </div>
-          <div className="p-4 border-t border-gray-100 dark:border-color-primary sm:p-6">
-            <div className="mx-auto overflow-hidden rounded-xl border border-gray-200 bg-white dark:border-white/[0.05] dark:bg-white/[0.03]">
+          <div className="border-t border-gray-300 dark:border-color-primary pt-4">
+            <div className="mx-auto overflow-hidden bg-white dark:border-white/[0.05] dark:bg-white/[0.03]">
               <div className="max-w-full overflow-x-auto">
                 <Table>
-                  <TableHeader className="border-b border-gray-100 dark:border-white/[0.05]">
+                  <TableHeader className="border-b border-gray-200 dark:border-white/[0.05]">
                     <TableRow>
                       <TableCell colSpan={2} isHeader className="px-5 py-3 text-start text-theme-xs text-color-primary-light dark:text-gray-400">Bot Name</TableCell>
                       <TableCell colSpan={2} isHeader className="px-5 py-3 text-start text-theme-xs text-color-primary-light dark:text-gray-400">Updated Date</TableCell>
@@ -193,7 +193,7 @@ const ChatBot = () => {
                       <TableCell colSpan={2} isHeader className="px-5 py-3 text-start text-theme-xs text-color-primary-light dark:text-gray-400">Action</TableCell>
                     </TableRow>
                   </TableHeader>
-                  <TableBody className="divide-y divide-gray-100 dark:divide-white/[0.05] w-full">
+                  <TableBody className="divide-y divide-gray-200 dark:divide-white/[0.05] w-full">
                     {isFetching && isload ? (
                       <TableRow className="w-full">
                         <TableCell colSpan={12} className="text-center py-6">
@@ -203,7 +203,17 @@ const ChatBot = () => {
                     ) : botData?.data?.length ? (
                       botData?.data?.map((bot: Bot) => (
                         <TableRow key={bot._id}>
-                          <TableCell colSpan={2} className="px-5 py-2 text-start font-light divide-gray-100 text-theme-sm dark:text-white/90 text-color-primary">{bot.title}</TableCell>
+                          <TableCell
+                            colSpan={2}
+                            className="px-5 py-2 text-start font-light divide-gray-100 text-theme-sm dark:text-white/90 text-color-primary"
+                          >
+                            <div className="flex items-center gap-3">
+                              <div className="w-10 h-10 rounded-full bg-gray-200 group-hover:bg-gray-300 dark:bg-gray-700 flex items-center justify-center text-lg">
+                                <Robot className="text-color-primary!" />
+                              </div>
+                              <span>{bot.title}</span>
+                            </div>
+                          </TableCell>
                           <TableCell colSpan={2} className="px-5 py-2 text-start font-light divide-gray-100 text-theme-sm dark:text-white/90 text-color-primary">
                             {formatUpdatedDate(bot?.updatedAt)}
                           </TableCell>
@@ -213,7 +223,7 @@ const ChatBot = () => {
                               color="theme"
                               checked={activeBots[bot._id]}
                               onChange={(checked: boolean) => handleSwitchChange(bot, checked)}
-                            />
+                            /> 
                           </TableCell>
                           <TableCell colSpan={2} className="flex px-3 py-2 text-color-primary-light text-color-primary-light">
                             <IconButton 
@@ -222,11 +232,11 @@ const ChatBot = () => {
                             >
                               <Link
                                 href={`/chatbot-details?botId=${bot._id}`}
-                                className="-mr-2"
+                                className="mr-0"
                               >
                                 <EditIcon
                                   className={`text-color-primary-light hover:text-gray-600 dark:hover:text-color-primary-light text-xxs ${
-                                    !activeBots[bot._id] && "!text-color-primary-light dark:!text-disable-dark"
+                                    !activeBots[bot._id] && "!text-gray-300 dark:!text-disable-dark"
                                   }`}
                                 />
                               </Link>

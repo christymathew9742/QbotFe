@@ -93,14 +93,14 @@ const ApiConfig = () => {
         <div>
             <PageBreadcrumb pagePath="API Config" />
             <div className="space-y-6">
-                <div className="rounded-2xl border border-gray-200 bg-white dark:border-color-primary dark:bg-white/[0.03]">
+                <div className="rounded-md shadow-xl backdrop-blur-sm bg-white dark:border-color-primary dark:bg-white/[0.03]">
                     <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 items-center px-6 py-5">
                         <h3 className="text-base font-medium text-color-primary dark:text-white/90">
                             API Configuration
                         </h3>
                     </div>
-                    <div className="p-4 border-t border-gray-100 dark:border-color-primary sm:p-6">
-                        <div className="p-4 mx-auto overflow-hidden rounded-xl border border-gray-200 bg-white dark:border-white/[0.05] dark:bg-white/[0.03] sm:p-6">
+                    <div className="p-4 border-t border-gray-200 dark:border-color-primary sm:p-6">
+                        <div className="mx-auto overflow-hidden bg-white dark:border-white/[0.05] dark:bg-white/[0.03] sm:p-6">
                             <h3 className="mb-2 text-base font-medium text-color-primary dark:text-white/90">Integrations</h3>
                             <p className="text-color-primary-light dark:text-color-primary-light font-light mb-8">
                                 To enable chatbot communication through WhatsApp using Meta’s Business API, you must integrate your Access
