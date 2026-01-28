@@ -22,6 +22,7 @@ import { Table, TableBody, TableCell, TableHeader, TableRow } from "@/components
 import { EditIcon, DeleteIcon, Robot } from "@/icons";
 import { extractFileKeys, formatUpdatedDate } from "@/utils/utils";
 import api from "@/utils/axios";
+import ConfirmModal from "@/components/ConfirmModal";
 
 export const metadata: Metadata = {
   title: "List all Qbot",
@@ -47,22 +48,26 @@ const ChatBot = () => {
   const [status, setStatus] = useState<string | null>("");
   const [activeBots, setActiveBots] = useState<Record<string, boolean>>({});
   const [isFetching, setIsFetching] = useState(true);
-  const [isload, setIsLoad] = useState(true)
+  const [isload, setIsLoad] = useState(true);
   const toggleLock = useRef<Record<string, boolean>>({});
+
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [botToDelete, setBotToDelete] = useState<Bot | null>(null);
 
   useEffect(() => {
     setIsFetching(pendingStatus.fetch);
   }, [pendingStatus.fetch]);
 
   const fetchBots = useCallback(() => {
-      const query = {
-        search,
-        status: status || "",
-        page,
-        limit: rowsPerPage,
-      };
-      const queryString = new URLSearchParams(query as any).toString();
-      dispatch(fetchBotRequest(queryString));
+    const query = {
+      search,
+      status: status || "",
+      page,
+      limit: rowsPerPage,
+    };
+    const queryString = new URLSearchParams(query as any).toString();
+    dispatch(fetchBotRequest(queryString));
   }, [dispatch, search, status, page, rowsPerPage]);
 
   useEffect(() => {
@@ -78,35 +83,48 @@ const ChatBot = () => {
       setActiveBots(initialState);
     }
   }, [botData]);
-  
-  const handleDelete = useCallback(
-    async (bot:Bot) => {
-      const { _id: id, title, nodes } = bot;
-      const inputs = nodes.flatMap((node) => node.data.inputs || []);
-      try {
-        let fileKey:any = extractFileKeys(inputs);
 
-        if (Array.isArray(fileKey) && fileKey.length > 0) {
-          await api.delete(`/createbots/${id}/files`, {
-            data: { fileKey, chatbotId:id },
-          });
-        }
-        if (window.confirm(`Are you sure you want to delete ${title}?.`)) {
-          await dispatch(deleteBotRequest(id));
-          toast.success(`${title} deleted successfully`);
-        } 
-      } catch (error) {
-        console.error("Error in deleting ChatBot:", error);
-        toast.error(`Error in deleting ${title}`);
-      } finally {
-        setIsLoad(false);
-        setTimeout(() => {
-          fetchBots();
-        }, 500);
-      } 
-    },
-    [dispatch, fetchBots, isFetching]
-  );
+  const handleInitiateDelete = (bot: Bot) => {
+    setBotToDelete(bot);
+    setIsModalOpen(true);
+  };
+
+  const handleCloseModal = () => {
+    if (!isLoading) {
+      setIsModalOpen(false);
+    }
+  };
+
+  const handleConfirmDelete = async () => {
+    if (!botToDelete) return;
+
+    setIsLoading(true);
+    const { _id: id, title, nodes } = botToDelete;
+    const inputs = nodes.flatMap((node) => node.data.inputs || []);
+
+    try {
+      let fileKey: any = extractFileKeys(inputs);
+      if (Array.isArray(fileKey) && fileKey.length > 0) {
+        await api.delete(`/createbots/${id}/files`, {
+          data: { fileKey, chatbotId: id },
+        });
+      }
+
+      await dispatch(deleteBotRequest(id));
+      toast.success(`${title} deleted successfully`);
+      setIsModalOpen(false);
+
+    } catch (error) {
+      console.error("Error in deleting ChatBot:", error);
+      toast.error(`Error in deleting ${title}`);
+    } finally {
+      setIsLoading(false);
+      setIsLoad(false);
+      setTimeout(() => {
+        fetchBots();
+      }, 500);
+    }
+  };
 
   const handleChangePage = (_: any, newPage: number) => setPage(newPage + 1);
 
@@ -128,7 +146,7 @@ const ChatBot = () => {
 
   const handleSwitchChange = useCallback(
     async (bot: Bot, checked: boolean) => {
-      if (toggleLock.current[bot._id]) return; 
+      if (toggleLock.current[bot._id]) return;
       toggleLock.current[bot._id] = true;
 
       setActiveBots((prev) => ({ ...prev, [bot._id]: checked }));
@@ -139,14 +157,14 @@ const ChatBot = () => {
       } finally {
         toggleLock.current[bot._id] = false;
         setIsLoad(false);
-        if(status !== "") {
+        if (status !== "") {
           setTimeout(() => {
             fetchBots();
           }, 500);
         }
       }
     },
-    [dispatch, fetchBots, pendingStatus.fetch, pendingStatus.update]
+    [dispatch, fetchBots, pendingStatus.fetch, pendingStatus.update, status]
   );
 
   const options = [
@@ -223,10 +241,10 @@ const ChatBot = () => {
                               color="theme"
                               checked={activeBots[bot._id]}
                               onChange={(checked: boolean) => handleSwitchChange(bot, checked)}
-                            /> 
+                            />
                           </TableCell>
                           <TableCell colSpan={2} className="flex px-3 py-2 text-color-primary-light text-color-primary-light">
-                            <IconButton 
+                            <IconButton
                               disabled={!activeBots[bot._id]}
                               className="w-[35px]"
                             >
@@ -242,10 +260,10 @@ const ChatBot = () => {
                               </Link>
                             </IconButton>
                             <IconButton
-                              onClick={() => handleDelete(bot)}
+                              onClick={() => handleInitiateDelete(bot)}
                               className="w-[35px]"
                             >
-                              <DeleteIcon className="text-color-primary-light hover:text-gray-600 dark:hover:text-color-primary-light text-xxs" />
+                              <DeleteIcon className="text-color-primary-light hover:text-red-600 dark:hover:text-red-400 text-xxs transition-colors" />
                             </IconButton>
                           </TableCell>
                         </TableRow>
@@ -274,6 +292,18 @@ const ChatBot = () => {
             onRowsPerPageChange={handleChangeRowsPerPage}
           />
         )}
+        
+        <ConfirmModal
+          isOpen={isModalOpen}
+          onClose={handleCloseModal}
+          onConfirm={handleConfirmDelete}
+          title="Delete Chatbot"
+          message={`Are you sure you want to delete "${botToDelete?.title || 'this chatbot'}"? This action cannot be undone.`}
+          confirmText="Yes, Delete"
+          cancelText="Cancel"
+          isLoading={isLoading}
+          type="danger" 
+        />
       </div>
     </div>
   );

@@ -1,5 +1,5 @@
 import { SxProps } from '@mui/system';
-import { customInputStylesLoginBord, customInputStyles } from './fieldPropsStyles';
+import { customTextFieldStyle } from './fieldPropsStyles';
 
 export type FieldType =
   | 'text'
@@ -21,7 +21,8 @@ export type FieldType =
   | 'color'
   | 'hidden'
   | 'textarea'
-  | 'select';
+  | 'select'
+  | 'timezone';
 
 interface FieldConfig {
     name: string;
@@ -29,6 +30,7 @@ interface FieldConfig {
     type: FieldType;
     size?: number;
     className?: string;
+    endAdornment?: string;
     rows?: number;
     style?: SxProps | null;
     labelTop?: string;
@@ -43,7 +45,6 @@ export interface SectionConfig {
 
 const defaultFieldConfig: Pick<FieldConfig, 'size' | 'style' | 'className'> = {
     size: 12,
-    className: 'dark:!bg-[#101828] dark:!border-[#4b1dd8] !rounded-md',
 };
 
 export const FieldConfig: SectionConfig[] = [
@@ -54,14 +55,14 @@ export const FieldConfig: SectionConfig[] = [
                 name: 'email',
                 label: 'Email',
                 type: 'email',
-                style: customInputStyles,
+                style: customTextFieldStyle,
                 ...defaultFieldConfig,
             },
             {
                 name: 'password',
                 label: 'Password',
                 type: 'password',
-                style: customInputStyles,
+                style: customTextFieldStyle,
                 ...defaultFieldConfig,
             },
         ],
@@ -73,28 +74,28 @@ export const FieldConfig: SectionConfig[] = [
                 name: 'username',
                 label: 'User name',
                 type: 'text',
-                style: customInputStyles,
+                style: customTextFieldStyle,
                 ...defaultFieldConfig,
             },
             {
                 name: 'email',
                 label: 'Email',
                 type: 'email',
-                style: customInputStyles,
+                style: customTextFieldStyle,
                 ...defaultFieldConfig,
             },
             {
                 name: 'password',
                 label: 'Password',
                 type: 'password',
-                style: customInputStyles,
+                style: customTextFieldStyle,
                 ...defaultFieldConfig,
             },
             {
                 name: 'confirmPassword',
                 label: 'Confirm password',
                 type: 'password',
-                style: customInputStyles,
+                style: customTextFieldStyle,
                 ...defaultFieldConfig,
             },
         ],
@@ -106,28 +107,28 @@ export const FieldConfig: SectionConfig[] = [
                 name: "facebook",
                 label: "Facebook",
                 type: "text",
-                style: customInputStyles,
+                style: customTextFieldStyle,
                 ...defaultFieldConfig,
             },
             {
                 name: "twitter",
                 label: "X.com",
                 type: "text",
-                style: customInputStyles,
+                style: customTextFieldStyle,
                 ...defaultFieldConfig,
             },
             {
                 name: "linkedin",
                 label: "LinkedIn",
                 type: "text",
-                style: customInputStyles,
+                style: customTextFieldStyle,
                 ...defaultFieldConfig,
             },
             {
                 name: "instagram",
                 label: "Instagram",
                 type: "text",
-                style: customInputStyles,
+                style: customTextFieldStyle,
                 ...defaultFieldConfig,
             },
         ],
@@ -139,35 +140,35 @@ export const FieldConfig: SectionConfig[] = [
                 name: "displayname",
                 label: "Display Name",
                 type: "text",
-                style: customInputStyles,
+                style: customTextFieldStyle,
                 ...defaultFieldConfig,
             },
             {
                 name: "username",
                 label: "User Name",
                 type: "text",
-                style: customInputStyles,
+                style: customTextFieldStyle,
                 ...defaultFieldConfig,
             },
             {
                 name: "email",
                 label: "Email Address",
                 type: "email",
-                style: customInputStyles,
+                style: customTextFieldStyle,
                 ...defaultFieldConfig,
             },
             {
                 name: "phone",
                 label: "Phone",
                 type: "text",
-                style: customInputStyles,
+                style: customTextFieldStyle,
                 ...defaultFieldConfig,
             },
             {
                 name: "bio",
                 label: "Bio",
                 type: "text",
-                style: customInputStyles,
+                style: customTextFieldStyle,
                 ...defaultFieldConfig,
             },
         ],
@@ -179,28 +180,28 @@ export const FieldConfig: SectionConfig[] = [
                 name: "country",
                 label: "Country",
                 type: "text",
-                style: customInputStyles,
+                style: customTextFieldStyle,
                 ...defaultFieldConfig,
             },
             {
                 name: "state",
                 label: "City/State",
                 type: "text",
-                style: customInputStyles,
+                style: customTextFieldStyle,
                 ...defaultFieldConfig,
             },
             {
                 name: "postalcode",
                 label: "Postal Code",
                 type: "text",
-                style: customInputStyles,
+                style: customTextFieldStyle,
                 ...defaultFieldConfig,
             },
             {
                 name: "taxId",
                 label: "House No",
                 type: "text",
-                style: customInputStyles,
+                style: customTextFieldStyle,
                 ...defaultFieldConfig,
             },
         ],
@@ -214,7 +215,7 @@ export const FieldConfig: SectionConfig[] = [
                 labelTop: "To a Recipient:",
                 toolTip: "Enter your recipient number here.",
                 placeholder: "Enter your number",
-                style: customInputStyles,
+                style: customTextFieldStyle,
                 ...defaultFieldConfig,
             },
             {
@@ -224,7 +225,7 @@ export const FieldConfig: SectionConfig[] = [
                 labelTop: "Message:",
                 toolTip: "Enter your message here.",
                 placeholder: "Enter your message",
-                style: customInputStyles,
+                style: customTextFieldStyle,
                 ...defaultFieldConfig,
             },
         ],
@@ -238,7 +239,7 @@ export const FieldConfig: SectionConfig[] = [
                 labelTop: "Access Token:",
                 toolTip: "Copy and paste your Access Token from your WhatsApp Business account here.",
                 placeholder: "Enter your Access Token",
-                style: customInputStyles,
+                style: customTextFieldStyle,
                 ...defaultFieldConfig,
             },
             {
@@ -247,12 +248,78 @@ export const FieldConfig: SectionConfig[] = [
                 labelTop: "Phone number ID:",
                 toolTip: "Copy and paste your Phone Number ID from your WhatsApp Business account here.",
                 placeholder: "Enter your Phone number ID",
-                style: customInputStyles,
+                style: customTextFieldStyle,
                 ...defaultFieldConfig,
             },
         ],
     },
+    {
+        section: "chatbotFields",
+        fields: [
+            {
+                name: "botName",
+                type: "text",
+                label: "Assistant Name",
+                placeholder: "e.g., NimbleMeet",
+                style: customTextFieldStyle,
+            },
+            {
+                name: "generalWelcomeMessage",
+                type: "textarea",
+                rows: 6,
+                label: "Welcome Greeting",
+                placeholder: "Enter greeting...",
+                className:"mb-4! mt-4!",
+                style: customTextFieldStyle,
+            },
+        ],
+    },
+    {
+        section: "receiptSettings",
+        fields: [
+            {
+                name: "autoSendBookingPdf",
+                type: "checkbox",
+                label: "Auto-Send Receipt (PDF)",
+                placeholder: "Enter greeting...",
+            },
+        ],
+    },
+    {
+        section: "systemFields",
+        fields: [
+            {
+                name: "timezone",
+                type: "timezone",
+                placeholder: "System Timezone",
+                style: customTextFieldStyle,
+            },
+            {
+                name: "monthlyTarget",
+                type: "number",
+                label: "Monthly Target",
+                style: customTextFieldStyle,
+                endAdornment: "Volume", 
+            },
+        ],
+    },
+    {
+        section: "inactivityTimeoutMinutes",
+        fields: [
+            {
+                name: "inactivityTimeoutMinutes",
+                type: "number",
+                label: "Session Timeout",
+                placeholder: "Enter greeting...",
+                style: customTextFieldStyle,
+                endAdornment: "Minutes", 
+            },
+        ],
+    },
+
 ];
+
+
   
   
   

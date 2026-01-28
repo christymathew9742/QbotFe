@@ -1,7 +1,7 @@
 'use client';
 
-import Button from '@/components/ui/button/Button';
-import { CircularProgress } from '@mui/material';
+// import Button from '@/components/ui/button/Button';
+import { Button, CircularProgress } from '@mui/material';
 import { useRef, useState } from 'react';
 
 interface FieldProps {
@@ -48,7 +48,7 @@ const CopyField = ({ id, label, value, title, disabled=false, onClick, update, t
               readOnly
               type={type}
               disabled={disabled}
-              className="w-full p-2.5 pr-10 text-sm text-color-primary-light bg-gray-50 border border-gray-300 rounded-md dark:bg-gray-700 dark:border-gray-600 dark:text-color-primary-light cursor-text"
+              className="w-full h-[43px]! p-2.5 pr-10 text-sm text-color-primary-light bg-gray-50 border border-gray-300 rounded-md dark:bg-gray-700 dark:border-gray-600 dark:text-color-primary-light cursor-text"
             />
             <button
               type="button"
@@ -71,13 +71,23 @@ const CopyField = ({ id, label, value, title, disabled=false, onClick, update, t
 
           {onClick && (
             <Button
-              onClick={onClick}
-              size="sm"
               type="submit"
-              className="w-[16%] !py-[11px]"
+              onClick={onClick} 
+              className={`bg-app-theme! px-6! py-[11px]! text-white! rounded-lg! text-xxs! font-medium! items-center! w-[16%]! ${value ? 'opacity-50! cursor-not-allowed!' : ''}`}
               disabled={value && true || false}
+              sx={{ textTransform: 'none', float: 'right' }}
             >
-              {update ? <><CircularProgress size={20} className="mr-2 !text-white"/></> : <>Generate Token</>}
+              {update ? (
+                  <>
+                    Generating...
+                    <svg className="h-4 w-4 animate-spin ml-4!" viewBox="0 0 24 24">
+                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none"></circle>
+                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
+                    </svg>
+                  </>
+              ) : (
+                  "Generate Token"
+              )}
             </Button>
           )}
         </div>

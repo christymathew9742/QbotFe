@@ -31,7 +31,14 @@ import {
   format,
 } from 'date-fns';
 import api from './axios';
-import Image from 'next/image';
+
+interface DateTimeResult {
+  month?: string;
+  date?: string;
+  startTime?: string;
+  endTime?: string;
+  timezone?: string;
+}
 
 const {
   BOT:{
@@ -44,7 +51,7 @@ const {
 } = constantsText;
 const BASE_MEDIA_URL = "https://storage.googleapis.com/qbot-assets/whatsappuser/";
 
-const iconProps = { sx: { fontSize: '14px', marginRight: '4px',  } };
+const iconProps = { sx: { fontSize: '20px', marginRight: '4px',  } };
 
 export const messageIcons = [
   { type: 'Text', field: 'messages', icon: <WysiwygIcon sx={{ ...iconProps.sx, color: MESSAGE }}  /> },
@@ -243,64 +250,27 @@ export const allowedExtensions = {
   doc: ["pdf", "doc", "docx", "xls", "xlsx", "ppt", "pptx", "txt", "csv", "rtf", "zip", "rar"],
 };
 
-// export const extractDateTime = (preference: any[]) => {
-//   const result: any[] = [];
-//   const temp: any = {};
+const DATE_REGEX = /([A-Za-z]{3,})\s+(\d{1,2})(?:,)?/; 
+const TIME_REGEX = /(\d{1,2}:\d{2})\s*-\s*(\d{1,2}:\d{2})/;
 
-//   preference.forEach((item: any) => {
-//     const value = Object.values(item)[0];
-//     if (typeof value !== "string") return;
+export const extractDateTime = (value: string): DateTimeResult => {
+  if (!value || typeof value !== "string") return {};
 
-//     const dateMatch = value.trim().match(/(\d{1,2})\s*([A-Za-z]{3,})/);
-//     if (dateMatch) {
-//       temp.date = dateMatch[1];
-//       temp.month = dateMatch[2];
-//     }
+  const cleanStr = value.trim();
+  const result: DateTimeResult = {};
+  const dateMatch = cleanStr.match(DATE_REGEX);
+  if (dateMatch) {
+    result.month = dateMatch[1];
+    result.date = dateMatch[2];
+  }
+  const timeMatch = cleanStr.match(TIME_REGEX);
+  if (timeMatch) {
+    result.startTime = timeMatch[1];
+    result.endTime = timeMatch[2];
+  }
 
-//     const timeMatch = value
-//       .trim()
-//       .match(/(\d{1,2}:\d{2}\s*[APMapm]{2})\s*-\s*(\d{1,2}:\d{2}\s*[APMapm]{2})/);
-//     if (timeMatch) {
-//       temp.startTime = timeMatch[1];
-//       temp.endTime = timeMatch[2];
-//     }
-//   });
-
-//   if (Object.keys(temp).length > 0) result.push(temp);
-//   return result;
-// };
-
-export const extractDateTime = (preference: any[]) => {
-  const temp: any = {};
-  preference.forEach((item: any) => {
-    const value = Object.values(item)[0];
-    if (typeof value !== "string") return;
-    
-    console.log("Extracting from preference value:", value);
-
-    const cleanStr = value.trim();
-    const timeRegex = /(\d{1,2}:\d{2}(?:\s*[APap][Mm])?)\s*-\s*(\d{1,2}:\d{2}(?:\s*[APap][Mm])?)/;
-    const timeMatch = cleanStr.match(timeRegex);
-    if (timeMatch) {
-      temp.startTime = timeMatch[1].trim();
-      temp.endTime = timeMatch[2].trim();
-    }
-
-    const dateRegex = /(\d{1,2})\s+([A-Za-z]{3,})|([A-Za-z]{3,})[,.]?\s+(\d{1,2})/;
-    const dateMatch = cleanStr.match(dateRegex);
-
-    if (dateMatch) {
-      if (dateMatch[1]) {
-        temp.date = dateMatch[1];
-        temp.month = dateMatch[2];
-      } else if (dateMatch[3]) {
-        temp.month = dateMatch[3];
-        temp.date = dateMatch[4];
-      }
-    }
-  });
-
-  return temp;
+  result.timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+  return result;
 };
 
 export const getValidUrlOrValue = (
@@ -362,8 +332,16 @@ export const getValidUrlOrValue = (
   try {
     if (!value) return null;
 
-    const filenames = value.split(",").map((f:string) => f.trim()).filter(Boolean);
-    const validFiles = filenames.filter(isMediaFile);
+    if (typeof value !== "string") {
+      return String(value);
+    }
+
+    const filenames = value
+      .split(",")
+      .map((f: string) => f?.trim())
+      .filter(Boolean);
+
+    const validFiles = filenames?.filter(isMediaFile);
 
     if (validFiles.length === 0) return String(value);
 
@@ -376,7 +354,9 @@ export const getValidUrlOrValue = (
             ? handleDownloadSingle(urls[0])
             : handleDownloadZip(urls)
         }
-        title={urls.length === 1 ? "Download File" : `Download ${urls.length} Files`}
+        title={
+          urls.length === 1 ? "Download File" : `Download ${urls.length} Files`
+        }
         className="flex items-center gap-2 text-xs font-light text-blue-700 transition-transform duration-300 hover:scale-110"
       >
         <CloudDownloadOutlinedIcon fontSize="small" />

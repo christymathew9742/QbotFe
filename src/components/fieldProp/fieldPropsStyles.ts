@@ -1,4 +1,7 @@
 import { SxProps } from '@mui/system';
+import { GroupBase, StylesConfig } from 'react-select';
+import { ITimezone } from 'react-timezone-select';
+type TimezoneStyleConfig = StylesConfig<ITimezone, boolean, GroupBase<ITimezone>>;
 
 export const customInputStylesLoginBord:SxProps = {
     '& .MuiOutlinedInput-root': {
@@ -33,30 +36,50 @@ export const customInputStylesLoginBord:SxProps = {
 };
 
 
+export const customTextFieldStyle: SxProps = {
+    '& .MuiInputBase-input': { 
+        color: '#493e81b8' 
+    },
+    '& .MuiInputLabel-root': { 
+        color: '#493e81b8' 
+    },
+    '& .MuiInputLabel-root.Mui-focused': { 
+        color: '#493e81' 
+    },
+    '& .MuiOutlinedInput-root': {
+        borderRadius: '8px',
+        backgroundColor: 'transparent',
+        '& fieldset': {
+            borderColor: '#493e81b8',
+            transition: 'border-color 0.3s ease-in-out, border-width 0.2s ease-in-out',
+        },
+        '&:hover fieldset': {
+            borderColor: '#493e81b8',
+        },
+        '&.Mui-focused fieldset': {
+            borderColor: '#493e81b8', 
+            borderWidth: '2px',
+        },
+    },
+};
+
 export const customInputStyles: SxProps = {
-    '& .MuiPickersInputBase-root' :{
-        borderRadius: '.2rem',
+    '& .MuiPickersInputBase-root': {
+        borderRadius: '.4rem',
         backgroundColor: 'transparent',
         height: '45px',
-        '.dark & .MuiPickersSectionList-root': {
-            backgroundColor: 'transparent',
-            color: 'white',
-        },
-        '.dark & .MuiIconButton-root': {
-            color: 'white',
-        },
         '&:hover fieldset': {
             borderWidth: '1px !important',
             borderColor: 'rgb(206 210 216)',
         },
         '&.Mui-focused fieldset': {
-            borderColor:'#4b1dd8!important',
+            borderColor: '#4b1dd8!important',
             borderWidth: '1px !important',
             boxShadow: '0 0 0 3px rgba(59, 130, 246, 0.1)',
-            outline:'none!important',
+            outline: 'none!important',
         },
     },
-     '& .MuiPickersLayout-root' :{
+    '& .MuiPickersLayout-root': {
         marginTop: '20px',
     },
     '& .MuiOutlinedInput-root': {
@@ -80,13 +103,12 @@ export const customInputStyles: SxProps = {
             borderColor: 'rgb(206 210 216)',
         },
         '&.Mui-focused fieldset': {
-            borderColor:'#4b1dd8!important',
+            borderColor: '#4b1dd8!important',
             borderWidth: '1px !important',
             boxShadow: '0 0 0 3px rgba(59, 130, 246, 0.1)',
-            outline:'none!important',
+            outline: 'none!important',
         },
     },
-
     '& .MuiOutlinedInput-input': {
         color: '#9ca3af',
         fontSize: '0.875rem',
@@ -95,23 +117,50 @@ export const customInputStyles: SxProps = {
             color: '#9ca3af',
         },
     },
-
     '& .MuiInputLabel-root': {
         color: '#9ca3af',
         fontSize: '0.875rem',
     },
-
     '& .MuiInputLabel-root.Mui-focused': {
         color: '#9ca3af',
         fontSize: '0.875rem',
     },
-    '.dark & fieldset': {
-        borderColor:'#344054',
-    },
-    '.dark &:hover fieldset': {
-        borderColor:'#344054'
-    },
 };
+
+export const timezoneSelectStyle: TimezoneStyleConfig = {
+    control: (base, state) => ({
+        ...base,
+        borderRadius: 8,
+        backgroundColor: "transparent",
+        borderColor: "#493e81b8",
+        boxShadow: "none",
+        minHeight: "56px",
+        "&:hover": {
+            borderColor: "#493e81b8",
+        },
+    }),
+
+    input: (base) => ({
+        ...base,
+        color: "#493e81b8",
+    }),
+
+    singleValue: (base) => ({
+        ...base,
+        color: "#493e81b8",
+    }),
+
+    placeholder: (base) => ({
+        ...base,
+        color: "#493e81b8",
+    }),
+
+    menu: (base) => ({
+        ...base,
+        zIndex: 1300,
+    }),
+};
+
 
 
 

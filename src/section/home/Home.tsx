@@ -75,7 +75,6 @@ const Home = () => {
             <div className="col-span-12 space-y-6 sm:col-span-6">
                 <PromoCard/>
                 <WhatsAppMonthlyAppointmentChart  monthlyAppointments={globalData?.monthlyAppointments || []}  pendingStatus={pendingStatus?.fetch || isPending} />
-                {/* <WhatsAppMetrics metrics = {metricsData} /> */}
             </div>
             <div className="col-span-12 sm:col-span-6">
                 <WhatsAppMetrics metrics = {metricsData} />

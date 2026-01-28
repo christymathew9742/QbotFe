@@ -12,8 +12,8 @@ export const constantsText = {
         ICON_TITLE4:'Group',
         ICON:{
             MESSAGE:'#0FAB49',
-            REPLAY:'#FF1493',
-            PREFERENCE: 'rgb(23 196 220)',
+            REPLAY:'#e879f9',
+            PREFERENCE: '#17c4dc',
             GROUP:'rgb(201 49 201)',
         },
         CREATE_CHAT:{

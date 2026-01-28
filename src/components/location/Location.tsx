@@ -93,11 +93,11 @@ export default function LocationPickerInner({
     };
 
     return (
-        <div className="dark:p-2">
+        <div className="dark:p-2 mb-2 h-[420px]">
             <MapContainer 
                 center={value?.length && value[0] || position as LatLngExpression} 
-                zoom={5} 
-                style={{ height: "380px", width: "100%", cursor:"pointer" }}
+                zoom={16} 
+                style={{ height: "100%", width: "100%", cursor:"pointer" }}
             >
                 <TileLayer 
                     url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
@@ -106,7 +106,7 @@ export default function LocationPickerInner({
                 <SearchControlComponent setLocation={setLocation} />
                 <Marker position={ value?.length && value[0] || position as LatLngExpression } />
             </MapContainer>
-            <div className="p-1 bg-gray-300 text-xxs">
+            <div className="p-2 bg-gray-300 text-xxs">
                 {value[0] ? (
                     <p><strong>Coordinates:</strong> Lat: {value[0]?.lat}, Lng: {value[0]?.lng}</p>
                 ) : (

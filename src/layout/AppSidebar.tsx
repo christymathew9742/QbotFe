@@ -370,7 +370,7 @@ const AppSidebar: React.FC = () => {
           <div className="flex flex-col gap-6">
             <div>
               <h2
-                className={`mb-4 flex text-xxs font-semibold uppercase text-color-primary-light ${
+                className={`mb-4 flex text-xxxs font-semibold uppercase text-color-primary-light ${
                   !isExpanded && !isMobileOpen
                     ? "justify-center"
                     : "justify-start px-4"
@@ -386,7 +386,7 @@ const AppSidebar: React.FC = () => {
             </div>
             <div>
               <h2
-                className={`mb-4 flex text-xxs font-semibold uppercase text-color-primary-light ${
+                className={`mb-4 flex text-xxxs font-semibold uppercase text-color-primary-light ${
                   !isExpanded && !isMobileOpen
                     ? "justify-center"
                     : "justify-start px-4"
