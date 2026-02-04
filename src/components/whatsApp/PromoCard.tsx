@@ -1,3 +1,4 @@
+import Link from 'next/link';
 import React from 'react';
 
 const PromoCard: React.FC = () => {
@@ -20,12 +21,12 @@ const PromoCard: React.FC = () => {
                         AI-powered automation for effortless appointment management.
                     </p>
                     <div className="pt-2">
-                        <button 
-                            type="button" 
-                            className="bg-white text-sm text-[#493e81] hover:bg-indigo-50 transition-all duration-300 font-semibold py-3 px-8 rounded-full shadow-md active:scale-95 transform hover:-translate-y-0.5"
+                        <Link
+                            href="/api-config"
+                            className="inline-block bg-white text-sm text-[#493e81] hover:bg-indigo-50 transition-all duration-300 font-semibold py-3 px-8 rounded-full shadow-md active:scale-95 transform hover:-translate-y-0.5"
                         >
                             Integrate Free Now
-                        </button>
+                        </Link>
                     </div>
                 </div>
 

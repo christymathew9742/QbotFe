@@ -15,6 +15,7 @@ import { parseCookies } from "nookies";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchUserRequest } from "@/redux/reducers/user/actions";
 import { Expried } from "@/icons/index";
+import MenuOpenIcon from '@mui/icons-material/MenuOpen';
 
 const AppHeader: React.FC = () => {
   const [isApplicationMenuOpen, setApplicationMenuOpen] = useState(false);
@@ -59,22 +60,20 @@ const AppHeader: React.FC = () => {
   }, []);
 
   return (
-    <header className="sticky bg-app-bg-theme top-0 z-40 flex w-full backdrop-blur-md border-b border-theme-border transition-colors duration-300 dark:border-gray-800 dark:bg-gray-900">
+    <header className="sticky bg-hdbg top-0 z-40 flex w-full backdrop-blur-md border-b border-theme-border transition-colors duration-300 dark:border-gray-800 dark:bg-gray-900">
       <div className="flex flex-grow items-center justify-between px-3 py-2 md:px-6">
         <div className="flex items-center gap-3 sm:gap-4">
           <button
             aria-controls="sidebar"
             onClick={handleToggle}
-            className="group relative p-1 flex h-6 w-6 items-center justify-center rounded-lg border border-gray-200 text-color-primary-light transition-all hover:border-[#493e81]/30 hover:bg-gray-50 hover:text-[#493e81] dark:border-gray-800 dark:text-color-primary-light dark:hover:text-white"
+            className="group relative p-1.5 flex h-8 w-10 items-center justify-center rounded-md border border-gray-200 text-color-primary-light transition-all hover:border-[#493e81]/30 hover:bg-gray-50 hover:text-[#493e81] dark:border-gray-800 dark:text-color-primary-light dark:hover:text-white"
           >
             {isMobileOpen ? (
                <svg className="h-5 w-5 fill-current" viewBox="0 0 24 24">
                  <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41z"/>
                </svg>
             ) : (
-               <svg className="h-5 w-5 fill-current" viewBox="0 0 24 24">
-                 <path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z"/>
-               </svg>
+              <MenuOpenIcon className="h-6 w-6"/>
             )}
           </button>
 
@@ -97,7 +96,7 @@ const AppHeader: React.FC = () => {
         </div>
         <div className="flex items-center justify-end gap-3 sm:gap-6 w-full">
           {tockenDetails?.hastocken && (
-            <div className="hidden sm:flex items-center gap-2 rounded-full border border-red-200 bg-red-50 px-2 py-1 text-xxs text-red-600 font-extralight dark:border-red-500/20 dark:bg-red-500/10 dark:text-red-400">
+            <div className="hidden sm:flex items-center gap-2 rounded-md border border-red-200 bg-red-50 px-2 py-1 text-xxs text-red-600 font-extralight dark:border-red-500/20 dark:bg-red-500/10 dark:text-red-400">
               <span className="flex h-4 w-4 items-center justify-center">
                  <Expried />
               </span>

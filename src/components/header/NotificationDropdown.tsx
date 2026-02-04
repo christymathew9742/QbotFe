@@ -88,12 +88,16 @@ export default function NotificationDropdown() {
       ) : (
         <button
           onClick={handleClose}
-          className={`relative flex items-center justify-center text-color-primary  border-2 border-color-primary-light transition-all duration-200 rounded-full h-8 w-8
-            ${isOpen ?  'dark:bg-color-primary dark:text-white' : 'bg-white text-color-primary-light dark:border-color-primary dark:bg-gray-900 dark:text-color-primary-light dark:hover:bg-color-primary dark:hover:text-white'}
+          className={`relative flex items-center justify-center text-color-primary transition-all duration-200 rounded-full h-8 w-8
+            ${isOpen ?  'dark:bg-color-primary' : 'text-color-primary-light'}
           `}
         >
           {unreadCount > 0 && (
-            <span className="absolute flex items-center justify-center min-w-[18px] h-[18px] px-1 -top-1 -right-1 rounded-full text-[10px] font-bold bg-red-500 text-white shadow-sm ring-2 ring-white dark:ring-gray-900">
+            <span
+              className={` absolute flex items-center justify-center -top-[3px] -right-0.5 h-4 rounded-full text-xxss font-extralight text-white bg-red-500
+                ${unreadCount > 9 && "min-w-4 p-0.5"} 
+              `}
+            >
               {unreadCount > 99 ? "99+" : unreadCount}
             </span>
           )}

@@ -100,12 +100,12 @@ const UserDetails: React.FC = () => {
             <PageBreadcrumb pagePath="Users, Details" />
             <div className="space-y-6">
                 <div className="flex flex-col sm:flex-row gap-4">
-                    <div className="rounded-2xl border border-gray-200 dark:border-color-primary bg-white dark:bg-white/[0.03] w-full sm:w-[40%]">
+                    <div className="rounded-md shadow-xl backdrop-blur-sm dark:border-color-primary bg-white dark:bg-white/[0.03] w-full sm:w-[40%]">
                         <div className="h-full rounded-xl p-1">
                             <div className="px-4 py-2 w-full">
                                 <h3 className="text-lg font-semibold text-color-primary dark:text-white">Details</h3>
                             </div> 
-                            <div className="p-4 border-t dark:border-color-primary sm:p-6 overflow-y-auto custom-scrollbar h-[350px]">
+                            <div className="p-4 border-t border-b mb-2 dark:border-color-primary sm:p-6 overflow-y-auto custom-scrollbar h-[350px]">
                                 <div className="border dark:border-gray-700 rounded-[4px]">
                                     {infoItems.map(({ label, value }, idx) => (
                                         <div
@@ -120,18 +120,16 @@ const UserDetails: React.FC = () => {
                                     ))}
                                 </div>
                             </div>
-                            <div className="grid grid-cols-1 gap-2  px-4 py-2 border-t dark:border-color-primary "></div>
                         </div>
                     </div>
-                    <div className="rounded-2xl border border-gray-200 dark:border-color-primary bg-white dark:bg-white/[0.03] w-full sm:w-[60%]">
+                    <div className="rounded-md shadow-xl backdrop-blur-sm dark:border-color-primary bg-white dark:bg-white/[0.03] w-full sm:w-[60%]">
                         <div className="h-full rounded-xl p-1">
                             <div className="px-4 py-2">
                                 <h3 className="text-lg font-semibold text-color-primary dark:text-white">Activities</h3>
                             </div>
-                            <div className="p-4 border-t dark:border-color-primary sm:p-6 overflow-y-auto custom-scrollbar h-[350px] space-y-4">
+                            <div className="p-4 border-t border-b mb-2 dark:border-color-primary sm:p-6 overflow-y-auto custom-scrollbar h-[350px] space-y-4">
                                 <SentimentChartOne appointments={userDetails?.sentimentData} />
                             </div>
-                            <div className="grid grid-cols-1 gap-2  px-4 py-2 border-t dark:border-color-primary "></div>
                         </div>
                     </div>
                 </div>

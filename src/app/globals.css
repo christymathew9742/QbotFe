@@ -173,7 +173,6 @@
 
   /***** custom style *****/
   /* colors */
-  /* --color-custom-blue-right: #6054FF; */
   --color-custom-them-clr: #6054FF;
   --color-custom-blue-left: #459AFF;
   --color-letter-theme-clr: #334155;
@@ -199,8 +198,9 @@
   --color-app-bg-theme:#493e8105;
   --color-color-primary:#493e81;
   --color-sidebar-theme:#493e81;
+  --color-bot-theme:#7561dd;
+  --color-hdbg:#f8f8f8;
   --color-color-primary-light:#493e81b8;
-  /* --color-logo-bg:#e9e2f8; */
   --color-theme-border:#493e811f;
   --color-status-bg-active:#0080006b;
   --color-status-bg-cancel:#ff00006b;
@@ -209,9 +209,11 @@
   --color-notify: #493e8138;
   --color-custom-border: #6f6f6f24;
   --color-node-pop: #e4e7ec87;
-  /* --color-dark-border-node: #29909fab; */
   --color-dark-border-node: #7fffd466;
   --color-dark-border-tiptap: #7fffd426;
+  --color-bot-msg: #0080001f;
+  --color-user-replay: #872c961a;
+
 
   /* Font Sizes */
   --text-xxss: 8px;
@@ -316,6 +318,16 @@
   @apply bg-brand-50 group-hover:bg-brand-100 dark:bg-brand-500/15 dark:group-hover:bg-brand-500/20;
 }
 
+.chatbot-window .custom-scrollbar {
+  /* Hide scrollbar for Chrome, Safari and Opera */
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
+}
+
+.chatbot-window .custom-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
 @utility no-scrollbar {
   /* Chrome, Safari and Opera */
   &::-webkit-scrollbar {
@@ -362,227 +374,122 @@
   }
 }
 
-/* third-party libraries CSS */
-/**react flow section**/
-.react-flow__panel a {
-  display: none !important;
-}
-.react-flow {
-  --xy-theme-selected: #f7faf5;
-  --xy-theme-hover: #C5C5C5;
-  --xy-theme-edge-hover: black;
-  --xy-theme-color-focus: #E8E8E8;
-  --xy-node-border-default: 1px solid #EDEDED;
-  --xy-node-boxshadow-default: 
-    0px 3.54px 4.55px 0px #00000005, 
-    0px 3.54px 4.55px 0px #0000000D, 
-    0px 0.51px 1.01px 0px #0000001A;
-  --xy-node-border-radius-default: 8px;
-  --xy-handle-background-color-default: #ffffff;
-  --xy-handle-border-color-default: #AAAAAA;
-  --xy-edge-label-color-default: #505050;
-}
-
-.dark .react-flow .react-flow__node-customNode {
-  border: 1px solid hwb(0 0% 100% / 0); /* subtle black border */
-  transition: box-shadow 0.3s ease;
-}
-
-.dark .react-flow .react-flow__node-customNode:hover {
-  border: 0 0 10px 2px lab(26.42% -9.89 -3.16 / 0.605);
-}
-
-.dark .react-flow {
-  /* Selection & Hover */
-  --xy-theme-selected: #7fffd426;
-  --xy-theme-hover: #7fffd426;
-  --xy-theme-edge-hover: #29909fab;
-  --xy-theme-color-focus: #7fffd426;
-
-  /* Node Styling */
-  --xy-node-boxshadow-default: 
-    0px 3px 6px rgba(0, 0, 0, 0.6),
-    0px 6px 12px rgba(0, 0, 0, 0.45),
-    0px 12px 24px rgba(0, 0, 0, 0.3); /* layered black shadow */
-  --xy-node-border-radius-default: 8px;
-
-  /* Handles */
-  --xy-handle-background-color-default: #7fffd4;
-  --xy-handle-border-color-default: #000000cc;
-
-  /* Edge labels */
-  --xy-edge-label-color-default: #7fffd4;
-}
-
-/* Customizing Default Theming */
-.react-flow__node {
-  box-shadow: var(--xy-node-boxshadow-default);
-  border-radius: var(--xy-node-border-radius-default);
-  background-color: #ffffff;
-  padding: 10px;
-  font-size: 12px;
-  border: var(--xy-node-border-default);
-  color: var(--xy-node-color, var(--xy-node-color-default));
-}
-.dark .react-flow__node {
-  background-color: #101828;
-  border: 1px solid oklch(0.54 0 0);
-  color:#ffffffE6; 
-}
-.react-flow__node.selectable:focus {
-  box-shadow: 0px 0px 0px 4px var(--xy-theme-color-focus);
-  border-color: #d9d9d9;
-}
-.react-flow__node.selectable:focus:active {
-  box-shadow: var(--xy-node-boxshadow-default);
-}
-.react-flow__node.selectable:hover, 
-.react-flow__node.draggable:hover {
-  border-color: var(--xy-theme-hover);
-}
-.react-flow__node.selectable.selected {
-  border-color: var(--xy-theme-selected);
-  box-shadow: var(--xy-node-boxshadow-default);
-}
-.react-flow__node-group {
-  background-color: rgba(207, 182, 255, 0.4);
-  border-color: #9E86ED;
-}
-.react-flow__edge.selectable:hover .react-flow__edge-path,
-.react-flow__edge.selectable.selected .react-flow__edge-path {
-  stroke: var(--xy-theme-edge-hover);
-}
-.react-flow__handle {
-  background-color: var(--xy-handle-background-color-default);
-}
-.react-flow__handle.connectionindicator:hover {
-  pointer-events: all;
-  border-color: var(--xy-theme-edge-hover);
-  background-color: white;
-}
-.react-flow__handle.connectionindicator:focus , 
-.react-flow__handle.connectingfrom,
-.react-flow__handle.connectingto {
-  border-color: var(--xy-theme-edge-hover);
-}
-
 /*message section*/
-.react-flow__node .border-messages-node  {
+/* .react-flow__node .border-messages-node  {
   border: 1px solid rgb(15 171 73)
-}
+} */
+
 .react-flow__node .messages-node-normal {
-  background-color: rgb(221 255 234);
-}
-.dark .react-flow__node .messages-node-normal {
-  background-color: rgb(221 255 234 / 10%);
+  background-color: rgb(221 255 234 / 5%);
 }
 
 /*replay section*/
-.react-flow__node .border-replay-node  {
+/* .react-flow__node .border-replay-node  {
   border: 1px solid #f069b1;
-}
+} */
+
 .react-flow__node .replay-node-normal {
-  background-color: #fff3f9;
-}
-.dark .react-flow__node .replay-node-normal {
-  background-color: #fff3f917;
+  background-color: #fff3f908;
 }
 
 /*preference*/
-.react-flow__node .border-preference-node  {
-  border: 1px solid rgb(23 196 220);
-}
 .react-flow__node .preference-node-normal {
-  background-color: rgb(220 251 255);
-}
-.dark .react-flow__node .preference-node-normal {
   background-color: rgb(19 185 207 / 11%);
 }
 
 /* edge section */
-.react-flow__edge.react-flow__edge-smoothstep {
+/* .react-flow__edge.react-flow__edge-smoothstep {
   pointer-events: none;
-}
+} */
 
 /**datepicker dark mode color**/
-html.dark .react-datepicker {
-  background-color:  #0a0f16;
+html .react-datepicker {
+  background-color:  #0f172a;
   color: #ffffff;
 }
 
-/* Header */
-html.dark .react-datepicker__header {
-  background-color:  #0a0f16;
+.react-datepicker-wrapper {
+  width: 100%!important;
 }
 
-html.dark .react-datepicker__current-month,
-html.dark .react-datepicker-time__header {
+/* Header */
+html .react-datepicker__header {
+  background-color:  #0f172a;
+}
+
+html .react-datepicker__current-month,
+html .react-datepicker-time__header {
   color: #ffffff;
   font-weight: 500;
 }
 
 /* Days of the week */
-html.dark .react-datepicker__day-name {
+html .react-datepicker__day-name {
   color: #ffffff;
 }
 
 /* Individual days */
-html.dark .react-datepicker__day,
-html.dark .react-datepicker__time-name {
+html .react-datepicker__day,
+html .react-datepicker__time-name {
   color: #ffffff;
 }
 
 /* Disabled days and time options */
-html.dark .react-datepicker__day--disabled,
-html.dark .react-datepicker__time-list-item--disabled {
-  color: #888888;
+html .react-datepicker__day--disabled,
+html .react-datepicker__time-list-item--disabled {
+  color: #8f8a8a47!important;
 }
 
 /* Selected day or time */
-html.dark .react-datepicker__day--selected,
-html.dark .react-datepicker__day--keyboard-selected,
-html.dark .react-datepicker__time-list-item--selected {
+html .react-datepicker__day--selected,
+html .react-datepicker__day--keyboard-selected,
+html .react-datepicker__time-list-item--selected {
   background-color: #3b82f6;
   color: #ffffff;
 }
 
 /* Hover (only for enabled date items) */
-html.dark .react-datepicker__day:not(.react-datepicker__day--disabled):hover {
+html .react-datepicker__day:not(.react-datepicker__day--disabled):hover {
   background-color: #3b82f6;
   color: #ffffff;
 }
 
 /* Hover (only for enabled time items) */
-html.dark .react-datepicker__time-list-item:not(.react-datepicker__time-list-item--disabled):hover,
-html.dark .react-datepicker__time-list-item:not(.react-datepicker__time-list-item--disabled):hover button {
+html .react-datepicker__time-list-item:not(.react-datepicker__time-list-item--disabled):hover,
+html .react-datepicker__time-list-item:not(.react-datepicker__time-list-item--disabled):hover button {
   background-color: #3b82f6!important;
   color: #ffffff!important;
 }
 
 /* Time picker container background */
-html.dark .react-datepicker__time-container .react-datepicker__time {
-  background-color: #0a0f16;
+html .react-datepicker__time-container .react-datepicker__time {
+  background-color: #0f172a;
 }
 
 /* Time picker list items */
-html.dark .react-datepicker__time-list-item {
+html .react-datepicker__time-list-item {
   color: #ffffff;
 }
 
 /* Custom scrollbar for time picker */
-html.dark .react-datepicker__time-list {
+html .react-datepicker__time-list {
   scrollbar-width: thin; /* Firefox */
   scrollbar-color: #3b82f6 #1e1e1e; /* Firefox: thumb color + track color */
 }
 
 /* Webkit browsers (Chrome, Edge, Safari) */
-html.dark .react-datepicker__time-list::-webkit-scrollbar {
+html .react-datepicker__time-list::-webkit-scrollbar {
   width: 4px;
 }
 
-html.dark .react-datepicker__time-list::-webkit-scrollbar-track {
-  background: #0a0f16!important 
+html .react-datepicker__time-list::-webkit-scrollbar-track {
+  background: #0f172a!important 
 }
+
+/* Customizing Default Theming */
+/* .react-flow__node {
+  font-size: 16px;
+} */
 
 /** hide map button**/
 .leaflet-bottom{
@@ -600,6 +507,23 @@ html.dark .react-datepicker__time-list::-webkit-scrollbar-track {
   border: none;
   transition: border 0.2s ease;
 }
+.variable-highlight {
+  padding: 2px 4px;
+  font-weight: 400;
+}
+.ProseMirror p.is-editor-empty:first-child::before {
+  color: #adb5bd;
+  content: attr(data-placeholder);
+  float: left;
+  height: 0;
+  font-size: 16px;
+  pointer-events: none;
+}
+
+/* .dark .ProseMirror p.is-editor-empty:first-child::before {
+  color: #64748b;
+} */
+
 .tiptap-editor-container:hover,
 .tiptap-editor-container:focus-within,
 .tiptap-editor-container .ProseMirror:focus {
@@ -607,18 +531,22 @@ html.dark .react-datepicker__time-list::-webkit-scrollbar-track {
   outline: none;
 }
 .qbot-editor {
-  font-size: 12px;
+  font-size: 18px;
 }
-.dark .active-editor-bi-messages svg{
+
+
+/* .dark .active-editor-bi-messages svg{
   color: rgb(15 171 73)!important;
-}
-.dark .active-editor-bi-replay svg{
+} */
+/* .dark .active-editor-bi-replay svg{
   color: #f069b1!important;
-}
-.dark .disable-editor-bi-messages svg,
+} */
+/* .dark .disable-editor-bi-messages svg,
 .dark .disable-editor-bi-replay svg {
   color:#ffffffE6!important;
-}
+} */
+
+
 .inputs:hover .text-drag-text {
   opacity: 100;
 }
@@ -1162,3 +1090,8 @@ span.flatpickr-weekday,
   opacity: 0.8;
   cursor: grabbing; /* Changes the cursor to indicate dragging */
 }
+
+.MuiCircularProgress-svg {
+  @apply text-color-primary-light!
+}
+

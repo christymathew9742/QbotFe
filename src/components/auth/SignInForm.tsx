@@ -81,7 +81,7 @@ const SignIn: React.FC = () => {
             <div className="float-left w-full">
               <Link
                 href="/reset-password"
-                className="text-[14px] text-app-theme  hover:text-brand-600 dark:text-brand-400"
+                className="text-xxm text-app-theme  hover:text-brand-600 dark:text-brand-400"
               >
                 Forgot password?
               </Link>

@@ -129,7 +129,7 @@ export default function SentimentChartOne({ appointments = [] }: LineChartOnePro
                     options={options}
                     series={series}
                     type="area"
-                    height={280}
+                    height={275}
                 />
             </div>
         </div>

@@ -1,18 +1,18 @@
 "use client";
 
-import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { CircularProgress } from "@mui/material";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
+import { Button, CircularProgress } from "@mui/material";
 import { Formik, Form } from "formik";
 import * as Yup from "yup";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch } from "@/redux/store";
 import PageBreadcrumb from "@/components/common/PageBreadCrumb";
 import { Metadata } from "next";
-import Button from "@/components/ui/button/Button";
 import FormInputProps from "@/components/fieldProp/FormInputProps";
 import { FieldConfig } from "@/components/fieldProp/fieldConfig";
 import { fetchUserRequest, updateUserRequest } from "@/redux/reducers/user/actions";
-import { getErrorSelector, getUpdateUserPendingSelector, getUserSelector } from "@/redux/reducers/user/selectors";
+import { getUpdateUserPendingSelector, getUserSelector } from "@/redux/reducers/user/selectors";
+import WhatsAppWelcomeCard from "@/components/whatsApp/WhatsAppWelcomeCard";
 
 export const metadata: Metadata = {
     title: "List all Qbot",
@@ -101,6 +101,12 @@ const ApiConfig = () => {
                     </div>
                     <div className="p-4 border-t border-gray-200 dark:border-color-primary sm:p-6">
                         <div className="mx-auto overflow-hidden bg-white dark:border-white/[0.05] dark:bg-white/[0.03] sm:p-6">
+                            <WhatsAppWelcomeCard 
+                                title="Service Connector"
+                                description="Generate a verification token to send and receive messages and view webhook events in real time."
+                                buttonText="API Setup"
+                                href="/generate-token"
+                            />
                             <h3 className="mb-2 text-base font-medium text-color-primary dark:text-white/90">Integrations</h3>
                             <p className="text-color-primary-light dark:text-color-primary-light font-light mb-8">
                                 To enable chatbot communication through WhatsApp using Meta’s Business API, you must integrate your Access
@@ -124,20 +130,22 @@ const ApiConfig = () => {
                                     {fields.map((field) => (
                                         <FormInputProps key={field.name} Config={field} />
                                     ))}
-
                                     <Button
-                                        size="sm"
-                                        type="submit"
-                                        className="w-[150px] !py-[11px] float-end mt-3 flex items-center justify-center gap-2"
-                                        disabled={isUpdate}
+                                        type="submit" 
+										className="bg-app-theme! px-6! py-2.5! text-white! rounded-lg! text-sm! font-medium! items-center!"
+										disabled={isUpdate}
+										sx={{ textTransform: 'none', float: 'right' }}
                                     >
                                         {isUpdate ? (
                                             <>
-                                                Updating...
-                                                <CircularProgress size={20} className="!text-white" />
+                                                Saving...
+                                                <svg className="h-4 w-4 animate-spin ml-4!" viewBox="0 0 24 24">
+                                                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none"></circle>
+                                                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
+                                                </svg>
                                             </>
                                         ) : (
-                                            "Update"
+                                            "Save Changes"
                                         )}
                                     </Button>
                                 </Form>

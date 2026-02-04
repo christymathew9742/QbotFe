@@ -21,6 +21,10 @@ import SmartButtonIcon from '@mui/icons-material/SmartButton';
 import CloudDownloadOutlinedIcon from '@mui/icons-material/CloudDownloadOutlined';
 import JSZip from "jszip";
 import { saveAs } from "file-saver";
+import { parse, isValid } from "date-fns";
+import { fromZonedTime, toZonedTime, format as formatTz } from "date-fns-tz";
+
+
 
 import {
   isToday,
@@ -31,7 +35,14 @@ import {
   format,
 } from 'date-fns';
 import api from './axios';
-import Image from 'next/image';
+
+interface DateTimeResult {
+  month?: string;
+  date?: string;
+  startTime?: string;
+  endTime?: string;
+  timezone?: string;
+}
 
 const {
   BOT:{
@@ -44,7 +55,127 @@ const {
 } = constantsText;
 const BASE_MEDIA_URL = "https://storage.googleapis.com/qbot-assets/whatsappuser/";
 
-const iconProps = { sx: { fontSize: '14px', marginRight: '4px',  } };
+const iconProps = { sx: { fontSize: '20px', marginRight: '4px',  } };
+
+const DATE_TIME_RANGE_REGEX = /\b(?:Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)\s\d{1,2},\s?\d{1,2}:\d{2}\s?[-–—]\s?\d{1,2}:\d{2}(?:\s?(?:AM|PM))?\b/i;
+
+function isValidDateRange(text: string): boolean {
+  return DATE_TIME_RANGE_REGEX.test(text);
+}
+
+// export function convertToLocalTime(
+//   input?: string,
+//   timeZone?: any,
+//   year = new Date().getFullYear()
+// ) {
+  
+//   if (!input || typeof input !== "string") return null;
+//   if (!isValidDateRange(input)) return null;
+
+//   const userTZ = Intl.DateTimeFormat().resolvedOptions().timeZone;
+//   const extracted = input.match(DATE_TIME_RANGE_REGEX)?.[0];
+//   if (!extracted) return null;
+
+//   const [datePart, timePart] = extracted.split(",");
+//   if (!datePart || !timePart) return null;
+
+//   const [startTime, endTime] = timePart.trim().split("-");
+//   if (!startTime || !endTime) return null;
+
+//   const is12Hour = /am|pm/i.test(extracted);
+//   const parseFormat = is12Hour
+//     ? "MMM dd yyyy hh:mm a"
+//     : "MMM dd yyyy HH:mm";
+
+//   const parseDate = (time: string) =>
+//     parse(
+//       `${datePart.trim()} ${year} ${time.trim()}`,
+//       parseFormat,
+//       new Date()
+//     );
+
+//   const startParsed = parseDate(startTime);
+//   const endParsed = parseDate(endTime);
+
+//   if (!isValid(startParsed) || !isValid(endParsed)) return null;
+
+//   const startUTC = fromZonedTime(startParsed, timeZone);
+//   const endUTC = fromZonedTime(endParsed, timeZone);
+
+//   const startLocal = toZonedTime(startUTC, userTZ);
+//   const endLocal = toZonedTime(endUTC, userTZ);
+
+//   // 🛑 FINAL SAFETY
+//   if (isNaN(startLocal.getTime()) || isNaN(endLocal.getTime())) {
+//     return null;
+//   }
+
+//   return `${formatTz(startLocal, "dd MMM, hh:mm a", {
+//     timeZone: userTZ,
+//   })} - ${formatTz(endLocal, "hh:mm a", {
+//     timeZone: userTZ,
+//   })}`;
+// }
+
+/**
+ * @param input - The time string (e.g., "Feb 13, 09:40-10:00")
+ * @param originalTimeZone - The timezone used when the slot was CREATED (e.g., 'America/Anchorage')
+ * @param selectedTimeZone - The timezone you are currently SWITCHING to (e.g., 'Europe/Dublin')
+ * @param year - The year of the appointment
+ */
+export function convertToLocalTime(
+  input?: string,
+  originalTimeZone: string = "UTC", 
+  selectedTimeZone: string = "UTC",
+  year = new Date().getFullYear()
+) {
+  if (!input || typeof input !== "string") return null;
+
+  // 1. Clean and Parse Input
+  const cleanInput = input.replace(/,/g, ", ").replace(/\s+/g, " ").trim();
+  const parts = cleanInput.split(",");
+  if (parts.length < 2) return null;
+
+  const datePart = parts[0].trim();
+  const timeRange = parts[1].trim();
+  const times = timeRange.split("-").map(t => t.trim());
+  if (times.length < 2) return null;
+
+  const [startTimeStr, endTimeStr] = times;
+  const is12Hour = /am|pm/i.test(timeRange);
+  const parseFormat = is12Hour ? "MMM d yyyy h:mm a" : "MMM d yyyy HH:mm";
+
+  // The final destination is always the user's actual browser/system timezone
+  const userTZ = Intl.DateTimeFormat().resolvedOptions().timeZone;
+
+  const processTime = (timeStr: string) => {
+    const fullStr = `${datePart} ${year} ${timeStr}`;
+    const parsedDate = parse(fullStr, parseFormat, new Date());
+
+    if (!isValid(parsedDate)) return null;
+
+    /**
+     * LOGIC:
+     * 1. We treat the text as belonging to the ORIGINAL timezone.
+     * 2. We convert it to a universal UTC moment.
+     * 3. We can then project that moment into the "Selected" or "User" zone.
+     */
+    const utcDate = fromZonedTime(parsedDate, originalTimeZone);
+    
+    // If you specifically want to see it in the "Selected" timezone (e.g. Dublin)
+    // change 'userTZ' to 'selectedTimeZone' below.
+    return toZonedTime(utcDate, userTZ);
+  };
+
+  const startLocal = processTime(startTimeStr);
+  const endLocal = processTime(endTimeStr);
+
+  if (!startLocal || !endLocal) return null;
+
+  // 2. Format Output
+  // We include the Date and the name of the Timezone for clarity
+  return `${formatTz(startLocal, "MMM d, hh:mm a", { timeZone: userTZ })} - ${formatTz(endLocal, "hh:mm a", { timeZone: userTZ })} (${userTZ})`;
+}
 
 export const messageIcons = [
   { type: 'Text', field: 'messages', icon: <WysiwygIcon sx={{ ...iconProps.sx, color: MESSAGE }}  /> },
@@ -243,68 +374,37 @@ export const allowedExtensions = {
   doc: ["pdf", "doc", "docx", "xls", "xlsx", "ppt", "pptx", "txt", "csv", "rtf", "zip", "rar"],
 };
 
-// export const extractDateTime = (preference: any[]) => {
-//   const result: any[] = [];
-//   const temp: any = {};
+// const DATE_REGEX = /([A-Za-z]{3,})\s+(\d{1,2})(?:,)?/; 
+// const TIME_REGEX = /(\d{1,2}:\d{2})\s*-\s*(\d{1,2}:\d{2})/;
 
-//   preference.forEach((item: any) => {
-//     const value = Object.values(item)[0];
-//     if (typeof value !== "string") return;
+const DATE_REGEX = /\b(?:([A-Za-z]{3,})\s+(\d{1,2})|(\d{1,2})\s+([A-Za-z]{3,}))\b/;
+const TIME_REGEX = /\b(\d{1,2}:\d{2}(?:\s?(?:AM|PM))?)\s*[-–—]\s*(\d{1,2}:\d{2}(?:\s?(?:AM|PM))?)\b/i;
 
-//     const dateMatch = value.trim().match(/(\d{1,2})\s*([A-Za-z]{3,})/);
-//     if (dateMatch) {
-//       temp.date = dateMatch[1];
-//       temp.month = dateMatch[2];
-//     }
 
-//     const timeMatch = value
-//       .trim()
-//       .match(/(\d{1,2}:\d{2}\s*[APMapm]{2})\s*-\s*(\d{1,2}:\d{2}\s*[APMapm]{2})/);
-//     if (timeMatch) {
-//       temp.startTime = timeMatch[1];
-//       temp.endTime = timeMatch[2];
-//     }
-//   });
 
-//   if (Object.keys(temp).length > 0) result.push(temp);
-//   return result;
-// };
+export const extractDateTime = (value: string): DateTimeResult => {
+  if (!value || typeof value !== "string") return {};
 
-export const extractDateTime = (preference: any[]) => {
-  const temp: any = {};
-  preference.forEach((item: any) => {
-    const value = Object.values(item)[0];
-    if (typeof value !== "string") return;
-    
-    console.log("Extracting from preference value:", value);
+  const cleanStr = value.trim();
+  const result: DateTimeResult = {};
+  const dateMatch = cleanStr.match(DATE_REGEX);
+  if (dateMatch) {
+    result.month = dateMatch[1];
+    result.date = dateMatch[2];
+  }
+  const timeMatch = cleanStr.match(TIME_REGEX);
+  if (timeMatch) {
+    result.startTime = timeMatch[1];
+    result.endTime = timeMatch[2];
+  }
 
-    const cleanStr = value.trim();
-    const timeRegex = /(\d{1,2}:\d{2}(?:\s*[APap][Mm])?)\s*-\s*(\d{1,2}:\d{2}(?:\s*[APap][Mm])?)/;
-    const timeMatch = cleanStr.match(timeRegex);
-    if (timeMatch) {
-      temp.startTime = timeMatch[1].trim();
-      temp.endTime = timeMatch[2].trim();
-    }
-
-    const dateRegex = /(\d{1,2})\s+([A-Za-z]{3,})|([A-Za-z]{3,})[,.]?\s+(\d{1,2})/;
-    const dateMatch = cleanStr.match(dateRegex);
-
-    if (dateMatch) {
-      if (dateMatch[1]) {
-        temp.date = dateMatch[1];
-        temp.month = dateMatch[2];
-      } else if (dateMatch[3]) {
-        temp.month = dateMatch[3];
-        temp.date = dateMatch[4];
-      }
-    }
-  });
-
-  return temp;
+  result.timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+  return result;
 };
 
 export const getValidUrlOrValue = (
   value: string | any,
+  timeZone?: string,
   onStart?: () => void,
   onEnd?: () => void
 ) => {
@@ -362,8 +462,23 @@ export const getValidUrlOrValue = (
   try {
     if (!value) return null;
 
-    const filenames = value.split(",").map((f:string) => f.trim()).filter(Boolean);
-    const validFiles = filenames.filter(isMediaFile);
+    if (typeof value !== "string") {
+      return String(value);
+    }
+    
+    if (isValidDateRange(value)) {
+      const converted = convertToLocalTime(value, timeZone);
+      if (converted) {
+        return converted;
+      }
+    }
+
+    const filenames = value
+      .split(",")
+      .map((f: string) => f?.trim())
+      .filter(Boolean);
+
+    const validFiles = filenames?.filter(isMediaFile);
 
     if (validFiles.length === 0) return String(value);
 
@@ -376,7 +491,9 @@ export const getValidUrlOrValue = (
             ? handleDownloadSingle(urls[0])
             : handleDownloadZip(urls)
         }
-        title={urls.length === 1 ? "Download File" : `Download ${urls.length} Files`}
+        title={
+          urls.length === 1 ? "Download File" : `Download ${urls.length} Files`
+        }
         className="flex items-center gap-2 text-xs font-light text-blue-700 transition-transform duration-300 hover:scale-110"
       >
         <CloudDownloadOutlinedIcon fontSize="small" />
@@ -401,6 +518,9 @@ export const getFormattedMessage = (message: any) => {
   }
   return str;
 };
+
+
+
 
 
 

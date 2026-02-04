@@ -23,10 +23,12 @@ import {
 } from "@/redux/reducers/appointment/selectors";
 import { fetchAppointmentRequest } from "@/redux/reducers/appointment/actions";
 import { customInputStyles } from "@/components/fieldProp/fieldPropsStyles";
-import { extractDateTime } from "@/utils/utils";
+import { convertToLocalTime, extractDateTime } from "@/utils/utils";
 import BookIcon from '@mui/icons-material/Book';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import CallIcon from '@mui/icons-material/Call';
+import AccessAlarmIcon from '@mui/icons-material/AccessAlarm';
+import { getUserSelector } from "@/redux/reducers/user/selectors";
 
 const Appoinment = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -35,11 +37,13 @@ const Appoinment = () => {
   const [status, setStatus] = useState<string | null>(null);
   const [selectedDate, setSelectedDate] = useState<Dayjs | null>(null);
   const [page, setPage] = useState(1);
-  const [rowsPerPage, setRowsPerPage] = useState(9);
+  const [rowsPerPage, setRowsPerPage] = useState(6);
   const [isFetching, setIsFetching] = useState(true);
   const [isload, setIsLoad] = useState(true)
   const appointmentData = useSelector(getAppointmentSelector);
   const pendingStatus = useSelector(getAllPending);
+  const currentUser = useSelector(getUserSelector);
+  const userData = currentUser?.data || {};
 
   useEffect(() => {
     setIsFetching(pendingStatus.fetch);
@@ -111,7 +115,7 @@ const Appoinment = () => {
               </h3>
               <div className="relative">
                 <span className="absolute -translate-y-1/2 left-4 top-1/2 pointer-events-none">
-                  <SearchIcon className="!text-color-primary-light dark:!text-amber-50" />
+                  <SearchIcon className="text-color-primary-light! dark:text-amber-50!" />
                 </span>
                 <Input
                   type="text"
@@ -143,8 +147,20 @@ const Appoinment = () => {
                   </div>
                 ) : appointmentData?.data?.length ? (
                   appointmentData.data.map((card: any) => {
-                    const preference = card?.data?.preference || [];
-                    const dateData = extractDateTime(preference);
+                    const slot = card?.data || {};
+                    const rawTimeStr = convertToLocalTime(slot["Select Specific Time"] as string, userData?.timezone);
+                    console.log(rawTimeStr,'rawTimeStrrawTimeStrrawTimeStr');
+                    const dateData: any = rawTimeStr ? extractDateTime(rawTimeStr as string) : {};
+                    const now = card?.createdAt ? new Date(card.createdAt) : new Date();
+                    const userTimeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+                    const statusKey = card?.status?.toLowerCase()?.trim();
+                    const statusColors: Record<string, string> = {
+                      booked: "bg-status-bg-active",
+                      cancelled: "bg-red-300 dark:bg-status-bg-cancel",
+                      rescheduled: "bg-status-bg-reactive",
+                      completed: "bg-status-bg-completed",
+                    };
+                    const statusClass = statusColors[statusKey] || "";
 
                     return (
                       <Link
@@ -152,48 +168,45 @@ const Appoinment = () => {
                         passHref
                         key={card?._id}
                       >
-                        <div className="flex rounded-xl w-full h-auto bg-white dark:bg-[#1f1f1f] text-black dark:text-white shadow-md transition-all border border-[#493e8130] dark:border-app-theme-dark hover:shadow-lg hover:scale-[1.01] active:scale-[0.99] cursor-pointer">
-                          <div className="bg-app-theme text-center flex flex-col justify-between dark:bg-app-theme-dark rounded-l-xl w-24">
-                            <div className="text-xl font-bold text-white/70 py-2">{dateData?.month && dateData?.month || "----"}</div>
-                            <div className="text-lg font-medium text-white mb-4">{dateData?.date && dateData?.date || "---"}</div>
-                            <div className="text-xxs text-white/70 pb-1">{dateData?.startTime && `🕒${dateData?.startTime}-...` || "--"}</div>
+                        <div className="flex rounded-md w-full h-auto bg-white dark:bg-[#1f1f1f] text-black dark:text-white shadow-md transition-all border border-[#493e8130] dark:border-app-theme-dark hover:shadow-lg hover:scale-[1.01] active:scale-[0.99] cursor-pointer">
+                          <div className="bg-app-theme text-center flex flex-col justify-between dark:bg-app-theme-dark rounded-l-md w-30">
+                            <div className="text-xl font-bold text-white/70 py-2">
+                              {dateData?.month || now.toLocaleDateString('en-IN', { month: 'short', timeZone: userTimeZone })}
+                            </div>
+                            <div className="text-5xl font-medium text-white mb-4">
+                              {dateData?.date || now.toLocaleDateString('en-IN', { day: 'numeric', timeZone: userTimeZone })}
+                            </div>
+                            <div className="text-xxxs text-white/70 pb-1 flex items-center justify-center gap-1">
+                              {dateData?.startTime && (
+                                <>
+                                  <AccessAlarmIcon className="text-xxs! mb-0.5!" />
+                                  <span>{`${dateData.startTime} - ${dateData.endTime}`}</span>
+                                </>
+                              )}
+                            </div>
                           </div>
-                          <div className="flex-1 p-4 flex flex-col justify-between dark:bg-black rounded-tr-xl rounded-br-xl relative">
+                          <div className="flex-1 p-4 flex flex-col justify-between dark:bg-black rounded-md relative">
                             <div>
                               <div className="text-lg font-semibold font-mono text-color-primary">
-                                <AccountCircleIcon className="text-color-primary-light mr-2 w-16 mb-1"/>{card?.profileName}
+                                <AccountCircleIcon className="text-color-primary-light mr-2 w-16 mb-1" />
+                                {card?.profileName}
                               </div>
                               <div className="text-xxs font-extralight font-mono mt-2 text-color-primary-light">
-                                <CallIcon className="text-color-primary-light mr-1 ml-2 w-4!"/>{card?.whatsAppNumber}
+                                <CallIcon className="text-color-primary-light mr-1 ml-2 w-4!" />
+                                {card?.whatsAppNumber}
                               </div>
-                              <div 
-                                className={`absolute right-2 top-1.5 z-10 h-3 w-3 rounded-full ${
-                                  card?.status?.toLowerCase()?.trim() === "booked"
-                                    ? "bg-status-bg-active"
-                                    : card?.status?.toLowerCase()?.trim() === "cancelled"
-                                    ? "bg-red-300 dark:bg-status-bg-cancel"
-                                    : card?.status?.toLowerCase()?.trim() === "rescheduled"
-                                    ? "bg-status-bg-reactive"
-                                    : card?.status?.toLowerCase()?.trim() === "completed"
-                                    ? "bg-status-bg-completed"
-                                    : ""
-                                }`}                                
-                              />
+                              <div className={`absolute right-2 top-1.5 z-10 h-3 w-3 rounded-full ${statusClass}`} />
                               <p className="text-sm text-app-theme dark:text-color-primary-light mt-2">
                                 <BookIcon className="text-color-primary-light! mr-1 ml-2 w-4! mb-1" />
-                                {
-                                  card?.flowTitle?.length > 16 
-                                  ? card.flowTitle.slice(0, 13) + "..." 
-                                  : card?.flowTitle
-                                }
+                                {card?.flowTitle?.length > 16
+                                  ? `${card.flowTitle.slice(0, 13)}...`
+                                  : card?.flowTitle}
                               </p>
                             </div>
                           </div>
                         </div>
                       </Link>
                     );
-
-                    
                   })
                 ) : (
                   <div className="w-full text-center col-span-3 flex justify-center">
