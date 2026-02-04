@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useState, useCallback, useMemo } from "react";
-import { formatTime, formatStringDate, formatString, getValidUrlOrValue, getFormattedMessage, extractDateTime } from "@/utils/utils"; // Make sure extractDateTime is imported
+import { formatTime, formatStringDate, formatString, getValidUrlOrValue, getFormattedMessage } from "@/utils/utils"; // Make sure extractDateTime is imported
 import { CircularProgress } from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
 import { useSearchParams } from "next/navigation";
@@ -16,6 +16,7 @@ import { fetchAppointmentRequest, updateAppointmentRequest } from "@/redux/reduc
 import Select from "@/components/form/Select";
 import Label from "@/components/form/Label";
 import BookIcon from '@mui/icons-material/Book';
+import { getUserSelector } from "@/redux/reducers/user/selectors";
 
 const AppointmentDetails: React.FC = () => {
     const dispatch = useDispatch<AppDispatch>();
@@ -27,6 +28,10 @@ const AppointmentDetails: React.FC = () => {
     const [appointmentDetails, setAppointmentDetails] = useState<any>(null);
     const [error, setError] = useState<string | null>(null);
     const { renderAlert } = useAlert();
+    const currentUser = useSelector(getUserSelector);
+    const userData = currentUser?.data || {};
+
+    console.log("Appointment Details - User Data:", userData);
     
     const appointmentId = useMemo(
         () => searchParams.get("appointmentId"),
@@ -119,7 +124,7 @@ const AppointmentDetails: React.FC = () => {
                             </div>
                             <div className="p-4 border-t border-b mb-2 dark:border-color-primary sm:p-6 overflow-y-auto custom-scrollbar h-[350px]">
                                 <div className="w-full flex justify-between items-center mb-4">
-                                    <span className="text-sm font-light dark:text-white"> 
+                                    <span className="text-sm font-light dark:text-white text-color-primary!"> 
                                         <BookIcon className="text-color-primary-light! mr-1 w-4! mb-1" /> {appointment?.flowTitle || "-"}
                                     </span>
                                     <div className="flex items-center gap-2">
@@ -128,7 +133,7 @@ const AppointmentDetails: React.FC = () => {
                                         </span>
                                     </div>
                                 </div>
-                                <div className="border dark:border-gray-700 rounded-[4px]">
+                                <div className="border dark:border-gray-700 rounded-sm">
                                     {Object.entries(appointment?.data ?? {}).map(([key, value], index) => {
                                         if (value === undefined || value === null) return null;
 
@@ -161,7 +166,7 @@ const AppointmentDetails: React.FC = () => {
                                                         {formatString(key)} :
                                                     </p>
                                                     <p className="text-base font-semibold text-color-primary dark:text-white ml-2">
-                                                        {getValidUrlOrValue(value)}
+                                                        {getValidUrlOrValue(value, userData?.timezone)}
                                                     </p>
                                                 </div>
                                             </div>

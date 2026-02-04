@@ -23,11 +23,12 @@ import {
 } from "@/redux/reducers/appointment/selectors";
 import { fetchAppointmentRequest } from "@/redux/reducers/appointment/actions";
 import { customInputStyles } from "@/components/fieldProp/fieldPropsStyles";
-import { extractDateTime } from "@/utils/utils";
+import { convertToLocalTime, extractDateTime } from "@/utils/utils";
 import BookIcon from '@mui/icons-material/Book';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import CallIcon from '@mui/icons-material/Call';
 import AccessAlarmIcon from '@mui/icons-material/AccessAlarm';
+import { getUserSelector } from "@/redux/reducers/user/selectors";
 
 const Appoinment = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -41,6 +42,8 @@ const Appoinment = () => {
   const [isload, setIsLoad] = useState(true)
   const appointmentData = useSelector(getAppointmentSelector);
   const pendingStatus = useSelector(getAllPending);
+  const currentUser = useSelector(getUserSelector);
+  const userData = currentUser?.data || {};
 
   useEffect(() => {
     setIsFetching(pendingStatus.fetch);
@@ -112,7 +115,7 @@ const Appoinment = () => {
               </h3>
               <div className="relative">
                 <span className="absolute -translate-y-1/2 left-4 top-1/2 pointer-events-none">
-                  <SearchIcon className="!text-color-primary-light dark:!text-amber-50" />
+                  <SearchIcon className="text-color-primary-light! dark:text-amber-50!" />
                 </span>
                 <Input
                   type="text"
@@ -145,7 +148,8 @@ const Appoinment = () => {
                 ) : appointmentData?.data?.length ? (
                   appointmentData.data.map((card: any) => {
                     const slot = card?.data || {};
-                    const rawTimeStr = slot["Select Specific Time"];
+                    const rawTimeStr = convertToLocalTime(slot["Select Specific Time"] as string, userData?.timezone);
+                    console.log(rawTimeStr,'rawTimeStrrawTimeStrrawTimeStr');
                     const dateData: any = rawTimeStr ? extractDateTime(rawTimeStr as string) : {};
                     const now = card?.createdAt ? new Date(card.createdAt) : new Date();
                     const userTimeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
@@ -172,10 +176,10 @@ const Appoinment = () => {
                             <div className="text-5xl font-medium text-white mb-4">
                               {dateData?.date || now.toLocaleDateString('en-IN', { day: 'numeric', timeZone: userTimeZone })}
                             </div>
-                            <div className="text-xxs text-white/70 pb-1 flex items-center justify-center gap-1">
+                            <div className="text-xxxs text-white/70 pb-1 flex items-center justify-center gap-1">
                               {dateData?.startTime && (
                                 <>
-                                  <AccessAlarmIcon className="text-xs! mb-0.5!" />
+                                  <AccessAlarmIcon className="text-xxs! mb-0.5!" />
                                   <span>{`${dateData.startTime} - ${dateData.endTime}`}</span>
                                 </>
                               )}

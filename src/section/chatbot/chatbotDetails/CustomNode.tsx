@@ -2220,7 +2220,7 @@ const CustomNode: React.FC<NodeProps<CustomNodeData>> = ({ data, id }) => {
               onClick={() => handleAddOptions(index, id)}
               disabled={optionsCount >= maxOptions}
             >
-              <AddBoxIcon className="text-sm! text-cyan-400 mb-0.5" />
+              <AddBoxIcon className="text-sm! text-bot-theme mb-0.5" />
             </button>
           ) : (
             <button
@@ -2251,9 +2251,9 @@ const CustomNode: React.FC<NodeProps<CustomNodeData>> = ({ data, id }) => {
             className="flex items-center justify-center p-2 hover:bg-cyan-950/20 transition-all cursor-pointer group/slot"
           >
             <BookIcon
-              className="!text-[24px] text-cyan-400 group-hover/slot:scale-110 transition-transform duration-200"
+              className="text-[24px]! text-cyan-400 group-hover/slot:scale-110 transition-transform duration-200"
             />
-            <span className="ml-2 text-xs text-cyan-200/80 group-hover/slot:text-cyan-200">Manage Availability</span>
+            <span className="ml-2 text-xs text-bot-theme/50 group-hover/slot:text-bot-theme">Manage Availability</span>
           </div>
 
           <Dialog
@@ -2261,20 +2261,24 @@ const CustomNode: React.FC<NodeProps<CustomNodeData>> = ({ data, id }) => {
             onClose={handleClose}
             fullWidth
             sx={{
+              "& .MuiBackdrop-root": {
+                backdropFilter: "blur(4px)",
+                backgroundColor: "rgba(0,0,0,0.7)",
+              },
               "& .MuiDialog-paper": {
                 width: "100%",
                 maxWidth: "600px",
                 borderRadius: "16px",
-                background: "#0f172a", // Dark background for dialog
+                background: "#0f172a",
                 border: "1px solid #1e293b",
                 color: "#e2e8f0"
               },
             }}
           >
             {/* Custom styled dialog content wrapping */}
-            <div className="bg-[#0f172a] text-slate-200 h-[500px] p-2">
+            <div className="bg-[#0f172a] text-slate-200 min-h-[450px] overflow-y-hidden scrollbar-hide">
               <div className="flex py-3 px-4 items-center justify-between w-full border-b border-slate-800">
-                <div className="text-lg font-semibold text-cyan-400 shadow-cyan-500/20 drop-shadow-sm">
+                <div className="text-lg font-semibold text-white shadow-cyan-500/20 drop-shadow-sm">
                   Set Availability
                 </div>
                 <CloseFullscreen
@@ -2359,7 +2363,7 @@ const CustomNode: React.FC<NodeProps<CustomNodeData>> = ({ data, id }) => {
                   variant="contained"
                   onClick={addTimeSlot}
                   disabled={!selectedDate || !startTime || !endTime || !selectedValue}
-                  className="w-full !bg-gradient-to-r !from-cyan-600 !to-blue-600 hover:!from-cyan-500 hover:!to-blue-500 !text-white !font-bold !shadow-lg"
+                  className="w-full bg-linear-to-r! from-color-primary! to-bot-theme! hover:from-color-primary! hover:to-bot-theme! text-white! font-bold! shadow-lg!"
                 >
                   Add Slot
                 </Button>
@@ -2367,7 +2371,7 @@ const CustomNode: React.FC<NodeProps<CustomNodeData>> = ({ data, id }) => {
 
               <div className="border-t border-slate-800 mx-4" />
 
-              <div className={`overflow-y-auto custom-scrollbar h-[210px] p-4`}>
+              <div className={`overflow-y-auto custom-scrollbar max-h-[210px] p-4`}>
                 {savedSlots?.length > 0 ? (
                   <div className="space-y-3">
                     <p className="text-sm font-medium text-center text-slate-400">
@@ -2385,7 +2389,7 @@ const CustomNode: React.FC<NodeProps<CustomNodeData>> = ({ data, id }) => {
                       return (
                         <div key={dateIdx} className="bg-slate-800/50 rounded-lg p-3 border border-slate-700/50">
                           <div className="flex items-center justify-between mb-2 border-b border-slate-700 pb-1">
-                            <span className="text-cyan-300 font-semibold text-sm">
+                            <span className="text-white font-semibold text-sm">
                               {new Date(ds.date).toLocaleDateString([], { day: "2-digit", month: "short" })}
                             </span>
                             <span className="text-xxs text-slate-500">
@@ -2399,7 +2403,7 @@ const CustomNode: React.FC<NodeProps<CustomNodeData>> = ({ data, id }) => {
                                   {new Date(slot.start).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit", hour12: true })} - {new Date(slot.end).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit", hour12: true })}
                                 </span>
                                 <div className="flex gap-1 items-center">
-                                  <span className="bg-slate-700 px-1 rounded text-[10px] text-slate-300">Int: {slot.interval}</span>
+                                  <span className="bg-slate-700 px-1 rounded text-xxxs text-slate-300">Int: {slot.interval}</span>
                                   <button
                                     className="text-red-400 hover:text-red-300 hover:bg-red-900/20 rounded p-0.5 transition-colors"
                                     onClick={() => handleRemoveSlot(ds.date, slot.start, slot.end)}
@@ -2499,7 +2503,7 @@ const CustomNode: React.FC<NodeProps<CustomNodeData>> = ({ data, id }) => {
 
     function renderUploadSctions(fileData: UploadResult[], type: string, accept?: string, id?: string | any, maxFiles?: number) {
       return (
-        <div className="bg-slate-900/50 p-1">
+        <div className="bg-slate-900/50 p-1 rounded-2xl">
           <ReusableFileUploader
             accept={accept}
             maxFiles={maxFiles}

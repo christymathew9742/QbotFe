@@ -93,7 +93,7 @@ export default function LocationPickerInner({
     };
 
     return (
-        <div className="dark:p-2 mb-2 h-[420px]">
+        <div className="dark:p-2 mb-2 h-[370px]">
             <MapContainer 
                 center={value?.length && value[0] || position as LatLngExpression} 
                 zoom={16} 

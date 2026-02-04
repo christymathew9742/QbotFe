@@ -198,6 +198,7 @@
   --color-app-bg-theme:#493e8105;
   --color-color-primary:#493e81;
   --color-sidebar-theme:#493e81;
+  --color-bot-theme:#7561dd;
   --color-hdbg:#f8f8f8;
   --color-color-primary-light:#493e81b8;
   --color-theme-border:#493e811f;
@@ -317,6 +318,16 @@
   @apply bg-brand-50 group-hover:bg-brand-100 dark:bg-brand-500/15 dark:group-hover:bg-brand-500/20;
 }
 
+.chatbot-window .custom-scrollbar {
+  /* Hide scrollbar for Chrome, Safari and Opera */
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
+}
+
+.chatbot-window .custom-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
 @utility no-scrollbar {
   /* Chrome, Safari and Opera */
   &::-webkit-scrollbar {
@@ -426,7 +437,7 @@ html .react-datepicker__time-name {
 /* Disabled days and time options */
 html .react-datepicker__day--disabled,
 html .react-datepicker__time-list-item--disabled {
-  color: #888888;
+  color: #8f8a8a47!important;
 }
 
 /* Selected day or time */

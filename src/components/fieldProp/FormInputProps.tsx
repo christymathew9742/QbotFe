@@ -100,10 +100,10 @@ const FormInputProps: React.FC<FieldPropComponentProps> = ({ Config }) => {
                     return (
                         <div className="mb-4">
                             {labelTop && (
-                                <label htmlFor={name} className="block mb-2 pt-0 text-sm font-medium color-primary dark:text-white">
+                                <label htmlFor={name} className="block mb-2 pt-0 text-sm font-medium text-color-primary! dark:text-white">
                                     {labelTop}
                                     {toolTip && (
-                                        <span className="ml-2 inline-block bg-black text-white rounded-full w-3 h-3 text-xs text-center leading-3 cursor-pointer text-[10px] dark:border dark:border-gray-600" title={toolTip}>i</span>
+                                        <span className="ml-2 inline-block bg-color-primary! text-white rounded-full w-3 h-3 text-xs text-center leading-3 cursor-pointer text-xxxs dark:border dark:border-gray-600" title={toolTip}>i</span>
                                     )}
                                 </label>
                             )}
@@ -123,10 +123,10 @@ const FormInputProps: React.FC<FieldPropComponentProps> = ({ Config }) => {
                     return (
                         <div className="mb-4">
                             {labelTop && (
-                                <label htmlFor={name} className="block mb-2 pt-0 text-sm font-medium color-primary dark:text-white">
+                                <label htmlFor={name} className="block mb-2 pt-0 text-sm font-medium text-color-primary dark:text-white">
                                     {labelTop}
                                     {toolTip && (
-                                        <span className="ml-2 inline-block bg-black text-white rounded-full w-3 h-3 text-xs text-center leading-3 cursor-pointer text-[10px] dark:border dark:border-gray-600" title={toolTip}>i</span>
+                                        <span className="ml-1 inline-block bg-color-primary text-white rounded-full w-3 h-3 text-xs text-center leading-3 cursor-pointer text-xxxs dark:border dark:border-gray-600" title={toolTip}>i</span>
                                     )}
                                 </label>
                             )}
@@ -161,10 +161,10 @@ const FormInputProps: React.FC<FieldPropComponentProps> = ({ Config }) => {
                     return (
                         <div className="mb-4">
                             {labelTop && (
-                                <label htmlFor={name} className="block mb-2 text-sm font-medium color-primary dark:text-white">
+                                <label htmlFor={name} className="block mb-2 text-sm font-medium text-color-primary dark:text-white">
                                     {labelTop}
                                     {toolTip && (
-                                        <span className="ml-2 inline-block bg-black text-white rounded-full w-3 h-3 text-xs text-center leading-3 cursor-pointer text-[10px] dark:border dark:border-gray-600" title={toolTip}>i</span>
+                                        <span className="ml-2 inline-block bg-color-primary text-white rounded-full w-3 h-3 text-xs text-center leading-3 cursor-pointer text-xxxs dark:border dark:border-gray-600" title={toolTip}>i</span>
                                     )}
                                 </label>
                             )}

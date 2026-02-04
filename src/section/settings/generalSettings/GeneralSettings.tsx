@@ -102,8 +102,8 @@ const GeneralSettings = () => {
     botName: userData.botName || "",
     generalWelcomeMessage: userData.generalWelcomeMessage || "",
     autoSendBookingPdf: userData.autoSendBookingPdf === true || userData.autoSendBookingPdf === "true",
-    timezone: userData.timezone || Intl.DateTimeFormat().resolvedOptions().timeZone,
-    language: userData.language || "English (UK)",
+    timezone: userData.timezone || (typeof Intl !== "undefined" ? Intl.DateTimeFormat().resolvedOptions().timeZone : "UTC"),
+    language: (typeof navigator !== "undefined" ? navigator.language : "en-US"),
     monthlyTarget: userData.monthlyTarget || 0,
     inactivityTimeoutMinutes: userData.inactivityTimeoutMinutes || 3,
   }), [dispatch,userData]);
@@ -227,7 +227,7 @@ const GeneralSettings = () => {
              <div>
                <h1 className="text-xl font-bold text-color-primary dark:text-white">General Settings</h1>
                <p className="text-sm text-color-primary-light dark:text-gray-400 mt-1">
-                 Manage your system preferences and chatbot identity.
+                 Manage your system preferences and chatbot configuration.
                </p>
              </div>
            </div>

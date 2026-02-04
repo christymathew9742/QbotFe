@@ -1,7 +1,6 @@
 'use client';
 
-// import Button from '@/components/ui/button/Button';
-import { Button, CircularProgress } from '@mui/material';
+import { Button } from '@mui/material';
 import { useRef, useState } from 'react';
 
 interface FieldProps {
@@ -80,7 +79,11 @@ const CopyField = ({ id, label, value, title, disabled=false, onClick, update, t
               {update ? (
                   <>
                     Generating...
-                    <svg className="h-4 w-4 animate-spin ml-4!" viewBox="0 0 24 24">
+                    <svg 
+                      className="animate-spin ml-4! shrink-0!"
+                      style={{ width: '20px', height: '20px', minWidth: '20px' }}
+                      viewBox="0 0 24 24"
+                    >
                       <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none"></circle>
                       <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
                     </svg>
