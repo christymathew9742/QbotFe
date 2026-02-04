@@ -2,8 +2,9 @@ import SignUpForm from "@/components/auth/SignUpForm";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Next.js SignUp Page | TailAdmin - Next.js Dashboard Template",
-  description: "This is Next.js SignUp Page TailAdmin Dashboard Template",
+  title: "NimbleMeet Sign In | AI Automated WhatsApp Chatbot",
+  description:
+    "Sign in to NimbleMeet – an AI-powered automated WhatsApp chatbot platform for smart appointment booking, customer engagement, and business automation.",
 };
 
 export default function SignUp() {

@@ -15,8 +15,9 @@ import { getUpdateUserPendingSelector, getUserSelector } from "@/redux/reducers/
 import WhatsAppWelcomeCard from "@/components/whatsApp/WhatsAppWelcomeCard";
 
 export const metadata: Metadata = {
-    title: "List all Qbot",
-    description: "This is the Qbot listing page",
+  title: "All Bots | NimbleMeet AI WhatsApp Chatbot",
+  description:
+    "View and manage all your AI-powered bots in NimbleMeet. Monitor automated WhatsApp conversations, streamline bookings, and enhance customer engagement from one dashboard.",
 };
 
 interface FormData {

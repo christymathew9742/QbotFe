@@ -25,8 +25,9 @@ import api from "@/utils/axios";
 import ConfirmModal from "@/components/ConfirmModal";
 
 export const metadata: Metadata = {
-  title: "List all Qbot",
-  description: "This is the Qbot listing page",
+  title: "bot List | NimbleMeet AI WhatsApp Chatbot",
+  description:
+    "View and manage all your Qbots in NimbleMeet. Monitor AI-powered WhatsApp chatbots, automate conversations, and control customer engagement from a single dashboard.",
 };
 
 interface Bot {

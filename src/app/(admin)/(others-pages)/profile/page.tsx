@@ -6,9 +6,9 @@ import { Metadata } from "next";
 import PageBreadcrumb from "@/components/common/PageBreadCrumb";
 
 export const metadata: Metadata = {
-  title: "Profile | Qbot admin Profile",
+  title: "Profile | NimbleMeet admin Profile",
   description:
-    "This is Qbot Profile page for Users",
+    "This is NimbleMeet Profile page for Users",
 };
 
 export default function Profile() {

@@ -1,9 +1,9 @@
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Qbot | AI-Powered Chat Assistant",
+  title: "NimbleMeet | AI-Powered Appointment & WhatsApp Chatbot Platform",
   description:
-    "Qbot is a high-level AI-powered chat assistant designed to provide smart, fast, and reliable answers, helping you with appointments.",
+    "NimbleMeet is an advanced AI-powered platform that automates WhatsApp conversations, manages appointments, and delivers smart, fast, and reliable customer interactions for modern businesses.",
 };
 
 import { Home } from "@/section/home";
