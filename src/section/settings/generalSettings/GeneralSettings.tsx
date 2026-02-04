@@ -102,11 +102,11 @@ const GeneralSettings = () => {
     botName: userData.botName || "",
     generalWelcomeMessage: userData.generalWelcomeMessage || "",
     autoSendBookingPdf: userData.autoSendBookingPdf === true || userData.autoSendBookingPdf === "true",
-    timezone: userData.timezone || (typeof Intl !== "undefined" ? Intl.DateTimeFormat().resolvedOptions().timeZone : "UTC"),
-    language: (typeof navigator !== "undefined" ? navigator.language : "en-US"),
+    timezone: userData.timezone || (typeof window !== "undefined" && window.Intl ? Intl.DateTimeFormat().resolvedOptions().timeZone : "UTC"),
+    language: (typeof window !== "undefined" && window.navigator ? navigator.language : "en-US"),
     monthlyTarget: userData.monthlyTarget || 0,
     inactivityTimeoutMinutes: userData.inactivityTimeoutMinutes || 3,
-  }), [dispatch,userData]);
+  }), [userData]);
   
   useEffect(() => {
     if (!searchParams.has("tab")) {
