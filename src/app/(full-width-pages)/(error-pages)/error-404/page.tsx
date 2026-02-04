@@ -4,9 +4,9 @@ import Link from "next/link";
 import React from "react";
 
 export const metadata: Metadata = {
-  title: "Next.js Error 404 | TailAdmin - Next.js Dashboard Template",
+  title: "Page Not Found | NimbleMeet AI WhatsApp Chatbot",
   description:
-    "This is Next.js Error 404 page for TailAdmin - Next.js Tailwind CSS Admin Dashboard Template",
+    "The page you are looking for does not exist. Return to NimbleMeet to continue managing AI-powered WhatsApp conversations, bookings, and customer engagement.",
 };
 
 export default function Error404() {

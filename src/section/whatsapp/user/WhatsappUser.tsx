@@ -17,8 +17,9 @@ import { getAllPending, getWhatsAppUserSelector } from "@/redux/reducers/user/se
 import { fetchWhatsAppUserRequest } from "@/redux/reducers/user/actions";
 
 export const metadata: Metadata = {
-  title: "List all Qbot",
-  description: "This is the Qbot listing page",
+  title: "All bots | NimbleMeet AI WhatsApp Chatbot",
+  description:
+    "View and manage all Qbots in NimbleMeet. Monitor AI-powered WhatsApp chatbots, automate conversations, handle bookings, and improve customer engagement from a unified dashboard.",
 };
 
 interface User {
