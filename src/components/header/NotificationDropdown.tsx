@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState, useRef } from "react";
 import { Dropdown } from "../ui/dropdown/Dropdown";
 import { DropdownItem } from "../ui/dropdown/DropdownItem";
 import { CircularProgress, Skeleton } from "@mui/material";
@@ -30,6 +30,14 @@ export default function NotificationDropdown() {
   const currentUser = useSelector(getUserSelector);
   const userData = currentUser?.data;
   const router = useRouter();
+  const buttonRef = useRef<HTMLButtonElement>(null);
+  const dropdownRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (userData?._id) {
+      dispatch(fetchNotificationsRequest({ showAll: false }));
+    }
+  }, [dispatch, userData?._id]);
 
   useEffect(() => {
     const socket = new WebSocket(baseURL);
@@ -47,12 +55,33 @@ export default function NotificationDropdown() {
     return () => socket.close();
   }, [dispatch, showAll, userData, isOpen]);
 
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (!isOpen) return;
+
+      const target = event.target as Node;
+      const isClickOnButton = buttonRef.current && buttonRef.current.contains(target);
+      const isClickOnDropdown = dropdownRef.current && dropdownRef.current.contains(target);
+
+      if (!isClickOnButton && !isClickOnDropdown) {
+        setIsOpen(false);
+        dispatch(fetchNotificationsRequest({ showAll: false }));
+        setShowAll(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [isOpen, dispatch]);
+
   const handleNotificationClick = (id: string, appointmentId: string) => {
     dispatch(updateNotificationsRequest({ id, isRead: true }));
     router.push(`/appointment-details?appointmentId=${appointmentId}`);
     setTimeout(async () => {
       setIsOpen(false);
-      await dispatch(fetchNotificationsRequest({ showAll }));
+      await dispatch(fetchNotificationsRequest({ showAll: false }));
       setShowAll(false);
     }, 1000);
   };
@@ -69,11 +98,17 @@ export default function NotificationDropdown() {
     });
   }, [dispatch]);
 
-  const handleClose = useCallback(async () => {
-    setIsOpen((prev) => !prev);
-    await dispatch(fetchNotificationsRequest({ showAll: false }));
-    setShowAll(isOpen)
-  }, [dispatch, isOpen, showAll]);
+  const handleToggle = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    setIsOpen((prev) => {
+        const newState = !prev;
+        if (!newState) {
+            dispatch(fetchNotificationsRequest({ showAll: false }));
+            setShowAll(false);
+        }
+        return newState;
+    });
+  };
 
   return (
     <div className="relative z-50">
@@ -87,9 +122,10 @@ export default function NotificationDropdown() {
         />
       ) : (
         <button
-          onClick={handleClose}
+          ref={buttonRef} 
+          onClick={handleToggle}
           className={`relative flex items-center justify-center text-color-primary transition-all duration-200 rounded-full h-8 w-8
-            ${isOpen ?  'dark:bg-color-primary' : 'text-color-primary-light'}
+            ${isOpen ? 'dark:bg-color-primary' : 'text-color-primary-light'}
           `}
         >
           {unreadCount > 0 && (
@@ -110,81 +146,82 @@ export default function NotificationDropdown() {
         </button>
       )}
 
-      <Dropdown
-        isOpen={isOpen}
-        onClose={handleClose}
-        className={`absolute sm:right-0 mt-3 p-1 flex flex-col bg-white dark:bg-gray-dark ring-1 ring-black/5 dark:ring-white/10 sm:w-[380px] transition-all transform origin-top-right z-50
-        ${notifications.length ? "h-auto max-h-[85vh]" : "h-auto"}`}
-      >
-        <div className="flex items-center justify-between px-4 py-3 border-b border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-dark sticky top-0 z-10">
-          <h5 className="text-[17px] font-bold text-color-primary-light dark:text-gray-100">Notifications</h5>
-        </div>
-        <div className="flex-1 overflow-y-auto custom-scrollbar">
-          {!notifications.length ? (
-            <div className="flex flex-col items-center justify-center py-12">
-               <div className="bg-gray-50 dark:bg-white/5 rounded-full p-4 mb-3">
-                  <NotificationsOffIcon className="text-color-primary-light!" />
-               </div>
-              <span className="text-sm font-medium text-color-primary-light dark:text-gray-400">
-                No notifications yet
-              </span>
-            </div>
-          ) : (
-            <ul className="flex flex-col">
-              {notifications.map((notif: any) => (
-                <li key={notif._id} className="relative group">
-                  <DropdownItem
-                    onItemClick={() =>
-                      handleNotificationClick(notif?._id, notif?.appointmentId)
-                    }
-                    className={`flex items-start w-full px-4 py-3 transition-colors duration-200 border-b border-gray-50 dark:border-gray-800 
-                      ${!notif?.isRead ? "bg-notify dark:bg-blue-900/10" : "hover:bg-gray-50 dark:hover:bg-white/5"}`}
-                  >
-                    <div className="flex-shrink-0 mr-3 mt-1">
-                      <div className="w-10 h-10 rounded-full bg-gray-100 group-hover:bg-gray-300 dark:bg-gray-700 flex items-center justify-center text-lg">
-                        {!notif?.isRead ? (
-                          <NotificationsActiveIcon className="text-color-primary-light!" />
-                        ) : (
-                          <NotificationsOffIcon className="text-color-primary-light!" />
-                        )}
-                      </div>
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <p className="text-xxm leading-snug text-color-primary dark:text-gray-200">
-                        <span className="font-semibold text-color-primary dark:text-white">
-                          {notif?.profileName || "WhatsApp"}
-                        </span>{" "}
-                        has {notif?.type} an appointment for{" "}
-                        <span className="font-semibold text-color-primary dark:text-blue-300">{notif?.chatBotTitle}</span>
-                      </p>
-                      <p className="text-xxs font-medium text-color-primary-light mt-1">
-                        {formatStringDate(notif?.createdAt)}
-                      </p>
-                    </div>
-                    {!notif?.isRead && (
-                       <span className="w-2.5 h-2.5 bg-color-primary rounded-full mt-2 ml-2 flex-shrink-0"></span>
-                    )}
-                  </DropdownItem>
-                </li>
-              ))}
-            </ul>
-          )}
-        </div>
-        {notifications.length >= 5 && (
-          <div className="p-2 border-t border-gray-300 dark:border-gray-700 bg-gray-50 dark:bg-gray-800/50 rounded-b-2xl">
-            <button
-              onClick={handleShowAllNotifi}
-              className="flex items-center justify-center w-full px-4 py-2 text-sm font-semibold text-color-primary transition-colors rounded-lg dark:text-white dark:hover:bg-white/10"
-            >
-              {load ? (
-                <CircularProgress className="!w-4 !h-auto mr-2 text-color-primary" />
-              ) : null}
-              {showAll ? "Show Less" : "See all notifications"}
-            </button>
+      <div ref={dropdownRef}>
+        <Dropdown
+          isOpen={isOpen}
+          onClose={() => {}}
+          className={`absolute sm:right-0 mt-3 p-1 flex flex-col bg-white dark:bg-gray-dark ring-1 ring-black/5 dark:ring-white/10 sm:w-[380px] transition-all transform origin-top-right z-50
+          ${notifications.length ? "h-auto max-h-[85vh]" : "h-auto"}`}
+        >
+          <div className="flex items-center justify-between px-4 py-3 border-b border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-dark sticky top-0 z-10">
+            <h5 className="text-[17px] font-bold text-color-primary-light dark:text-gray-100">Notifications</h5>
           </div>
-        )}
-      </Dropdown>
+          <div className="flex-1 overflow-y-auto custom-scrollbar">
+            {!notifications.length ? (
+              <div className="flex flex-col items-center justify-center py-12">
+                 <div className="bg-gray-50 dark:bg-white/5 rounded-full p-4 mb-3">
+                    <NotificationsOffIcon className="text-color-primary-light!" />
+                 </div>
+                <span className="text-sm font-medium text-color-primary-light dark:text-gray-400">
+                  No notifications yet
+                </span>
+              </div>
+            ) : (
+              <ul className="flex flex-col">
+                {notifications.map((notif: any) => (
+                  <li key={notif._id} className="relative group">
+                    <DropdownItem
+                      onItemClick={() =>
+                        handleNotificationClick(notif?._id, notif?.appointmentId)
+                      }
+                      className={`flex items-start w-full px-4 py-3 transition-colors duration-200 border-b border-gray-50 dark:border-gray-800 
+                        ${!notif?.isRead ? "bg-notify dark:bg-blue-900/10" : "hover:bg-gray-50 dark:hover:bg-white/5"}`}
+                    >
+                      <div className="flex-shrink-0 mr-3 mt-1">
+                        <div className="w-10 h-10 rounded-full bg-gray-100 group-hover:bg-gray-300 dark:bg-gray-700 flex items-center justify-center text-lg">
+                          {!notif?.isRead ? (
+                            <NotificationsActiveIcon className="text-color-primary-light!" />
+                          ) : (
+                            <NotificationsOffIcon className="text-color-primary-light!" />
+                          )}
+                        </div>
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <p className="text-xxm leading-snug text-color-primary dark:text-gray-200">
+                          <span className="font-semibold text-color-primary dark:text-white">
+                            {notif?.profileName || "WhatsApp"}
+                          </span>{" "}
+                          has {notif?.type} an appointment for{" "}
+                          <span className="font-semibold text-color-primary dark:text-blue-300">{notif?.chatBotTitle}</span>
+                        </p>
+                        <p className="text-xxs font-medium text-color-primary-light mt-1">
+                          {formatStringDate(notif?.createdAt)}
+                        </p>
+                      </div>
+                      {!notif?.isRead && (
+                          <span className="w-2.5 h-2.5 bg-color-primary rounded-full mt-2 ml-2 flex-shrink-0"></span>
+                      )}
+                    </DropdownItem>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>
+          {notifications.length >= 5 && (
+            <div className="p-2 border-t border-gray-300 dark:border-gray-700 bg-gray-50 dark:bg-gray-800/50 rounded-b-2xl">
+              <button
+                onClick={handleShowAllNotifi}
+                className="flex items-center justify-center w-full px-4 py-2 text-sm font-semibold text-color-primary transition-colors rounded-lg dark:text-white dark:hover:bg-white/10"
+              >
+                {load ? (
+                  <CircularProgress className="!w-4 !h-auto mr-2 text-color-primary" />
+                ) : null}
+                {showAll ? "Show Less" : "See all notifications"}
+              </button>
+            </div>
+          )}
+        </Dropdown>
+      </div>
     </div>
   );
 }
-

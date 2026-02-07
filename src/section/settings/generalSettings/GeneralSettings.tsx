@@ -33,7 +33,7 @@ import { AppDispatch } from "@/redux/store";
 import { getUserSelector, getUpdateUserPendingSelector } from "@/redux/reducers/user/selectors";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchUserRequest, updateUserRequest } from "@/redux/reducers/user/actions";
-import ConfirmModal from "@/components/ConfirmModal"; // Imported Confirmation Modal
+import ConfirmModal from "@/components/ConfirmModal";
 
 interface SettingsData {
   botName: string;
