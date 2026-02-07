@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useState, useCallback, useMemo } from "react";
-import { formatTime, formatStringDate, formatString, getValidUrlOrValue, getFormattedMessage } from "@/utils/utils"; // Make sure extractDateTime is imported
+import { formatTime, formatStringDate, formatString, getValidUrlOrValue, getFormattedMessage } from "@/utils/utils";
 import { CircularProgress } from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
 import { useSearchParams } from "next/navigation";
@@ -30,8 +30,6 @@ const AppointmentDetails: React.FC = () => {
     const { renderAlert } = useAlert();
     const currentUser = useSelector(getUserSelector);
     const userData = currentUser?.data || {};
-
-    console.log("Appointment Details - User Data:", userData);
     
     const appointmentId = useMemo(
         () => searchParams.get("appointmentId"),

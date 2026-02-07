@@ -23,7 +23,7 @@ import {
 } from "@/redux/reducers/appointment/selectors";
 import { fetchAppointmentRequest } from "@/redux/reducers/appointment/actions";
 import { customInputStyles } from "@/components/fieldProp/fieldPropsStyles";
-import { convertToLocalTime, extractDateTime } from "@/utils/utils";
+import { extractDateTime } from "@/utils/utils";
 import BookIcon from '@mui/icons-material/Book';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import CallIcon from '@mui/icons-material/Call';
@@ -148,8 +148,7 @@ const Appoinment = () => {
                 ) : appointmentData?.data?.length ? (
                   appointmentData.data.map((card: any) => {
                     const slot = card?.data || {};
-                    const rawTimeStr = convertToLocalTime(slot["Select Specific Time"] as string, userData?.timezone);
-                    console.log(rawTimeStr,'rawTimeStrrawTimeStrrawTimeStr');
+                    const rawTimeStr = slot["Select Specific Time"] as string
                     const dateData: any = rawTimeStr ? extractDateTime(rawTimeStr as string) : {};
                     const now = card?.createdAt ? new Date(card.createdAt) : new Date();
                     const userTimeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
