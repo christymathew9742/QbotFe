@@ -346,7 +346,7 @@ export const getValidUrlOrValue = (
     
     if (isValidDateRange(value)) {
       return (
-        <span className="inline-flex items-center gap-3 text-sm text-gray-900 dark:text-gray-100">
+        <span className="inline-flex items-center gap-3">
           <span>{value}</span>
           {timeZone && (
             <span className="
