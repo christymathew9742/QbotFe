@@ -9,7 +9,7 @@ import { fetchAppointmentRequest } from "@/redux/reducers/appointment/actions";
 import WhatsAppAvgSentiment from "@/components/whatsApp/WhatsAppAvgSentiment";
 import WhatsAppMonthlyAppointmentChart from "@/components/whatsApp/WhatsAppMonthlyAppointmentChart";
 import WhatsAppStatCard from "@/components/whatsApp/WhatsAppRecentAppointments";
-import { getWhatsAppGlobaleSelector, getAllPending } from "@/redux/reducers/user/selectors";
+import { getWhatsAppGlobaleSelector, getAllPending, getUserSelector } from "@/redux/reducers/user/selectors";
 import { fetchUserRequest, fetchWhatsRequest } from "@/redux/reducers/user/actions";
 import PromoCard from "@/components/whatsApp/PromoCard";
 
@@ -40,8 +40,9 @@ const Home = () => {
     const pendingStatus = useSelector(getAllPending);
     const globalData =  useSelector(getWhatsAppGlobaleSelector)
     const isPending = !globalData || Object.keys(globalData).length < 1;
-    
-    console.log("Global Data:", globalData);
+    const currentUser = useSelector(getUserSelector);
+    const userData = currentUser?.data || {};
+
     useEffect(() => {
         dispatch(fetchAppointmentRequest());
         dispatch(fetchWhatsRequest());
@@ -73,8 +74,8 @@ const Home = () => {
                 <WhatsAppStatCard  appointmentStatus={appointmentStatus || {}} pendingStatus={pendingStatus?.fetch || isPending}/>
             </div>
             <div className="col-span-12 space-y-6 sm:col-span-6">
-                <PromoCard/>
-                <WhatsAppMonthlyAppointmentChart  monthlyAppointments={globalData?.monthlyAppointments || []}  pendingStatus={pendingStatus?.fetch || isPending} />
+                <PromoCard  pendingStatus={pendingStatus?.fetch || isPending} />
+                <WhatsAppMonthlyAppointmentChart  monthlyAppointments={globalData?.monthlyAppointments || []}  pendingStatus={pendingStatus?.fetch || isPending} monthlyTarget={userData?.monthlyTarget || 100} />
             </div>
             <div className="col-span-12 sm:col-span-6">
                 <WhatsAppMetrics metrics = {metricsData} />

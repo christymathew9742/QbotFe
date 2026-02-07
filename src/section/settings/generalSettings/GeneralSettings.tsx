@@ -104,7 +104,7 @@ const GeneralSettings = () => {
     autoSendBookingPdf: userData.autoSendBookingPdf === true || userData.autoSendBookingPdf === "true",
     timezone: userData.timezone || (typeof window !== "undefined" && window.Intl ? Intl.DateTimeFormat().resolvedOptions().timeZone : "UTC"),
     language: (typeof window !== "undefined" && window.navigator ? navigator.language : "en-US"),
-    monthlyTarget: userData.monthlyTarget || 0,
+    monthlyTarget: userData.monthlyTarget || 100,
     inactivityTimeoutMinutes: userData.inactivityTimeoutMinutes || 3,
   }), [userData]);
   
