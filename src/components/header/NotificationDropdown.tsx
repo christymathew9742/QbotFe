@@ -94,9 +94,7 @@ export default function NotificationDropdown() {
         >
           {unreadCount > 0 && (
             <span
-              className={` absolute flex items-center justify-center -top-[3px] -right-0.5 h-4 rounded-full text-xxss font-extralight text-white bg-red-500
-                ${unreadCount > 9 && "min-w-4 p-0.5"} 
-              `}
+              className={` absolute flex items-center justify-center -top-[3px] -right-0.5 h-4 rounded-full text-xxss font-extralight text-white bg-red-500 min-w-4 p-0.5`}
             >
               {unreadCount > 99 ? "99+" : unreadCount}
             </span>
