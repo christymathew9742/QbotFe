@@ -164,7 +164,7 @@ const AppointmentDetails: React.FC = () => {
                                                         {formatString(key)} :
                                                     </p>
                                                     <p className="text-base font-semibold text-color-primary dark:text-white ml-2">
-                                                        {getValidUrlOrValue(value, userData?.timezone)}
+                                                        {getValidUrlOrValue(value, appointment?.timezone)}
                                                     </p>
                                                 </div>
                                             </div>
