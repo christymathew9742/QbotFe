@@ -276,7 +276,9 @@ export const extractDateTime = (value: string): DateTimeResult => {
     result.endTime = timeMatch[2];
   }
 
-  result.timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+  result.timezone =  typeof window !== "undefined" && window.Intl 
+    ? Intl.DateTimeFormat().resolvedOptions().timeZone 
+    : "UTC";
   return result;
 };
 
@@ -345,28 +347,35 @@ export const getValidUrlOrValue = (
     }
     
     if (isValidDateRange(value)) {
+      const systemTimezone = typeof window !== "undefined" && window.Intl 
+      ? Intl.DateTimeFormat().resolvedOptions().timeZone 
+      : "UTC";
       return (
-        <span className="inline-flex items-center gap-3">
-          <span>{value}</span>
-          {timeZone && (
-            <span className="
-              inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full 
-              text-xs font-medium tracking-wide
-              bg-indigo-50 text-color-primary-light ring-1 ring-inset ring-indigo-700/10 
-              dark:bg-indigo-500/10 dark:text-indigo-300 dark:ring-indigo-400/20
-              select-none
-            ">
-              <svg 
-                className="w-3 h-3 opacity-70" 
-                fill="none" 
-                viewBox="0 0 24 24" 
-                stroke="currentColor" 
-                strokeWidth="2"
-              >
-                <path strokeLinecap="round" strokeLinejoin="round" d="M12 21a9.004 9.004 0 008.716-6.747M12 21a9.004 9.004 0 01-8.716-6.747M12 21c2.485 0 4.5-4.03 4.5-9S14.485 3 12 3m0 18c-2.485 0-4.5-4.03-4.5-9S9.515 3 12 3m0 0a8.997 8.997 0 017.843 4.582M12 3a8.997 8.997 0 00-7.843 4.582m15.686 0A11.953 11.953 0 0112 10.5c-2.998 0-5.74-1.1-7.843-2.918m15.686 0A8.959 8.959 0 0121 12c0 .778-.099 1.533-.284 2.253m0 0A17.919 17.919 0 0112 16.5c-3.162 0-6.133-.815-8.716-2.247m0 0A9.015 9.015 0 013 12c0-1.605.546-3.131 1.567-4.333" />
-              </svg>
-              {timeZone}
-            </span>
+        <span className="inline-flex items-center gap-2 text-xs font-medium text-color-primary dark:text-gray-300">
+          <span className="tracking-tight">{value}</span>
+
+          {timeZone &&  systemTimezone !== timeZone &&(
+            <>
+              /<span className="
+                inline-flex items-center gap-1 px-2 py-0.5 rounded-md
+                text-[6px] font-bold uppercase tracking-wider leading-none
+                shadow-sm
+                bg-indigo-50 text-color-primary-light ring-1 ring-inset ring-color-primary/20
+                dark:bg-color-primary/20 dark:text-indigo-200 dark:ring-color-primary
+                select-none transform transition-transform hover:scale-105
+              ">
+                <svg 
+                  className="w-2.5 h-2.5 shrink-0" 
+                  fill="none" 
+                  viewBox="0 0 24 24" 
+                  stroke="currentColor" 
+                  strokeWidth="2.5"
+                >
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M12 21a9.004 9.004 0 008.716-6.747M12 21a9.004 9.004 0 01-8.716-6.747M12 21c2.485 0 4.5-4.03 4.5-9S14.485 3 12 3m0 18c-2.485 0-4.5-4.03-4.5-9S9.515 3 12 3m0 0a8.997 8.997 0 017.843 4.582M12 3a8.997 8.997 0 00-7.843 4.582m15.686 0A11.953 11.953 0 0112 10.5c-2.998 0-5.74-1.1-7.843-2.918m15.686 0A8.959 8.959 0 0121 12c0 .778-.099 1.533-.284 2.253m0 0A17.919 17.919 0 0112 16.5c-3.162 0-6.133-.815-8.716-2.247m0 0A9.015 9.015 0 013 12c0-1.605.546-3.131 1.567-4.333" />
+                </svg>
+                <span className="pt-px">{timeZone}</span>
+              </span>
+            </>
           )}
         </span>
       );
