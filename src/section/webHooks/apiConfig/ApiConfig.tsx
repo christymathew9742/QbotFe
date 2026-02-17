@@ -41,11 +41,12 @@ const ApiConfig = () => {
     const pendingStatus:any = useSelector(getUpdateUserPendingSelector);
     const userData = currentUser?.data || {};
     const userUpdate = currentUser?.userResponse?.user || {};
-
     const initialValues = useMemo<FormData>(
         () => ({
             accesstoken: userData?.accesstoken || "",
             phonenumberid: userData?.phonenumberid || "",
+            timezone: userData?.timezone ?? (typeof window !== "undefined" && window.Intl  ? Intl.DateTimeFormat().resolvedOptions().timeZone : "UTC"),
+            language: typeof window !== "undefined" ? navigator.language : "en-US",
         }),
         [userData]
     );
